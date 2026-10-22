@@ -1,17 +1,17 @@
 {
   "version": 1,
   "publicationMode": "authorized-public-snapshots",
-  "preparedAt": "2026-10-22T23:58:48+08:00",
+  "preparedAt": "2026-10-23T00:08:57.375621+08:00",
   "datasets": [
     {
       "id": "finance",
       "type": "snapshot",
       "file": "./finance.json",
       "status": "ready",
-      "generatedAt": "2026-10-21T00:13:34.334062+00:00",
-      "records": 9333,
-      "bytes": 3065879,
-      "sha256": "7e14187c6a13c86afe573d0191549721483914817cdbb483bf8399ca8dce82b3"
+      "generatedAt": "2026-10-22T16:07:20.221093+00:00",
+      "records": 9729,
+      "bytes": 4887407,
+      "sha256": "f8494c4d99ad687e35c7df985a896f3c723d49fceef5562bb644f911cdf804b8"
     },
     {
       "id": "webank",
