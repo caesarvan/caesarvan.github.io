@@ -1,7 +1,7 @@
 {
   "version": 1,
   "publicationMode": "authorized-public-snapshots",
-  "preparedAt": "2026-10-22T23:38:56+08:00",
+  "preparedAt": "2026-10-22T23:58:48+08:00",
   "datasets": [
     {
       "id": "finance",
@@ -12,6 +12,16 @@
       "records": 9333,
       "bytes": 3065879,
       "sha256": "7e14187c6a13c86afe573d0191549721483914817cdbb483bf8399ca8dce82b3"
+    },
+    {
+      "id": "webank",
+      "type": "snapshot",
+      "file": "./webank.json",
+      "status": "ready",
+      "generatedAt": "2026-10-22T23:58:48+08:00",
+      "records": 1059,
+      "bytes": 462693,
+      "sha256": "b368083241ecd0e91ab74bca8b9351a96fd5101bed5abba07813887655648112"
     },
     {
       "id": "investment",

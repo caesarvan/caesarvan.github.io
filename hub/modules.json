@@ -15,6 +15,19 @@
       "enabled": true
     },
     {
+      "id": "webank",
+      "title": "微众投资周报",
+      "description": "微众银行资产快照、持仓与卡资金流；保留报告期间和收益资料缺口。",
+      "icon": "▤",
+      "color": "#278774",
+      "group": "life",
+      "type": "page",
+      "href": "./pages/webank/index.html",
+      "mode": "published",
+      "order": 11,
+      "enabled": true
+    },
+    {
       "id": "investment",
       "title": "投资看板",
       "description": "账户、权益与持仓，自动载入已发布的投资快照。",

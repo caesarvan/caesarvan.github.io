@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>微众投资周报 · 财务总览</title>
+  <link rel="stylesheet" href="./webank.css">
+  <script src="./webank.js" defer></script>
+</head>
+<body>
+  <nav class="report-nav" aria-label="财务报告导航">
+    <a href="../finance/index.html">财务总览</a>
+    <a href="./index.html" aria-current="page">微众投资周报</a>
+    <a class="hub-link" href="../../#/finance" target="_top">统一入口 ↗</a>
+  </nav>
+  <main class="webank-page">
+    <header class="page-header">
+      <div><p class="eyebrow">微众银行 · 人民币账户快照</p><h1>微众投资周报</h1></div>
+      <div class="report-controls"><label for="report-select">报告期间</label><select id="report-select" disabled><option>正在载入…</option></select></div>
+    </header>
+    <section id="loading-state" class="state-panel" role="status">正在载入已核验的银行报告…</section>
+    <section id="error-state" class="state-panel" role="alert" hidden><h2>报告暂时无法载入</h2><p id="error-message"></p><button id="retry-button" type="button">重新载入</button></section>
+    <section id="empty-state" class="state-panel" hidden><h2>还没有可用报告</h2><p>尚未发布已核验快照，缺失资料不按零计算。</p></section>
+    <div id="report-content" hidden>
+      <div class="data-line"><span id="period-label"></span><span id="source-date"></span></div>
+      <section class="metrics" aria-label="报告摘要">
+        <article class="metric"><h2>期末总资产</h2><strong id="total-assets"></strong><p id="assets-date"></p></article>
+        <article class="metric"><h2>相对上个可用快照</h2><strong id="assets-change"></strong><p id="change-label"></p></article>
+        <article class="metric"><h2>本期投资收益</h2><strong class="unavailable" id="report-return">待补资料</strong><p>报告未提供可核对的收益数据</p></article>
+      </section>
+      <aside class="context-note"><strong>资产余额变化不等于投资收益。</strong><span id="return-gap"></span><span>范围仅为微众银行 App 账户，不包含 We2000，也不代表家庭完整净资产。</span></aside>
+      <section class="card" aria-labelledby="allocation-title">
+        <div class="section-heading"><div><h2 id="allocation-title">资产分类</h2><p>按银行报告展示分类；金额与占比均为期末快照。</p></div><span id="concentration" class="pill"></span></div>
+        <div id="allocation-chart" class="allocation-chart" role="img" aria-label="各资产分类的人民币金额与占比"></div>
+        <p class="footnote">分类名称不代表保本承诺或即时赎回能力。持有期、开放日和风险等级以具体产品文件为准。</p>
+      </section>
+      <section class="card" id="comparison-section" aria-labelledby="comparison-title">
+        <div class="section-heading"><div><h2 id="comparison-title">两次资产快照对比</h2><p id="comparison-period"></p></div></div>
+        <div class="table-scroll"><table><caption class="sr-only">分类资产余额变化，非收益</caption><thead><tr><th scope="col">银行分类</th><th scope="col" id="earlier-column">较早快照</th><th scope="col" id="latest-column">最新快照</th><th scope="col">余额变化（元）</th></tr></thead><tbody id="comparison-rows"></tbody></table></div>
+        <p class="footnote">所比较期间可能包含申赎、转账及估值变动，未以完整外部资金流调整，不能解释为收益或收益率。</p>
+      </section>
+      <section class="card" aria-labelledby="holdings-title">
+        <div class="section-heading"><div><h2 id="holdings-title">期末持仓</h2><p id="holdings-description"></p></div><label class="search-control"><span class="sr-only">搜索产品或银行分类</span><input id="holding-search" type="search" placeholder="搜索产品或分类" autocomplete="off"></label></div>
+        <div class="table-scroll"><table><caption class="sr-only">报告期末产品持仓</caption><thead><tr><th scope="col">产品 / 份额类别</th><th scope="col">银行分类</th><th scope="col">金额（元）</th><th scope="col">报告页</th></tr></thead><tbody id="holdings-rows"></tbody></table></div>
+        <p id="holding-result" class="footnote" aria-live="polite"></p>
+      </section>
+      <section class="card" aria-labelledby="flows-title">
+        <div class="section-heading"><div><h2 id="flows-title">微众卡资金流</h2><p>原报告流水按摘要汇总，转出为负、转入为正。</p></div><span id="flow-count" class="pill"></span></div>
+        <div class="table-scroll"><table><caption class="sr-only">本期资金流按银行摘要汇总</caption><thead><tr><th scope="col">银行摘要</th><th scope="col">笔数</th><th scope="col">净额（元）</th></tr></thead><tbody id="flow-summary-rows"></tbody></table></div>
+        <div id="flow-findings" class="flow-findings"></div>
+        <p class="footnote">“申购”和“净申购”按微众卡扣款口径统计，不代表确认份额、新增投资本金或收益。月报的基金申购摘要还包含与理财子过渡户有关的流水，不能解释为对所列基金的新增本金或换手。</p>
+        <p class="footnote">基金申购、配售退款、理财转出及账户扣划作为独立资金流证据，未重复追加到既有消费或收入台账；摘要中的“理财消费清算”也不直接等同生活消费。</p>
+        <details id="flow-details"><summary>查看本期逐笔流水</summary><div class="table-scroll"><table><caption class="sr-only">本期银行逐笔流水，保留原报告次序</caption><thead><tr><th scope="col">日期</th><th scope="col">银行摘要</th><th scope="col">收支（元）</th><th scope="col">卡余额（元）</th><th scope="col">报告页</th></tr></thead><tbody id="flow-detail-rows"></tbody></table></div></details>
+      </section>
+      <details class="card source-details"><summary>来源、核对与资料缺口</summary><div id="source-evidence"></div><p class="footnote">页面展示已发布的核验快照。原始 PDF、解密密码、私人路径和完整账户信息未随页面发布。</p></details>
+    </div>
+  </main>
+</body>
+</html>
