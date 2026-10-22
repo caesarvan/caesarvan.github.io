@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "publicationMode": "authorized-public-snapshots",
+  "preparedAt": "2026-10-22T23:38:56+08:00",
+  "datasets": [
+    {
+      "id": "finance",
+      "type": "snapshot",
+      "file": "./finance.json",
+      "status": "ready",
+      "generatedAt": "2026-10-21T00:13:34.334062+00:00",
+      "records": 9333,
+      "bytes": 3065879,
+      "sha256": "7e14187c6a13c86afe573d0191549721483914817cdbb483bf8399ca8dce82b3"
+    },
+    {
+      "id": "investment",
+      "type": "snapshot",
+      "file": "./investment.json",
+      "status": "ready",
+      "generatedAt": "2026-10-22T20:01:49+08:00",
+      "records": 4584,
+      "bytes": 971248,
+      "sha256": "c21b8f1033a508594d826fc315b6d90db7534eded5e2c9432158112726d96143"
+    },
+    {
+      "id": "travel",
+      "type": "snapshot",
+      "file": "./travel.json",
+      "status": "ready",
+      "generatedAt": "2026-10-22T20:15:36+08:00",
+      "records": 133,
+      "bytes": 74161,
+      "sha256": "03f3b46640e918a8fd8c942c2b5c9b73d1e0607c76b31ed14b584cda6bf9ee4d"
+    },
+    {
+      "id": "icloud",
+      "type": "index",
+      "file": "./icloud.json",
+      "status": "ready",
+      "generatedAt": "2026-10-22T15:36:41.182410+00:00",
+      "records": 15663,
+      "bytes": 3716211,
+      "sha256": "2b1a24c61eb2b39bf8efd8b255ae8ec2ffa640c7d166f7f6cf660c408f3359d0"
+    },
+    {
+      "id": "onedrive",
+      "type": "index",
+      "file": "./onedrive.json",
+      "status": "unavailable",
+      "generatedAt": "2026-10-22T15:36:41.182410+00:00",
+      "records": 0,
+      "bytes": 284,
+      "sha256": "cd100efad450afd3da9bc60019e94defd5285f42515a24d2063d36bc0a4bc028",
+      "reason": "源索引仍是云占位文件，15 秒内无法读取；尚未提取内容，待源文件在本机可读后重新生成。"
+    },
+    {
+      "id": "outlook",
+      "type": "index",
+      "file": "./outlook.json",
+      "status": "ready",
+      "generatedAt": "2026-10-22T15:36:41.182410+00:00",
+      "records": 808,
+      "bytes": 501732,
+      "sha256": "8ed03f6940837072fe8da8cc260bdf759fb58d6e43a24255804c6fd13f1fb5fc"
+    },
+    {
+      "id": "mail",
+      "type": "index",
+      "file": "./mail.json",
+      "status": "unavailable",
+      "generatedAt": "2026-10-22T15:36:41.182410+00:00",
+      "records": 0,
+      "bytes": 277,
+      "sha256": "92a809677b201040b3c6f982a47db353f3526c78672a2c98093e70596817e0bd",
+      "reason": "源索引仍是云占位文件，15 秒内无法读取；尚未提取内容，待源文件在本机可读后重新生成。"
+    },
+    {
+      "id": "youtube",
+      "type": "index",
+      "file": "./youtube.json",
+      "status": "ready",
+      "generatedAt": "2026-10-22T15:36:41.182410+00:00",
+      "records": 89,
+      "bytes": 15312,
+      "sha256": "52bd32db0816897701b6151d62524f410754148f8cdc1e1368ec9fd6a7d12b9a"
+    }
+  ]
+}

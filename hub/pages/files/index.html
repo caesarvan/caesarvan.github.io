@@ -3,41 +3,37 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'none'; font-src 'none'; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'none'; font-src 'none'; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
   <meta name="referrer" content="no-referrer">
-  <title>本地资料导航 · Life OS</title>
+  <title>资料导航 · Life OS</title>
   <link rel="stylesheet" href="./files.css">
   <script src="./files.js" defer></script>
 </head>
 <body>
   <main class="app">
     <header class="hero">
-      <div><a class="home-link" href="../../#/home">← Life OS</a><p class="eyebrow">YOUR PERSONAL LIBRARY</p><h1 id="page-title">本地资料导航</h1><p id="page-description" class="description">把资料入口放在一起，需要时再从本机载入。</p></div>
-      <div class="privacy-pill"><span class="live-dot"></span>仅当前浏览器内存</div>
+      <div><a class="home-link" href="../../#/home">← Life OS</a><p class="eyebrow">YOUR PERSONAL LIBRARY</p><h1 id="page-title">资料导航</h1><p id="page-description" class="description">资料入口放在一起，打开即可搜索和浏览。</p></div>
+      <div class="privacy-pill"><span class="live-dot"></span>已发布索引</div>
     </header>
-    <section class="import-panel" aria-labelledby="import-title">
-      <div class="import-intro"><div class="panel-icon" aria-hidden="true">↗</div><div><h2 id="import-title">连接你的本地索引</h2><p>选择 HTML 书签或资料索引；包含本地链接时，再选择对应文件夹。</p></div></div>
-      <div class="actions">
-        <label class="button primary" for="index-input">选择 HTML 索引</label><input id="index-input" class="visually-hidden" type="file" accept=".html,.htm,text/html">
-        <label class="button secondary" for="folder-input">选择本地文件夹</label><input id="folder-input" class="visually-hidden" type="file" webkitdirectory multiple>
-        <button id="clear-button" class="button quiet" type="button" disabled>清除载入内容</button>
-      </div>
-      <p class="privacy-note">文件不上传、不保存。导入时只读取链接与文字，脚本、样式和远程资源不会载入。刷新页面后需重新选择。</p>
-      <div id="import-status" class="status" role="status" aria-live="polite">尚未载入私人记录。</div>
+    <section id="source-panel" class="import-panel" aria-labelledby="source-title" aria-busy="true">
+      <div class="import-intro"><div class="panel-icon" aria-hidden="true">↗</div><div><h2 id="source-title">资料索引，打开即见</h2><p>页面自动读取已发布的索引，无需选择文件。</p></div></div>
+      <div class="actions"><button id="reload-button" class="button primary" type="button" disabled>正在载入…</button></div>
+      <p class="privacy-note">本页包含资料标题、分类与安全链接。附件原文件未发布；HTTPS 书签和来源邮件可在新窗口打开。</p>
+      <div id="load-status" class="status" role="status" aria-live="polite">正在读取资料索引…</div>
     </section>
-    <section class="stats" aria-label="当前资料统计">
-      <article class="stat lavender"><span>已载入链接</span><strong id="total-count">0</strong><small id="index-name">等待选择索引</small></article>
-      <article class="stat peach"><span>外部 HTTPS 入口</span><strong id="external-count">0</strong><small>由你点击后在新窗口打开</small></article>
-      <article class="stat mint"><span>本地文件</span><strong id="file-count">0</strong><small id="folder-name">尚未选择本地文件夹</small></article>
+    <section class="stats" aria-label="资料统计">
+      <article class="stat lavender"><span>索引记录</span><strong id="total-count">0</strong><small id="index-name">正在载入索引</small></article>
+      <article class="stat peach"><span>可打开的外部入口</span><strong id="external-count">0</strong><small>HTTPS 网站与来源邮件</small></article>
+      <article class="stat mint"><span>文件与目录条目</span><strong id="file-count">0</strong><small>附件原文件未发布</small></article>
     </section>
     <section class="library" aria-labelledby="library-title">
-      <div class="library-toolbar"><div><p class="eyebrow">EXPLORE</p><h2 id="library-title">资料与书签</h2></div><label class="search"><span aria-hidden="true">⌕</span><span class="visually-hidden">搜索名称或路径</span><input id="search-input" type="search" placeholder="搜索名称、路径或网站" autocomplete="off"></label></div>
-      <div class="filter-row"><div class="tabs" aria-label="筛选链接"><button type="button" class="tab active" data-filter="all" aria-pressed="true">全部</button><button type="button" class="tab" data-filter="local" aria-pressed="false">本地资料</button><button type="button" class="tab" data-filter="external" aria-pressed="false">外部书签</button></div><span id="result-count" class="result-count">0 条记录</span></div>
+      <div class="library-toolbar"><div><p class="eyebrow">EXPLORE</p><h2 id="library-title">资料与书签</h2></div><label class="search"><span aria-hidden="true">⌕</span><span class="visually-hidden">搜索名称、路径或主题</span><input id="search-input" type="search" placeholder="搜索名称、路径或主题" autocomplete="off"></label></div>
+      <div class="filter-row"><div class="tabs" aria-label="筛选链接"><button type="button" class="tab active" data-filter="all" aria-pressed="true">全部</button><button type="button" class="tab" data-filter="local" aria-pressed="false">文件索引</button><button type="button" class="tab" data-filter="external" aria-pressed="false">外部入口</button></div><span id="result-count" class="result-count">0 条记录</span></div>
       <div id="results" class="results"></div>
-      <div id="empty-state" class="empty-state"><div class="empty-icon" aria-hidden="true">▧</div><h3>你的资料，按需载入</h3><p>公开页面默认不包含私人记录。选择一个 HTML 索引，即可在这里搜索和浏览。</p></div>
+      <div id="empty-state" class="empty-state"><div class="empty-icon" aria-hidden="true">▧</div><h3 id="empty-heading">正在载入资料索引</h3><p id="empty-description">页面正在读取已发布的索引，请稍候。</p></div>
+      <nav id="pagination" class="pagination" aria-label="索引分页" hidden><button id="previous-button" class="button secondary" type="button">上一页</button><span id="page-count"></span><button id="next-button" class="button secondary" type="button">下一页</button></nav>
     </section>
-    <footer>LOCAL FIRST <span>·</span> 页面框架发布在 GitHub Pages，个人内容保留在你的设备。</footer>
+    <footer>YOUR PERSONAL LIBRARY <span>·</span> 索引已发布，附件原文件保留在原位置。</footer>
   </main>
-  <dialog id="directory-dialog" class="directory-dialog"><div class="dialog-heading"><div><p class="eyebrow">LOCAL FOLDER</p><h2 id="directory-title">目录文件</h2></div><button id="close-directory" type="button" class="button quiet">关闭</button></div><p id="directory-count" class="description"></p><div id="directory-files" class="directory-files"></div></dialog>
 </body>
 </html>

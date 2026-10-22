@@ -1,127 +1,44 @@
 (() => {
   'use strict';
   const profiles = {
-    icloud: ['iCloud 资料导航', '从本机载入 iCloud 文件索引，让资料随时可查。'],
-    onedrive: ['OneDrive 资料导航', '统一浏览本地 OneDrive 资料入口，按需打开文件。'],
-    outlook: ['Outlook 邮件导航', '载入本机邮件归档索引，快速寻找邮件与附件。'],
-    mail: ['邮件归档导航', '把邮件归档入口集中起来，内容保留在你的设备。'],
-    youtube: ['YouTube 书签', '载入你的 HTML 书签，搜索感兴趣的视频与频道。']
+    icloud: ['iCloud 资料导航', '搜索完整资料索引，了解文件位置与分类。'],
+    onedrive: ['OneDrive 资料导航', '集中浏览 OneDrive 资料索引与分类。'],
+    outlook: ['Outlook 邮件导航', '按附件名称与邮件主题查找记录，返回来源邮件。'],
+    mail: ['邮件归档导航', '查看早期邮件归档索引与邮件来源。'],
+    youtube: ['YouTube 书签', '搜索已整理的视频与频道，打开喜欢的内容。']
   };
-  const $ = (id) => document.getElementById(id);
-  const selectedProfile = profiles[new URLSearchParams(location.search).get('kind')] || ['本地资料导航', '把资料入口放在一起，需要时再从本机载入。'];
-  $('page-title').textContent = selectedProfile[0];
-  $('page-description').textContent = selectedProfile[1];
-  document.title = `${selectedProfile[0]} · Life OS`;
-  const state = { entries: [], files: [], directories: [], filter: 'all', indexName: '', rejected: 0, objectURLs: new Set(), loadVersion: 0 };
-  const cleanText = (s, max = 500) => String(s || '').replace(/\s+/g, ' ').trim().slice(0, max);
-  const fold = (s) => String(s).normalize('NFC').toLocaleLowerCase();
-  const escapeMarkup = (s) => s.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  function notify(message, error = false) { $('import-status').textContent = message; $('import-status').classList.toggle('error', error); }
+  const $ = id => document.getElementById(id);
+  const requested = new URLSearchParams(location.search).get('kind');
+  const kind = Object.hasOwn(profiles, requested) ? requested : 'icloud';
+  const profile = profiles[kind];
+  const PAGE_SIZE = 100;
+  const state = { entries: [], filter: 'all', page: 0, status: 'loading', reason: '', generatedAt: '', controller: null };
+  $('page-title').textContent = profile[0];
+  $('page-description').textContent = profile[1];
+  document.title = `${profile[0]} · Life OS`;
+  const fold = value => String(value).normalize('NFC').toLocaleLowerCase();
+  const isText = (value, max = 5000) => typeof value === 'string' && value.length <= max;
+  const sensitiveKey = /(?:token|secret|password|passwd|api[_-]?key|access[_-]?key|signature|credential|authorization|session|securitytoken|^sig$|^code$|^ticket$|^key$|^sid$|^jwt$|^x-amz-|^x-goog-)/i;
 
-  // Keep only reconstructed anchors and headings before DOMParser sees the input.
-  // No imported element can contain src/srcset/style/events or trigger a resource request.
-  function inertLinkDocument(source) {
-    const token = /<!--[\s\S]*?-->|<![^>]*>|<\/?([a-z][a-z0-9:-]*)\b(?:"[^"]*"|'[^']*'|[^'">])*>/gi;
-    let output = '', offset = 0, blocked = '';
-    const blockedTags = new Set(['script', 'style', 'iframe', 'object', 'template', 'noscript', 'svg', 'math', 'textarea', 'title']);
-    for (const match of source.matchAll(token)) {
-      if (!blocked) output += escapeMarkup(source.slice(offset, match.index));
-      const raw = match[0], name = (match[1] || '').toLowerCase(), closing = /^<\//.test(raw);
-      if (blocked) { if (closing && name === blocked) blocked = ''; }
-      else if (blockedTags.has(name) && !closing) blocked = name;
-      else if (name === 'a') {
-        if (closing) output += '</a>';
-        else {
-          const attr = [...raw.slice(2, -1).matchAll(/([^\s"'<>/=]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g)].find(item => item[1].toLowerCase() === 'href');
-          if (attr) {
-            const value = attr[2] ?? attr[3] ?? attr[4] ?? '';
-            output += `<a href="${escapeMarkup(value).replace(/"/g, '&quot;')}">`;
-          } else output += '<a>';
-        }
-      } else if (/^h[1-6]$/.test(name)) output += `<${closing ? '/' : ''}${name}>`;
-      else output += '\n';
-      offset = match.index + raw.length;
-    }
-    if (!blocked) output += escapeMarkup(source.slice(offset));
-    return new DOMParser().parseFromString(output, 'text/html');
+  function safeHref(value) {
+    if (!isText(value)) throw new Error('索引中的链接格式不正确。');
+    let url;
+    try { url = new URL(value); } catch { throw new Error('索引包含无效链接。'); }
+    if (url.protocol !== 'https:' || !url.hostname || url.username || url.password || [...url.searchParams.keys()].some(key => sensitiveKey.test(key))) throw new Error('索引包含不支持的链接。');
+    return url.href;
   }
-
-  function safePath(raw) {
-    let value = raw.trim();
-    if (!value || /[\u0000-\u001f\u007f]/.test(value) || value.startsWith('//')) return null;
-    let isFileURL = /^file:/i.test(value);
-    if (isFileURL) {
-      try { const url = new URL(value); if (url.hostname && url.hostname !== 'localhost') return null; value = url.pathname; }
-      catch { return null; }
-    } else if (/^[a-z][a-z0-9+.-]*:/i.test(value)) return null;
-    const directory = /[\\/]$/.test(value.split(/[?#]/)[0]);
-    value = value.split(/[?#]/)[0];
-    try { value = decodeURIComponent(value); } catch { return null; }
-    if (/[\u0000-\u001f\u007f]/.test(value)) return null;
-    const segments = [];
-    for (const part of value.replace(/\\/g, '/').normalize('NFC').split('/')) {
-      if (!part || part === '.') continue;
-      if (part === '..') { if (!segments.length) return null; segments.pop(); }
-      else segments.push(part);
+  function validate(data) {
+    if (!data || data.version !== 1 || data.kind !== kind || !['ready', 'unavailable'].includes(data.status) || !Array.isArray(data.entries) || data.entries.length > 100000) throw new Error('索引格式不正确，请稍后重试。');
+    if (data.status === 'unavailable') {
+      if (!isText(data.reason, 1000) || data.entries.length) throw new Error('索引的来源状态不正确。');
+      return data;
     }
-    if (!segments.length) return null;
-    return { path: segments.join('/'), directory, absolute: isFileURL || /^[\\/]/.test(value) };
-  }
-
-  function classify(raw) {
-    const value = raw.trim();
-    if (/^https:/i.test(value)) {
-      try { const url = new URL(value); if (url.protocol !== 'https:' || !url.hostname || url.username || url.password) return null; return { type: 'external', href: url.href, path: url.hostname + url.pathname }; }
-      catch { return null; }
+    for (const entry of data.entries) {
+      if (!entry || !['local', 'external'].includes(entry.type) || !isText(entry.label, 2000) || !entry.label || !isText(entry.path) || !isText(entry.group, 1000) || (entry.description !== undefined && !isText(entry.description, 3000))) throw new Error('索引记录格式不正确。');
+      if (entry.type === 'external') safeHref(entry.href);
+      if (entry.sourceHref !== undefined) safeHref(entry.sourceHref);
     }
-    if (value.startsWith('#')) return null;
-    const local = safePath(value);
-    return local ? { type: 'local', ...local } : null;
-  }
-
-  function parseIndex(text) {
-    const doc = inertLinkDocument(text), entries = [], seen = new Set();
-    let rejected = 0, heading = '';
-    for (const node of doc.querySelectorAll('h1,h2,h3,h4,h5,h6,a[href]')) {
-      if (node.tagName !== 'A') { heading = cleanText(node.textContent, 100); continue; }
-      const link = classify(node.getAttribute('href') || '');
-      if (!link) { rejected++; continue; }
-      const key = `${link.type}:${link.href || link.path}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
-      entries.push({ ...link, label: cleanText(node.textContent) || link.path.split('/').pop() || '未命名链接', group: heading });
-      if (entries.length >= 30000) break;
-    }
-    return { entries, rejected };
-  }
-
-  function pathScore(target, candidate) {
-    const a = fold(target), b = fold(candidate);
-    if (a === b) return 30000 + b.length;
-    if (a.endsWith('/' + b)) return 20000 + b.length;
-    if (b.endsWith('/' + a)) return 10000 + a.length;
-    if (a.split('/').pop() === b.split('/').pop()) return 1;
-    return 0;
-  }
-  function bestMatch(target, candidates) {
-    let score = 0, winners = [];
-    for (const candidate of candidates) {
-      const current = pathScore(target, candidate.path);
-      if (current > score) { score = current; winners = [candidate]; }
-      else if (current && current === score) winners.push(candidate);
-    }
-    return { value: winners.length === 1 ? winners[0] : null, ambiguous: winners.length > 1 };
-  }
-  function resolve(entry) {
-    if (!state.files.length) return { status: '需选择本地文件夹' };
-    if (!entry.directory) {
-      const match = bestMatch(entry.path, state.files);
-      if (match.value) return { file: match.value.file, path: match.value.path };
-      if (match.ambiguous) return { status: '存在同名文件，请选择更精确的文件夹' };
-    }
-    const directory = bestMatch(entry.path, state.directories);
-    if (directory.value) return { directory: directory.value };
-    return { status: directory.ambiguous ? '存在同名目录，请选择更精确的文件夹' : '未在已选文件夹中找到' };
+    return data;
   }
   function element(tag, className, text) {
     const node = document.createElement(tag);
@@ -129,99 +46,86 @@
     if (text !== undefined) node.textContent = text;
     return node;
   }
-  function openLocal(file) {
-    // Active document types are opened as plain text; nothing imported is executed.
-    const ext = file.name.split('.').pop().toLowerCase();
-    const types = { pdf: 'application/pdf', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', avif: 'image/avif', txt: 'text/plain', md: 'text/plain', csv: 'text/plain', json: 'text/plain', html: 'text/plain', htm: 'text/plain', svg: 'text/plain', xml: 'text/plain', js: 'text/plain', css: 'text/plain', xhtml: 'text/plain', eml: 'text/plain' };
-    const blob = new Blob([file], { type: types[ext] || 'application/octet-stream' });
-    const url = URL.createObjectURL(blob);
-    state.objectURLs.add(url);
-    window.open(url, '_blank', 'noopener,noreferrer');
+  function notify(message, error = false) {
+    $('load-status').textContent = message;
+    $('load-status').classList.toggle('error', error);
   }
-  function showDirectory(directory) {
-    $('directory-title').textContent = directory.path;
-    const files = state.files.filter(item => item.path.startsWith(directory.path + '/'));
-    $('directory-count').textContent = `此目录包含 ${files.length.toLocaleString('zh-CN')} 个文件；仅展示已选择文件夹中的内容。`;
-    $('directory-files').replaceChildren();
-    for (const item of files.slice(0, 1000)) {
-      const row = element('div', 'directory-file');
-      row.append(element('span', '', item.path.slice(directory.path.length + 1)));
-      const button = element('button', 'button secondary', '打开文件'); button.type = 'button'; button.addEventListener('click', () => openLocal(item.file)); row.append(button);
-      $('directory-files').append(row);
-    }
-    if (files.length > 1000) $('directory-files').append(element('p', 'truncation-note', '仅展示前 1,000 个文件。选择更小的文件夹可缩小范围。'));
-    $('directory-dialog').showModal();
+  function externalLink(href, title) {
+    const link = element('a', 'record-action', title);
+    link.href = safeHref(href); link.target = '_blank'; link.rel = 'noopener noreferrer';
+    return link;
   }
   function render() {
+    const loading = state.status === 'loading';
+    $('source-panel').setAttribute('aria-busy', String(loading));
+    $('reload-button').disabled = loading;
+    $('reload-button').textContent = loading ? '正在载入…' : '重新加载';
     $('total-count').textContent = state.entries.length.toLocaleString('zh-CN');
-    $('external-count').textContent = state.entries.filter(x => x.type === 'external').length.toLocaleString('zh-CN');
-    $('file-count').textContent = state.files.length.toLocaleString('zh-CN');
-    $('index-name').textContent = state.indexName || '等待选择索引';
-    $('folder-name').textContent = state.files.length ? state.files[0].path.split('/')[0] : '尚未选择本地文件夹';
-    $('clear-button').disabled = !state.indexName && !state.files.length;
+    $('external-count').textContent = state.entries.filter(entry => entry.type === 'external' || entry.sourceHref).length.toLocaleString('zh-CN');
+    $('file-count').textContent = state.entries.filter(entry => entry.type === 'local').length.toLocaleString('zh-CN');
+    const generated = Date.parse(state.generatedAt);
+    $('index-name').textContent = Number.isFinite(generated) ? `更新于 ${new Intl.DateTimeFormat('zh-CN', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Asia/Shanghai' }).format(generated)}` : loading ? '正在载入索引' : '尚无可用索引';
     const query = fold($('search-input').value.trim());
-    const results = state.entries.filter(entry => (state.filter === 'all' || entry.type === state.filter) && (!query || fold(`${entry.label} ${entry.path} ${entry.group}`).includes(query)));
+    const results = state.entries.filter(entry => (state.filter === 'all' || (state.filter === 'local' ? entry.type === 'local' : entry.type === 'external' || entry.sourceHref)) && (!query || fold(`${entry.label} ${entry.path} ${entry.group} ${entry.description || ''}`).includes(query)));
+    const pages = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
+    state.page = Math.min(state.page, pages - 1);
     $('result-count').textContent = `${results.length.toLocaleString('zh-CN')} 条记录`;
     $('results').replaceChildren();
     $('empty-state').hidden = results.length > 0;
     if (!results.length) {
-      $('empty-state').querySelector('h3').textContent = state.indexName ? '没有找到匹配的记录' : '你的资料，按需载入';
-      $('empty-state').querySelector('p').textContent = state.indexName ? '试试其他关键词或筛选条件。索引仅接受 HTTPS 和有效本地路径。' : '公开页面默认不包含私人记录。选择一个 HTML 索引，即可在这里搜索和浏览。';
+      $('empty-heading').textContent = state.status === 'loading' ? '正在载入资料索引' : state.status === 'unavailable' ? '来源索引暂不可用' : state.status === 'error' ? '索引载入失败' : '没有找到匹配的记录';
+      $('empty-description').textContent = state.status === 'loading' ? '页面正在读取已发布的索引，请稍候。' : state.reason || '试试其他关键词或筛选条件。';
     }
-    for (const entry of results.slice(0, 500)) {
+    for (const entry of results.slice(state.page * PAGE_SIZE, (state.page + 1) * PAGE_SIZE)) {
       const record = element('article', `record ${entry.type}`), body = element('div', 'record-body');
       record.append(element('div', 'record-icon', entry.type === 'external' ? '↗' : entry.directory ? '▱' : '▤'));
       body.append(element('h3', '', entry.label));
+      if (entry.description) body.append(element('p', 'record-description', entry.description));
       const path = element('p', 'record-path', entry.path); path.title = entry.path; body.append(path);
       if (entry.group) body.append(element('span', 'record-status', entry.group));
-      if (entry.type === 'external') {
-        const link = element('a', 'record-action', '打开网站 ↗'); link.href = entry.href; link.target = '_blank'; link.rel = 'noopener noreferrer'; body.append(link);
-      } else {
-        const resolved = resolve(entry), button = element('button', 'record-action', resolved.file ? '打开本地文件 ↗' : resolved.directory ? '查看目录 →' : resolved.status);
-        button.type = 'button'; button.disabled = !resolved.file && !resolved.directory;
-        if (resolved.file) button.addEventListener('click', () => openLocal(resolved.file));
-        else if (resolved.directory) button.addEventListener('click', () => showDirectory(resolved.directory));
-        body.append(button);
-      }
+      if (entry.type === 'external') body.append(externalLink(entry.href, '打开网站 ↗'));
+      else body.append(element('span', 'record-notice', '附件未发布'));
+      if (entry.sourceHref) body.append(externalLink(entry.sourceHref, '打开来源邮件 ↗'));
       record.append(body); $('results').append(record);
     }
-    if (results.length > 500) $('results').append(element('p', 'truncation-note', '当前展示前 500 条，请搜索关键词缩小范围。'));
+    $('pagination').hidden = results.length <= PAGE_SIZE;
+    $('previous-button').disabled = state.page === 0;
+    $('next-button').disabled = state.page >= pages - 1;
+    $('page-count').textContent = results.length ? `${state.page * PAGE_SIZE + 1}–${Math.min((state.page + 1) * PAGE_SIZE, results.length)} / ${results.length.toLocaleString('zh-CN')}` : '0';
   }
-  $('index-input').addEventListener('change', async (event) => {
-    const file = event.target.files[0], version = ++state.loadVersion;
-    if (!file) return;
-    if (file.size > 20 * 1024 * 1024) { notify('索引超过 20 MB，请选择更小的 HTML 文件。', true); event.target.value = ''; return; }
+  async function load() {
+    state.controller?.abort();
+    const controller = new AbortController(); state.controller = controller;
+    state.status = 'loading'; state.reason = '';
+    notify('正在读取已发布的资料索引…'); render();
+    const timeout = setTimeout(() => controller.abort(), 15000);
     try {
-      const text = await file.text(); if (version !== state.loadVersion) return;
-      const parsed = parseIndex(text);
-      state.entries = parsed.entries; state.rejected = parsed.rejected; state.indexName = file.name;
-      notify(`已从 ${file.name} 载入 ${parsed.entries.length.toLocaleString('zh-CN')} 条链接${parsed.rejected ? `，忽略 ${parsed.rejected} 条不支持或无效链接` : ''}。本地链接需选择对应文件夹。`);
-      render();
-    } catch { notify('无法读取此索引，请确认它是可读取的 HTML 文件。', true); }
-    event.target.value = '';
-  });
-  $('folder-input').addEventListener('change', (event) => {
-    const chosen = Array.from(event.target.files);
-    if (!chosen.length) return;
-    state.files = chosen.map(file => ({ file, path: (file.webkitRelativePath || file.name).normalize('NFC') }));
-    const directories = new Set();
-    for (const item of state.files) { const parts = item.path.split('/'); for (let i = 1; i < parts.length; i++) directories.add(parts.slice(0, i).join('/')); }
-    state.directories = [...directories].map(path => ({ path }));
-    notify(`已在内存中关联 ${chosen.length.toLocaleString('zh-CN')} 个本地文件；未上传文件内容。`); render(); event.target.value = '';
-  });
-  $('clear-button').addEventListener('click', () => {
-    state.loadVersion++; for (const url of state.objectURLs) URL.revokeObjectURL(url); state.objectURLs.clear();
-    state.entries = []; state.files = []; state.directories = []; state.indexName = ''; state.rejected = 0;
-    $('index-input').value = ''; $('folder-input').value = ''; $('search-input').value = '';
-    $('directory-files').replaceChildren(); if ($('directory-dialog').open) $('directory-dialog').close();
-    notify('已清除本页载入的索引、文件引用与临时链接。'); render();
-  });
-  $('search-input').addEventListener('input', render);
+      const response = await fetch(`../../data/${kind}.json`, { signal: controller.signal, cache: 'no-cache', credentials: 'omit' });
+      if (!response.ok) throw new Error(`暂时无法读取索引（HTTP ${response.status}），请点击重新加载。`);
+      const data = validate(await response.json());
+      if (state.controller !== controller) return;
+      state.entries = data.entries; state.status = data.status;
+      state.reason = data.status === 'unavailable' ? data.reason : '';
+      state.generatedAt = isText(data.generatedAt, 100) ? data.generatedAt : ''; state.page = 0;
+      notify(data.status === 'ready' ? `已自动载入 ${data.entries.length.toLocaleString('zh-CN')} 条索引。附件原文件未发布；外部网站与来源邮件由你点击后打开。` : data.reason, data.status === 'unavailable');
+    } catch (failure) {
+      if (state.controller !== controller) return;
+      state.status = 'error';
+      state.reason = failure.name === 'AbortError' ? '索引读取超过 15 秒，请检查网络后重新加载。' : failure instanceof SyntaxError ? '索引数据暂时无法解析，请稍后重新加载。' : failure.message || '索引载入失败，请重新加载。';
+      notify(state.reason + (state.entries.length ? ' 当前仍保留上次成功载入的记录。' : ''), true);
+    } finally {
+      clearTimeout(timeout);
+      if (state.controller === controller) render();
+    }
+  }
+  $('reload-button').addEventListener('click', load);
+  $('search-input').addEventListener('input', () => { state.page = 0; render(); });
   document.querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click', () => {
-    state.filter = button.dataset.filter;
+    state.filter = button.dataset.filter; state.page = 0;
     document.querySelectorAll('[data-filter]').forEach(tab => { const active = tab === button; tab.classList.toggle('active', active); tab.setAttribute('aria-pressed', String(active)); }); render();
   }));
-  $('close-directory').addEventListener('click', () => $('directory-dialog').close());
-  window.addEventListener('pagehide', () => { for (const url of state.objectURLs) URL.revokeObjectURL(url); });
-  render();
+  $('previous-button').addEventListener('click', () => { state.page = Math.max(0, state.page - 1); render(); $('library-title').scrollIntoView({ block: 'start' }); });
+  $('next-button').addEventListener('click', () => { state.page++; render(); $('library-title').scrollIntoView({ block: 'start' }); });
+  window.addEventListener('pagehide', () => state.controller?.abort());
+  load();
 })();
