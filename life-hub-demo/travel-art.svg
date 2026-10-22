@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" fill="none">
+  <title>湖山之间</title>
+  <desc>薄荷色湖面、层叠青山、暖橙色太阳和湖畔小亭的杭州旅行插画</desc>
+  <defs>
+    <clipPath id="frame"><rect width="720" height="440" rx="24"/></clipPath>
+  </defs>
+  <g clip-path="url(#frame)">
+    <path fill="#E6F1E4" d="M0 0h720v440H0z"/>
+    <circle cx="574" cy="89" r="45" fill="#F6B58D"/>
+    <circle cx="574" cy="89" r="56" stroke="#F6B58D" stroke-opacity=".34"/>
+    <path d="M89 78h51m-28-12h72m166-14h39m-16 11h56" stroke="#FAFCF4" stroke-width="6" stroke-linecap="round"/>
+    <path d="M-27 195c58-45 102-33 159-78 35-28 78-37 113-8 43 36 65 53 103 38 51-20 64-10 104 20 61 46 94-18 143-5 49 13 77 26 152 10v104H-27V195Z" fill="#ADCDBC"/>
+    <path d="M-15 230c43-3 61-32 90-60 32-32 56-37 92-7 40 34 56 59 106 37 38-16 61-68 105-68 41 0 56 28 85 48 36 24 71-13 106-11 31 2 53 30 89 36 37 7 64-15 85-15v104H-15v-64Z" fill="#79AE95"/>
+    <path d="M-29 233c60-24 101-15 152 21 60 42 105 31 150 7 47-26 81-24 126-4 54 23 97 26 153-2 69-35 122-20 188-3v188H-29V233Z" fill="#BEE0CF"/>
+    <path d="M338 195c22-11 32-30 43-41 12 2 29 13 44 30-34-14-53-9-87 11Z" fill="#95BFA5"/>
+    <path d="M-14 277c39 2 68 5 106 3 73-5 86-17 124-16 23 1 45 5 65 11-87-1-111 18-173 19-47 1-81-5-122-1v-16Z" fill="#DEEBCC"/>
+    <path d="M435 264c31-20 79-32 122-32 54 0 100 6 179 34v40c-81-27-131-39-184-35-47 3-72 7-117-7Z" fill="#4E8F74"/>
+    <path d="M486 270c73-14 151-6 234 24v27c-57-26-148-46-234-51Z" fill="#31725C"/>
+    <path d="M575 231c-2-20 0-39 3-56m-1 19-13-13m13 22 17-18" stroke="#39795F" stroke-width="3" stroke-linecap="round"/>
+    <path d="M551 174c-9-10-5-23 5-26-2-11 7-21 18-18 8-14 27-8 29 6 16-1 22 19 12 28 9 14-5 29-18 26-12 10-29 4-31-5-7 1-12-3-15-11Z" fill="#4B8F70"/>
+    <path d="M628 250v-37m0 15 10-8" stroke="#245C49" stroke-width="3" stroke-linecap="round"/>
+    <path d="M609 215c-11-7-6-20 3-22-4-12 9-23 19-16 11-10 25-1 23 11 13 5 12 21 1 26-9 12-32 13-46 1Z" fill="#2D7458"/>
+    <path d="M474 253v-53h59v53" fill="#EFE6C7"/>
+    <path d="M479 251v-46m48 46v-46m-24 46v-46" stroke="#4D6650" stroke-width="4"/>
+    <path d="M469 203h70v6h-70z" fill="#345B48"/>
+    <path d="M504 161c-7 19-25 29-51 34 6 5 13 7 22 7h58c10 0 16-2 22-7-26-5-44-15-51-34Z" fill="#245743"/>
+    <path d="M467 194c12 0 25-6 37-18 11 12 25 18 38 18" stroke="#648F70" stroke-width="2" stroke-linecap="round"/>
+    <path d="M504 163v-11" stroke="#245743" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="504" cy="151" r="3" fill="#D8AF69"/>
+    <path d="M468 254h72v5h-72z" fill="#D7D7B9"/>
+    <path d="M464 259h79l13 7h-103l11-7Z" fill="#E8E1C6"/>
+    <path d="M428 271c10-11 17-17 32-20m-21 22c13-8 24-11 37-12" stroke="#296C52" stroke-width="4" stroke-linecap="round"/>
+    <path d="M594 283c40 4 83 17 126 35" stroke="#77AA83" stroke-width="2" stroke-linecap="round"/>
+    <g stroke="#81BDA6" stroke-linecap="round">
+      <path d="M48 322h50m12 0h25m117-29h55m-18 13h91m-67 11h32m89-21h27m-78 38h69m-15 19h117m-332 14h82m18-24h48m251 46h40m-85-17h91m-509 11h55m15 0h13m94 30h66m-18-17h98m-13 33h80" stroke-width="2"/>
+      <path d="M25 351h83m26-17h69m39 62h34m106-18h32m95-35h72m-26-18h55m-202 59h47" stroke-opacity=".55"/>
+    </g>
+    <path d="M167 317c18 0 38 0 55-2-7 8-17 11-27 11-11 0-21-2-28-9Z" fill="#D58862"/>
+    <path d="M196 315v-32" stroke="#3F6E55" stroke-width="2" stroke-linecap="round"/>
+    <path d="m194 284-17 27h17v-27Z" fill="#FAF3D8"/>
+    <path d="M175 330h39m-30 5h17" stroke="#8EC4AB" stroke-width="2" stroke-linecap="round"/>
+    <path d="M-28 412c43-41 92-39 141-29 42 8 78 25 130 26 21 0 40-1 64-5-27 21-48 31-73 42H-28v-34Z" fill="#47866B"/>
+    <path d="M-13 409c39-16 77-19 111-11 29 7 59 21 96 24-55 13-101 8-144 6-23-1-44 1-63 7v-26Z" fill="#326D55"/>
+    <path d="M33 393c5-23 14-44 27-63m-12 35-21-6m17 14 23-4m-25 12-18-1" stroke="#245B45" stroke-width="4" stroke-linecap="round"/>
+    <path d="M42 350c-20-1-28-17-19-31-7-16 2-30 19-27 7-17 27-13 33 1 14-7 29 5 25 19 13 14 1 32-15 31-6 14-26 18-43 7Z" fill="#39775A"/>
+    <path d="M80 402c7-16 18-30 29-40m-15 22-13-1m20-8 14 2" stroke="#245B45" stroke-width="3" stroke-linecap="round"/>
+    <path d="M87 363c-10-7-9-20 3-25-2-13 11-22 22-14 13-4 24 7 19 20 10 11 0 25-13 24-8 8-25 6-31-5Z" fill="#5E9472"/>
+    <path d="M45 418c7-3 11-3 18-2m-42-3h9m104 17 16 1" stroke="#719D77" stroke-width="2" stroke-linecap="round"/>
+    <g fill="#F7F8EA" opacity=".48">
+      <circle cx="101" cy="102" r="1"/><circle cx="243" cy="48" r="1"/><circle cx="395" cy="92" r="1"/><circle cx="648" cy="124" r="1"/><circle cx="334" cy="35" r="1"/><circle cx="666" cy="46" r="1"/><circle cx="149" cy="50" r="1"/>
+    </g>
+  </g>
+</svg>

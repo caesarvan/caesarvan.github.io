@@ -1,0 +1,10 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"Life OS module registry v1",
+  "type":"object",
+  "required":["version","modules"],
+  "properties":{
+    "version":{"const":1},
+    "modules":{"type":"array","items":{"type":"object","required":["id","title","description","icon","color","type","order","group","enabled"],"properties":{"id":{"type":"string","pattern":"^[a-z][a-z0-9-]*$"},"title":{"type":"string","minLength":1,"maxLength":40},"description":{"type":"string"},"eyebrow":{"type":"string"},"icon":{"type":"string"},"color":{"type":"string","pattern":"^#[0-9a-fA-F]{6}$"},"type":{"enum":["builtin","page","link"]},"view":{"type":"string"},"href":{"type":"string"},"order":{"type":"number"},"group":{"enum":["core","extension"]},"enabled":{"type":"boolean"}},"allOf":[{"if":{"properties":{"type":{"const":"builtin"}}},"then":{"required":["view"]}},{"if":{"properties":{"type":{"const":"page"}}},"then":{"required":["href"],"properties":{"href":{"pattern":"^\\./pages/[a-z0-9-]+/index\\.html$"}}}},{"if":{"properties":{"type":{"const":"link"}}},"then":{"required":["href"],"properties":{"href":{"pattern":"^https://"}}}}]}}
+  }
+}

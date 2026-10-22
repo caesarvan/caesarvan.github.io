@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "modules": [
+    {"id":"overview","title":"生活总览","eyebrow":"YOUR DAILY PERSPECTIVE","description":"从今天出发，照顾生活的每一面。","icon":"grid","color":"#6c5ce7","type":"builtin","view":"overview","order":0,"group":"core","enabled":true},
+    {"id":"assistant","title":"个人助理","eyebrow":"A LITTLE LESS ON YOUR MIND","description":"清空脑海里的待办，专注真正重要的事。","icon":"sparkles","color":"#8066d9","type":"builtin","view":"assistant","order":10,"group":"core","enabled":true},
+    {"id":"finance","title":"财务管理","eyebrow":"MONEY WITH INTENTION","description":"看清每一笔，让生活更从容。","icon":"wallet","color":"#278774","type":"builtin","view":"finance","order":20,"group":"core","enabled":true},
+    {"id":"investment","title":"投资管理","eyebrow":"THE LONG VIEW","description":"把视线放长，关注组合的整体变化。","icon":"chart","color":"#5279d7","type":"builtin","view":"investment","order":30,"group":"core","enabled":true},
+    {"id":"travel","title":"旅行管理","eyebrow":"MAKE ROOM FOR WANDER","description":"在日常之外，给自己一个新的目的地。","icon":"plane","color":"#ba754a","type":"builtin","view":"travel","order":40,"group":"core","enabled":true},
+    {"id":"calendar","title":"日程管理","eyebrow":"TIME FOR WHAT MATTERS","description":"安排时间，也为自己留白。","icon":"calendar","color":"#b28428","type":"builtin","view":"calendar","order":50,"group":"core","enabled":true},
+    {"id":"health","title":"健康管理","eyebrow":"A LITTLE BETTER EVERY DAY","description":"关注身体的声音，积累微小的进步。","icon":"heart","color":"#bd6487","type":"builtin","view":"health","order":60,"group":"core","enabled":true},
+    {"id":"family","title":"家庭管理","eyebrow":"BETTER, TOGETHER","description":"把日常小事，一起照顾好。","icon":"home","color":"#799449","type":"builtin","view":"family","order":70,"group":"core","enabled":true},
+    {"id":"reading","title":"阅读花园","eyebrow":"A SPACE OF YOUR OWN","description":"收藏想读的书，在故事里走远一点。","icon":"book","color":"#4b8a87","type":"page","href":"./pages/reading/index.html","order":80,"group":"extension","enabled":true},
+    {"id":"apps","title":"所有空间","eyebrow":"YOUR SPACE, EVER GROWING","description":"每一个兴趣，都值得拥有自己的位置。","icon":"layers","color":"#6c5ce7","type":"builtin","view":"apps","order":100,"group":"extension","enabled":true}
+  ]
+}

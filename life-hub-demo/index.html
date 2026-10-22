@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f7fb">
+  <meta name="description" content="Caesar Life OS：个人助理、财务、投资、旅行、日程、健康与家庭的一站式生活主页。交互设计演示，所有业务数据均为虚构。">
+  <title>Caesar · Life OS</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div class="mobile-scrim" id="mobile-scrim" hidden></div>
+  <aside class="sidebar" id="sidebar" aria-label="主导航">
+    <a class="brand" href="#/overview" aria-label="Life OS 首页"><span class="brand-icon"><i></i><i></i><i></i><i></i></span><span>Life<span class="brand-light"> OS</span><small>CAESAR'S PERSONAL SPACE</small></span></a>
+    <div class="workspace-label">我的生活空间 <span class="tiny-dot"></span></div>
+    <nav id="navigation" class="navigation" aria-label="生活领域"></nav>
+    <div class="nav-section-label">自由生长的空间</div>
+    <nav id="custom-navigation" class="navigation" aria-label="扩展页签"></nav>
+    <button class="add-module nav-item" id="add-module"><span data-icon="plus"></span>添加页签</button>
+    <div class="sidebar-bottom">
+      <div class="space-card"><span class="space-mark" data-icon="sparkles"></span><strong>给生活，留一点余地。</strong><p>一个入口，连接每一面自己。</p><button id="open-apps">探索我的空间 <span data-icon="arrow-up-right"></span></button></div>
+      <button class="profile-button" id="profile-button"><span class="avatar">C<span></span></span><span><strong>Caesar</strong><small>个人工作空间</small></span><span class="profile-dots" data-icon="more"></span></button>
+    </div>
+  </aside>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="breadcrumb"><button class="icon-button mobile-menu" id="mobile-menu" aria-label="打开导航" aria-expanded="false"><span data-icon="menu"></span></button><span data-icon="grid"></span><span>我的空间</span><span class="breadcrumb-slash">/</span><strong id="breadcrumb-current">生活总览</strong></div>
+      <div class="topbar-actions"><button class="search-trigger" id="search-trigger" aria-label="搜索所有空间"><span data-icon="search"></span><span>搜索你的生活…</span><kbd>⌘ K</kbd></button><span class="demo-badge"><span></span>演示数据</span><button class="icon-button" id="theme-toggle" aria-label="切换为深色主题"><span data-icon="moon"></span></button><button class="icon-button notification-button" id="notifications" aria-label="查看提醒"><span data-icon="bell"></span><i></i></button></div>
+    </header>
+    <main id="main" tabindex="-1"></main>
+    <footer class="footer"><span><i></i>让每一天，井然有序。</span><span>Life OS · 概念演示 <span class="footer-divider">/</span> 所有金额、行程与指标均为虚构</span></footer>
+  </div>
+  <nav class="mobile-bottom" aria-label="快捷导航"><a href="#/overview" data-mobile="overview"><span data-icon="grid"></span>总览</a><a href="#/calendar" data-mobile="calendar"><span data-icon="calendar"></span>日程</a><button id="mobile-add"><span data-icon="plus"></span>记录</button><a href="#/apps" data-mobile="apps"><span data-icon="layers"></span>空间</a></nav>
+  <dialog id="dialog" aria-labelledby="dialog-title"><div id="dialog-content"></div></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
