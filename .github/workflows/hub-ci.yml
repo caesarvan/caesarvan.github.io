@@ -1,0 +1,19 @@
+name: Validate personal hub
+on:
+  push:
+    branches: [main]
+    paths: ['hub/**', '.github/workflows/hub-ci.yml']
+  pull_request:
+    paths: ['hub/**', '.github/workflows/hub-ci.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node hub/validate.mjs
