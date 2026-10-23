@@ -35,7 +35,7 @@ for(const item of catalog.datasets){
   const data=JSON.parse(buffer.toString());
   const count=item.type==='snapshot'
     ?Object.values(data.queries||{}).reduce((sum,query)=>{if(!Array.isArray(query.rows))fail('Invalid query rows');return sum+query.rows.length},0)
-    :Array.isArray(data.entries)?data.entries.length:fail('Invalid index entries');
+    :item.type==='ledger'?(data.schema_version==='unified-finance/1.0'&&Array.isArray(data.records)?data.records.length:fail('Invalid unified ledger')):Array.isArray(data.entries)?data.entries.length:fail('Invalid index entries');
   if(count!==item.records) fail('Dataset count mismatch');
   if(item.status==='unavailable'){if(count!==0)fail('Unavailable dataset has records');unavailable++}
   else if(item.status!=='ready') fail('Invalid availability state');

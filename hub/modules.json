@@ -15,6 +15,19 @@
       "enabled": true
     },
     {
+      "id": "finance-unified",
+      "title": "统一账库",
+      "description": "2025年起的消费、订单、银行和投资依据；包含大众点评新导出，可逐笔搜索与追溯。",
+      "icon": "▦",
+      "color": "#426fd0",
+      "group": "life",
+      "type": "page",
+      "href": "./pages/finance-unified/index.html",
+      "mode": "published",
+      "order": 10.5,
+      "enabled": true
+    },
+    {
       "id": "webank",
       "title": "微众投资周报",
       "description": "微众银行资产快照、持仓与卡资金流；保留报告期间和收益资料缺口。",

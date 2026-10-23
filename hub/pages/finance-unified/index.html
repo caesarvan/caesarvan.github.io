@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>统一账库 · 财务</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="../../embed.css">
+  <script src="../../embed.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#records">跳到记录</a>
+  <header class="topbar" data-life-hub-global><div class="topbar-inner"><a href="../../#/finance" class="brand"><span class="brand-mark" aria-hidden="true">¥</span><span>个人财务<span class="brand-sub"> / 统一账库</span></span></a><a class="subtle-link" href="../finance/index.html">查看收支图表 <span aria-hidden="true">↗</span></a></div></header>
+  <main>
+    <section class="intro" aria-labelledby="title"><div><p class="eyebrow">ONE RECORD, TRACEABLE EVIDENCE</p><h1 id="title">每一笔，都有来处。</h1><p class="intro-copy">从 2025 年 1 月 1 日起，把日常消费、平台订单、银行流水与投资记录放在同一本账里。</p></div><div class="update"><span class="live-dot" aria-hidden="true"></span><span id="update-text">正在读取统一账库…</span></div></section>
+    <section class="metrics" aria-label="账库概览">
+      <div class="metric"><span>原有银行／渠道账本</span><strong id="metric-bank">—</strong><small>保留原记录及统计口径</small></div>
+      <div class="metric"><span>已计入消费</span><strong id="metric-expense">—</strong><small>消费分析的逐笔基础</small></div>
+      <div class="metric"><span>平台订单</span><strong id="metric-order">—</strong><small id="order-coverage">订单作为用途依据</small></div>
+      <div class="metric"><span>大众点评订单</span><strong id="metric-dianping">—</strong><small>已纳入本次规范存储</small></div>
+      <div class="metric pending-metric"><span>消费待分类</span><strong id="metric-pending">—</strong><small>证据不足时保留待核</small></div>
+    </section>
+    <aside class="principle"><span class="principle-icon" aria-hidden="true">i</span><p><strong>统一存储，按事实类型统计。</strong>订单用于解释消费，不额外增加支出；平台“已退款”需要到账流水核实。投资仓位、资产快照和累计盈亏分别保存，币种未知时不换算或合计。</p></aside>
+    <section class="workspace" aria-labelledby="records-heading">
+      <div class="workspace-head"><div><p class="eyebrow">RECORD EXPLORER</p><h2 id="records-heading">逐笔记录与依据</h2></div><button id="export" class="button secondary" disabled>导出筛选结果 CSV</button></div>
+      <nav class="tabs" role="tablist" aria-label="记录视图">
+        <button type="button" role="tab" id="tab-expenses" aria-controls="records" aria-selected="true" tabindex="0" data-tab="expenses">消费<span class="tab-count"></span></button>
+        <button type="button" role="tab" id="tab-orders" aria-controls="records" aria-selected="false" tabindex="-1" data-tab="orders">订单<span class="tab-count"></span></button>
+        <button type="button" role="tab" id="tab-bank" aria-controls="records" aria-selected="false" tabindex="-1" data-tab="bank">银行<span class="tab-count"></span></button>
+        <button type="button" role="tab" id="tab-investment" aria-controls="records" aria-selected="false" tabindex="-1" data-tab="investment">投资<span class="tab-count"></span></button>
+        <button type="button" role="tab" id="tab-review" aria-controls="records" aria-selected="false" tabindex="-1" data-tab="review">待核<span class="tab-count"></span></button>
+      </nav>
+      <div class="filters">
+        <label class="search-label"><span>搜索记录</span><input id="search" type="search" placeholder="商品、商户、用途、记录编号…" autocomplete="off"></label>
+        <label><span>记录类型</span><select id="type"><option value="all">全部类型</option></select></label>
+        <label><span>平台／机构</span><select id="platform"><option value="all">全部来源</option></select></label>
+        <label><span>开始日期</span><input id="start" type="date" value="2025-01-01" min="2025-01-01"></label>
+        <label><span>结束日期</span><input id="end" type="date" min="2025-01-01" aria-describedby="future-note"></label>
+      </div>
+      <div class="filter-bottom"><label class="check"><input id="pending" type="checkbox"><span>仅看待核记录</span></label><p id="future-note">结束日期留空，包含此后所有已导入记录。缺日期记录在“待核”中查看。</p><button id="reset" type="button" class="text-button">重置筛选</button></div>
+      <div class="results-head"><p id="result-count" role="status" aria-live="polite">正在加载…</p><span id="view-note">仅展示已计入账本的消费</span></div>
+      <div id="records" role="tabpanel" aria-labelledby="tab-expenses" tabindex="0"><div class="empty-state"><span class="loading-dot"></span><p>正在读取记录与用途依据</p></div></div>
+      <div class="pagination"><span id="page-info">—</span><div><label class="page-size">每页 <select id="page-size"><option value="25">25 条</option><option value="50">50 条</option><option value="100">100 条</option></select></label><button id="prev" class="button secondary" disabled aria-label="上一页">上一页</button><button id="next" class="button secondary" disabled aria-label="下一页">下一页</button></div></div>
+    </section>
+    <footer><p id="coverage-note">时间范围从 2025-01-01 开始；来源缺失不视为零消费或零资产。</p><p><a href="../finance/index.html">查看日／周／月收支图表 ↗</a> · 只读账库</p></footer>
+  </main>
+  <dialog id="detail-dialog" aria-labelledby="detail-title"><div class="dialog-top"><span class="eyebrow">记录详情 / EVIDENCE</span><button id="close-dialog" type="button" class="close" aria-label="关闭详情">×</button></div><div id="detail-body"></div></dialog>
+</body>
+</html>
