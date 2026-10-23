@@ -92,7 +92,7 @@
       frame = 0;
       const body = document.body;
       if (!body) return;
-      const height = Math.ceil(Math.max(body.scrollHeight, body.getBoundingClientRect().height));
+      const height = Math.ceil(Math.max(body.scrollHeight + body.offsetTop, body.getBoundingClientRect().bottom + window.scrollY));
       if (height < 1 || Math.abs(height - previousHeight) < 2) return;
       previousHeight = height;
       parent.postMessage({ type: 'life-hub:height', module: moduleId, height }, location.origin);
