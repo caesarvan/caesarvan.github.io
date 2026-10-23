@@ -1,0 +1,34 @@
+{
+  "checked_on": "2026-10-23",
+  "timezone": "Asia/Shanghai",
+  "source": {
+    "repository": "https://github.com/caesarvan/ai",
+    "commit": "ca7eef596bc85d061447db8a381bfec2d840f84e"
+  },
+  "files": {
+    "html": 6,
+    "original_assets": 22,
+    "byte_identical_assets": 20,
+    "adapted_original_assets": [
+      "assets/app.js",
+      "assets/i18n.js"
+    ]
+  },
+  "checks": {
+    "javascript_syntax": "passed: app.js, i18n.js, hub-profile-init.js",
+    "local_html_and_script_asset_references": "passed; no missing profile assets",
+    "credentials_and_local_paths_scan": "no matches",
+    "same_origin_embedded_navigation": "browser verified all six pages in one iframe; embed=1 preserved",
+    "language": "browser verified Chinese to English and lang=en preserved across all six pages",
+    "global_shell_duplication": "browser verified compact six-tab navigation and language control; standalone profile header/footer absent in iframe",
+    "standalone_profile": "browser verified original header/footer and five-stage timeline render at standalone index.html",
+    "content": "browser verified five public projects, three award cards, work gallery, about timeline and GitHub-only contact",
+    "desktop_visual": "screenshot inspected for embedded homepage; final shell and narrow-screen checks belong to integrated-site verification"
+  },
+  "scope_notes": [
+    "Migration uses only the public source repository content. No extra private material was imported.",
+    "Original animated chart is labeled as demonstration; values are not treated as observed telemetry.",
+    "Two original remote illustration references remain external and may fail independently.",
+    "No publishing or source-repository deletion was performed in this migration task."
+  ]
+}

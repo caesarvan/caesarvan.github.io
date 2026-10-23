@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Caesar Fan — short path and focus." />
+    <title>About · Caesar Fan</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <script src="assets/theme-init.js"></script>
+    <script src="assets/hub-profile-init.js"></script>
+    <link rel="stylesheet" href="assets/styles.css" />
+    <link rel="stylesheet" href="../../embed.css" />
+    <link rel="stylesheet" href="assets/hub-profile.css" />
+    <script defer src="../../embed.js"></script>
+  </head>
+  <body data-page="about">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="scanlines" aria-hidden="true"></div>
+    <div class="ambient" aria-hidden="true"></div>
+    <div id="site-header"></div>
+
+    <main id="main" class="page">
+      <header class="page-hero">
+        <p class="kicker" data-i18n="about.kicker">About</p>
+        <h1 data-i18n="about.title">关于</h1>
+        <p class="page-lede" data-i18n="about.lede">
+          Caesar Fan，现阶段从事 GPU / 芯片功耗验证。
+        </p>
+      </header>
+
+      <section class="plain-section reveal">
+        <h2 data-i18n="about.focus.title">专业方向</h2>
+        <p data-i18n="about.focus.body">
+          当前在 NVIDIA 从事 GPU / 芯片功耗验证，重点关注功耗与性能交互、时钟/电压/功耗域、功耗状态、门控、遥测与工作负载驱动的功耗行为。
+        </p>
+      </section>
+
+      <section class="plain-section">
+        <h2 data-i18n="about.path.title">教育与职业经历</h2>
+        <p class="section-lede" data-i18n="about.path.lede">从本科科研、硕士研究到芯片验证工作，按时间阶段展开。</p>
+        <nav class="stage-nav" id="stage-nav" aria-label="经历阶段"></nav>
+        <div class="stages" id="stages"></div>
+      </section>
+    </main>
+
+    <div id="site-footer" data-life-hub-global></div>
+    <script src="assets/i18n.js"></script>
+    <script src="assets/app.js"></script>
+  </body>
+</html>

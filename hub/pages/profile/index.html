@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Caesar Fan — chip verification, NPU interconnects, verification platforms, and open-source projects." />
+    <meta name="theme-color" content="#06090f" />
+    <title>Caesar Fan</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <script src="assets/theme-init.js"></script>
+    <script src="assets/hub-profile-init.js"></script>
+    <link rel="stylesheet" href="assets/styles.css" />
+    <link rel="stylesheet" href="../../embed.css" />
+    <link rel="stylesheet" href="assets/hub-profile.css" />
+    <script defer src="../../embed.js"></script>
+  </head>
+  <body data-page="home">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="scanlines" aria-hidden="true"></div>
+    <div class="ambient" aria-hidden="true"></div>
+    <div id="site-header"></div>
+
+    <main id="main">
+      <section class="hero">
+        <canvas id="die-canvas" aria-hidden="true"></canvas>
+        <div class="hero-frame">
+          <p class="hero-signal"><span class="pulse" aria-hidden="true"></span><span data-i18n="home.signal">NVIDIA · GPU / 芯片功耗验证</span></p>
+          <h1>
+            <span class="hero-name">Caesar Fan</span>
+            <span class="hero-en">Chip verification &amp; engineering systems</span>
+          </h1>
+          <p class="hero-lede" data-i18n="home.lede">
+            当前在 NVIDIA 从事 GPU / 芯片功耗验证，关注功耗与性能交互、时钟与电源域、功耗状态、门控、遥测及负载驱动的功耗行为。
+          </p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#timeline" data-i18n="home.cta.work">浏览完整时间轴</a>
+            <a class="btn ghost" href="projects.html" data-i18n="home.cta.projects">GitHub 项目</a>
+          </div>
+        </div>
+        <aside class="telemetry-card" aria-label="功耗遥测示意">
+          <div class="telemetry-head">
+            <span data-i18n="hero.telemetry">Power telemetry</span>
+            <span class="telemetry-live" data-i18n="hero.demo">演示</span>
+          </div>
+          <canvas id="telemetry-canvas" width="520" height="300"></canvas>
+          <div class="telemetry-metrics">
+            <div><span data-i18n="hero.metric.power">Power</span><strong>286W</strong></div>
+            <div><span data-i18n="hero.metric.clock">Clock</span><strong>1.98GHz</strong></div>
+            <div><span data-i18n="hero.metric.state">State</span><strong>P0</strong></div>
+          </div>
+          <p class="telemetry-disclosure" data-i18n="hero.demoNote">此图为视觉演示，数值与波形不代表真实设备、工作数据或实时遥测。</p>
+        </aside>
+      </section>
+
+      <section class="timeline-home" id="timeline">
+        <header class="section-head">
+          <p class="kicker" data-i18n="timeline.kicker">2017 — NOW</p>
+          <h2 data-i18n="timeline.title">学习与工作，沿一条时间轴展开</h2>
+          <p class="section-lede" data-i18n="timeline.lede">学校、科研、产品线与当前工作不再分成独立页面；每个事件都回到它发生的时间阶段。</p>
+        </header>
+        <nav class="stage-nav" id="stage-nav" aria-label="经历阶段"></nav>
+        <div class="stages" id="stages"></div>
+      </section>
+    </main>
+
+    <div id="site-footer" data-life-hub-global></div>
+    <script src="assets/i18n.js"></script>
+    <script src="assets/app.js"></script>
+  </body>
+</html>

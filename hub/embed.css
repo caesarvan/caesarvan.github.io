@@ -1,0 +1,103 @@
+/* These rules apply only inside the same-origin Life OS shell (?embed=1). */
+html[data-life-hub-embed="true"],
+html[data-life-hub-embed="true"] body,
+html[data-life-hub-embed="true"] #root,
+html[data-life-hub-embed="true"] .dashboard-root,
+html[data-life-hub-embed="true"] .dashboard-shell-loading {
+  min-height: 0 !important;
+}
+/* Avoid 100dvh + a data-status bar feeding back into the iframe's next height. */
+html[data-life-hub-embed="true"] .dashboard-root:has(> main > [data-dashboard-layout="viewport"]),
+html[data-life-hub-embed="true"] main[data-data-app-content="dashboard"]:has(> [data-dashboard-layout="viewport"]) {
+  height: auto !important;
+  overflow: visible;
+}
+html[data-life-hub-embed="true"] body {
+  margin: 0;
+  overflow-x: clip;
+}
+html[data-life-hub-embed="true"] [data-life-hub-global],
+html[data-life-hub-embed="true"] .webank-report-links,
+html[data-life-hub-embed="true"] .report-nav,
+html[data-life-hub-embed="true"] .dashboard-topbar-inner,
+html[data-life-hub-embed="true"] .dashboard-shell-loading-topbar {
+  display: none !important;
+}
+/* The shell owns branding; the app retains its actual report/asset tabs. */
+html[data-life-hub-embed="true"] .dashboard-topbar {
+  position: static;
+  min-height: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+html[data-life-hub-embed="true"] .dashboard-tabs-collapse {
+  grid-template-rows: auto !important;
+  pointer-events: auto;
+  overflow: visible;
+}
+html[data-life-hub-embed="true"] .dashboard-tabs-collapse-inner {
+  transform: none !important;
+}
+/* Data freshness and reload controls stay visible as a compact status line. */
+html[data-life-hub-embed="true"] .published-data-toolbar {
+  padding: 10px 20px;
+  gap: 8px 14px;
+  background: transparent;
+}
+html[data-life-hub-embed="true"] .published-data-toolbar strong {
+  display: inline;
+  margin: 0 10px 0 0;
+  font-size: 12px;
+}
+html[data-life-hub-embed="true"] .published-data-toolbar p {
+  display: inline;
+  font-size: 11px;
+}
+html[data-life-hub-embed="true"] .published-data-toolbar .published-data-time {
+  display: block;
+  margin-top: 3px;
+}
+html[data-life-hub-embed="true"] .published-data-toolbar button {
+  min-height: 34px;
+  padding: 6px 11px;
+  font-size: 11px;
+}
+/* Files: remove the second title/return banner, preserve stats and search. */
+html[data-life-hub-embed="true"] .app > .hero,
+html[data-life-hub-embed="true"][data-life-hub-module="icloud"] .app > footer,
+html[data-life-hub-embed="true"][data-life-hub-module="onedrive"] .app > footer,
+html[data-life-hub-embed="true"][data-life-hub-module="outlook"] .app > footer,
+html[data-life-hub-embed="true"][data-life-hub-module="mail"] .app > footer,
+html[data-life-hub-embed="true"][data-life-hub-module="youtube"] .app > footer {
+  display: none;
+}
+html[data-life-hub-embed="true"] .app {
+  padding-top: 18px;
+}
+/* Webank: keep the report period selector next to the report's data line. */
+html[data-life-hub-embed="true"] .webank-page {
+  padding-top: 18px;
+}
+html[data-life-hub-embed="true"] .webank-page .page-header > div:first-child {
+  display: none;
+}
+html[data-life-hub-embed="true"] .webank-page .page-header {
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+@media (max-width: 650px) {
+  html[data-life-hub-embed="true"] .published-data-toolbar {
+    padding: 10px 14px;
+  }
+}
+html[data-life-hub-embed="true"][data-theme="dark"] .published-data-toolbar{color:#bec5c6}
+html[data-life-hub-embed="true"][data-theme="dark"] .published-data-toolbar strong{color:#9ccbc1}
+/* Explicit shell theme takes precedence over each standalone site's system setting. */
+html[data-life-hub-embed="true"][data-life-hub-module="webank"][data-theme="dark"]{color-scheme:dark;color:#e3eee9;background:#191a23;--surface:#222430;--line:#363d44;--muted:#acc0b4;--teal:#80ccb4;--bar:#63b69c;--note:#283831;--negative:#f1a48d;--positive:#8cd7b8}
+html[data-life-hub-embed="true"][data-life-hub-module="webank"][data-theme="light"]{color-scheme:light;color:#233d39;background:#f3f6f4;--surface:#fff;--line:#dce6e1;--muted:#64766f;--teal:#278774;--bar:#389483;--note:#edf5f1;--negative:#a54c3b;--positive:#237360}
+html[data-life-hub-embed="true"][data-theme="dark"]:has(.library){color-scheme:dark;color:#e9e9f1;background:#191a23;--muted:#adb0c4;--accent:#b6a4ff;--border:#363949}
+html[data-life-hub-embed="true"][data-theme="dark"] :is(.library,.import-panel,.directory-dialog){background:#222430;color:#e9e9f1}
+html[data-life-hub-embed="true"][data-theme="dark"] :is(.lavender,.peach,.mint,.panel-icon,.record-icon,.empty-icon,.tab.active,.secondary){background:#302b48;color:#cfbff5}
+html[data-life-hub-embed="true"][data-theme="dark"] .search{background:#191a23;border-color:#363949}
+html[data-life-hub-embed="true"][data-theme="dark"] .search input{color:#e9e9f1}
+html[data-life-hub-embed="true"][data-theme="dark"] :is(.stat>span,.stat small,.record-description,.status){color:#adb0c4}

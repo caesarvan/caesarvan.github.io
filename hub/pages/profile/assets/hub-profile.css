@@ -1,0 +1,104 @@
+.telemetry-disclosure {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+html[data-profile-embedded="true"] {
+  --header-h: 0px;
+}
+
+html[data-profile-embedded="true"] body {
+  background: transparent;
+}
+
+html[data-profile-embedded="true"] .scanlines,
+html[data-profile-embedded="true"] .ambient,
+html[data-profile-embedded="true"] #site-footer {
+  display: none;
+}
+
+html[data-profile-embedded="true"] main {
+  max-width: 1240px;
+  padding: 0 20px 40px;
+}
+
+.profile-tools {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 1200px;
+  margin: 4px auto 0;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.profile-tools .lang-toggle {
+  flex: 0 0 auto;
+  margin-right: 4px;
+}
+
+.profile-tabs {
+  display: flex;
+  flex: 1;
+  gap: 6px;
+  padding: 2px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.profile-tabs a {
+  flex: 0 0 auto;
+  padding: 7px 14px;
+  border-radius: 12px;
+  color: var(--muted);
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.profile-tabs a:hover,
+.profile-tabs a.active {
+  background: var(--cyan-dim);
+  color: var(--ink);
+}
+
+.profile-tabs a:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+html[data-profile-embedded="true"] .hero {
+  min-height: 0;
+  padding: 32px 0 42px;
+}
+
+html[data-profile-embedded="true"] .page {
+  padding-top: 24px;
+}
+
+html[data-profile-embedded="true"] .stage-nav {
+  top: 8px;
+}
+
+@media (max-width: 600px) {
+  html[data-profile-embedded="true"] main {
+    padding-inline: 8px;
+  }
+
+  .profile-tools {
+    gap: 5px;
+  }
+
+  .profile-tabs a {
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+
+  html[data-profile-embedded="true"] .hero {
+    padding-top: 20px;
+  }
+}

@@ -121,43 +121,16 @@
       "enabled": true
     },
     {
-      "id": "design-demo",
-      "title": "Life OS 界面演示",
-      "description": "现代卡片主页、七个领域与阅读花园的交互原型。",
-      "icon": "✦",
-      "color": "#8066d9",
-      "group": "more",
-      "type": "link",
-      "href": "https://caesarvan.github.io/life-hub-demo/",
-      "mode": "demo",
-      "order": 90,
-      "enabled": true
-    },
-    {
       "id": "profile",
       "title": "个人主页",
-      "description": "芯片验证与软件工程的公开个人主页。",
+      "description": "Caesar Fan 的经历时间轴、公开项目、荣誉与中英文介绍。",
       "icon": "⌘",
       "color": "#668877",
       "group": "more",
-      "type": "link",
-      "href": "https://caesar-resume.fangaoyige.chatgpt.site",
-      "mode": "external",
+      "type": "page",
+      "href": "./pages/profile/index.html",
+      "mode": "static",
       "order": 100,
-      "enabled": true,
-      "externalNote": "此入口保留原有公开网站；当前没有将其源代码迁移到 GitHub Pages。"
-    },
-    {
-      "id": "blog",
-      "title": "个人博客",
-      "description": "保留原有 Hexo 首页与文章内容。",
-      "icon": "▧",
-      "color": "#a58265",
-      "group": "more",
-      "type": "link",
-      "href": "https://caesarvan.github.io/",
-      "mode": "external",
-      "order": 110,
       "enabled": true
     }
   ]
