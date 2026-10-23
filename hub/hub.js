@@ -1,4 +1,4 @@
-import {mountOverview} from './overview.js';
+import {mountOverview} from './overview.js?v=20261023-summary-v2';
 const $=s=>document.querySelector(s),main=$('#main');
 let registry,filter='all',search='',overview,frameCleanup=()=>{};
 const groups={all:'全部领域',life:'生活与财务',files:'资料与收藏',more:'关于我'};

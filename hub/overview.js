@@ -1,5 +1,8 @@
 /* Life OS overview: read the same published source files as each detailed space. */
 const DATA_BASE = new URL('./data/', import.meta.url);
+const successfulData = new Map();
+const requestVersions = new Map();
+const CACHE_TTL = 60000;
 const finite = value => typeof value === 'number' && Number.isFinite(value);
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt = (value, digits = 2) => finite(value) ? new Intl.NumberFormat('zh-CN', { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value) : '资料不足';
@@ -121,7 +124,7 @@ function renderTravel(data,card) {
     <p class="ov-note">预订或日历记录不等于实际成行。草案、规划、取消和已移出记录不参与有效行程计数，平台退改状态仍需核对。</p>
     ${sourceDetails('travel',data,'来自已核对的日历、邮件与本地旅行凭证。按上海“今天”划分历史及未来，起止日期沿用出行当地日期；详情保留当地时区。尚未开启日历或订单实时同步。')}`;
 }
-function fileSummary(id,data) {
+export function fileSummary(id,data) {
   if(data.status!=='ready')return { id,status:'unavailable',reason:data.reason || '来源尚未同步',generatedAt:data.generatedAt };
   if(!Array.isArray(data.entries))throw Error('资料索引结构不完整。');
   return {id,status:'ready',count:data.entries.filter(r=>r.directory!==true).length,dirs:data.entries.filter(r=>r.directory===true).length,groups:new Set(data.entries.map(r=>r.group || '未分类')).size,generatedAt:data.generatedAt};
@@ -135,29 +138,48 @@ export function mountOverview(container, {modules=[]}={}) {
   const active=definitions.filter(d=>d.id==='files'?['icloud','onedrive','outlook','mail','youtube'].some(enabled):enabled(d.id));
   container.classList.add('ov-overview'); container.innerHTML=`<div class="ov-overview-status"><span>各领域摘要 · 数据截止见各卡片</span><span class="ov-snapshot-label"><i></i> 已发布快照</span></div><div class="ov-overview-grid">${active.map(d=>`<article class="ov-card${d.wide?' ov-wide':''} ov-${d.id}" data-ov-card="${d.id}" aria-label="${esc(d.label)}首页摘要"><div class="ov-card-top"><div class="ov-card-title"><span class="ov-icon" aria-hidden="true">${d.icon}</span><div><h2>${esc(d.label)}</h2><p>${esc(d.subtitle)}</p></div></div>${d.id!=='files'?`<a class="ov-enter" href="#/${d.id}" aria-label="进入${esc(d.label)}">查看详情 <span aria-hidden="true">↗</span></a>`:''}</div><div class="ov-body"><div class="ov-loading" role="status"><span></span>正在读取已发布数据…</div></div>${['finance','webank','investment'].includes(d.id)?related(['finance','webank','investment'].filter(id=>id!==d.id),modules):''}</article>`).join('')}</div><p class="ov-global-note">每个领域保留自己的来源与数据截止。不同币种、平台单位及统计日期的资产分别展示。</p>`;
   for(const card of container.querySelectorAll('[data-ov-card]'))cards.set(card.dataset.ovCard,card);
-  async function fetchData(id) {
-    const controller=new AbortController();controllers.add(controller);const timeout=setTimeout(()=>controller.abort(),20000);
-    try { const response=await fetch(new URL(`${id}.json`,DATA_BASE),{signal:controller.signal,credentials:'omit',redirect:'error',cache:'no-store'}); if(!response.ok)throw Error(`HTTP ${response.status}，快照暂时无法读取。`);const result=await response.json();if(!result || typeof result!=='object')throw Error('快照格式不完整。');return result; }
+  async function fetchData(id,{force=false}={}) {
+    if(force)successfulData.delete(id);
+    const cached=successfulData.get(id);
+    if(cached && Date.now()-cached.at<CACHE_TTL)return cached.data;
+    const version=(requestVersions.get(id)||0)+1;requestVersions.set(id,version);
+    const controller=new AbortController();controllers.add(controller);const timeout=setTimeout(()=>controller.abort(),45000);
+    try { const response=await fetch(new URL(`${id}.json`,DATA_BASE),{signal:controller.signal,credentials:'omit',redirect:'error',cache:'no-cache'}); if(!response.ok)throw Error(`HTTP ${response.status}，快照暂时无法读取。`);const result=await response.json();if(!result || typeof result!=='object')throw Error('快照格式不完整。');if(!destroyed && requestVersions.get(id)===version)successfulData.set(id,{data:result,at:Date.now()});return result; }
     catch(error){if(error.name==='AbortError')throw Error('读取超时，请重试。');if(error instanceof SyntaxError)throw Error('快照 JSON 无效，请稍后重试。');throw error;}
     finally{clearTimeout(timeout);controllers.delete(controller);}
   }
-  async function load(id) {
+  async function load(id,force=false) {
     const card=cards.get(id);if(!card||destroyed)return;
     card.querySelector('.ov-body').innerHTML='<div class="ov-loading" role="status"><span></span>正在读取已发布数据…</div>';
-    try {const data=await fetchData(id);if(destroyed)return;({finance:renderFinance,investment:renderInvestment,webank:renderWebank,travel:renderTravel}[id])(data,card);}
-    catch(error){if(destroyed)return;card.querySelector('.ov-body').innerHTML=`<div class="ov-error" role="status"><strong>这份数据暂时无法显示</strong><p>${esc(error.message || '网络读取失败')}</p><button type="button" data-ov-retry="${id}">重新读取</button></div>`;}
+    try {const data=await fetchData(id,{force});if(destroyed)return;({finance:renderFinance,investment:renderInvestment,webank:renderWebank,travel:renderTravel}[id])(data,card);}
+    catch(error){successfulData.delete(id);if(destroyed)return;card.querySelector('.ov-body').innerHTML=`<div class="ov-error" role="status"><strong>这份数据暂时无法显示</strong><p>${esc(error.message || '网络读取失败')}</p><button type="button" data-ov-retry="${id}">重新读取</button></div>`;}
   }
   const fileIds=['icloud','outlook','youtube','onedrive','mail'].filter(enabled),fileStates=new Map();
   function renderFiles(){
     const card=cards.get('files');if(!card||destroyed)return;
-    const items=fileIds.map(id=>{const s=fileStates.get(id),m=modules.find(m=>m.id===id),names={icloud:'iCloud 资料',outlook:'Outlook 附件',youtube:'YouTube 收藏',onedrive:'OneDrive 资料',mail:'邮件归档'};return `<div class="ov-file-item"><a href="#/${id}" class="ov-file-label"><span class="ov-file-icon ov-file-${id}" aria-hidden="true">${esc(m?.icon || {icloud:'☁',outlook:'✉',youtube:'▷',onedrive:'▱',mail:'▤'}[id])}</span><span><strong>${esc(names[id])}</strong><small>${s?.status==='ready'?`${fmt(s.groups,0)} 个分类 · ${esc(date(s.generatedAt))}`:s?.status==='unavailable'?'源索引尚未同步':s?.status==='error'?'快照读取失败':'读取中…'}</small></span><span class="ov-file-count">${s?.status==='ready'?`${fmt(s.count,0)}<small>${id==='youtube'?'条收藏':'份索引'}</small>`:s?.status==='unavailable'?'<em>待同步</em>':s?.status==='error'?'<em>读取失败</em>':'…'} <b aria-hidden="true">↗</b></span></a>${s?.reason?`<p class="ov-file-reason">${esc(s.reason)}</p>`:''}${s?.status==='error'?`<button class="ov-file-retry" type="button" data-ov-file-retry="${id}">重新读取</button>`:''}</div>`;}).join('');
-    card.querySelector('.ov-body').innerHTML=`<p class="ov-date">数量来自已发布索引，点击条目进入同一空间</p><div class="ov-file-list">${items}</div><div class="ov-files-footer"><span>索引可搜索，原件保留在原位置</span><button type="button" data-ov-files-refresh>重读快照 ↻</button></div><p class="ov-note">未同步来源保留待同步状态，不计为 0 份资料。这里重读的是已发布快照，不会触发云盘或邮箱实时同步。</p><details class="ov-source"><summary>来源与统计口径</summary><p>直接读取 iCloud、Outlook、YouTube、OneDrive 与邮件归档的既有 JSON。数量为非目录索引条目数，不跨来源去重；收藏数量为书签数，分类名按原索引保留。</p><p>源索引日期显示在各条目下方。云端占位文件尚未同步时，保留原始原因。</p></details>`;
+    const items=fileIds.map(id=>{const s=fileStates.get(id),m=modules.find(m=>m.id===id),names={icloud:'iCloud 资料',outlook:'Outlook 附件',youtube:'YouTube 收藏',onedrive:'OneDrive 资料',mail:'邮件归档'};return `<div class="ov-file-item"><a href="#/${id}" class="ov-file-label"><span class="ov-file-icon ov-file-${id}" aria-hidden="true">${esc(m?.icon || {icloud:'☁',outlook:'✉',youtube:'▷',onedrive:'▱',mail:'▤'}[id])}</span><span><strong>${esc(names[id])}</strong><small>${s?.status==='ready'?`索引更新 ${esc(date(s.generatedAt))}`:s?.status==='unavailable'?'源索引尚未同步':s?.status==='error'?'快照读取失败':'读取中…'}</small></span><span class="ov-file-count">${s?.status==='ready'?`${fmt(s.count,0)}<small>${id==='youtube'?'条收藏':'份索引'}</small>`:s?.status==='unavailable'?'<em>待同步</em>':s?.status==='error'?'<em>读取失败</em>':'…'} <b aria-hidden="true">↗</b></span></a>${s?.reason?`<p class="ov-file-reason">${esc(s.reason)}</p>`:''}${s?.status==='error'?`<button class="ov-file-retry" type="button" data-ov-file-retry="${id}">重新读取</button>`:''}</div>`;}).join('');
+    card.querySelector('.ov-body').innerHTML=`<p class="ov-date">数量来自已发布数据目录，点击条目查看完整索引</p><div class="ov-file-list">${items}</div><div class="ov-files-footer"><span>索引可搜索，原件保留在原位置</span><button type="button" data-ov-files-refresh>重读快照 ↻</button></div><p class="ov-note">未同步来源保留待同步状态，不计为 0 份资料。这里重读的是已发布目录，不会触发云盘或邮箱实时同步。</p><details class="ov-source"><summary>来源与统计口径</summary><p>首页读取 datasets.json 中各来源的状态、记录数与索引日期，不下载完整索引。数量沿用原目录 records 字段，不跨来源去重；进入详情后再加载完整资料或收藏索引。</p><p>源索引日期显示在各条目下方。云端占位文件尚未同步时，保留原始原因。<a href="${esc(new URL('datasets.json',DATA_BASE).href)}" target="_blank" rel="noopener">查看已发布数据目录 ↗</a></p></details>`;
   }
-  async function loadFile(id){fileStates.delete(id);renderFiles();try{const data=await fetchData(id);fileStates.set(id,fileSummary(id,data));}catch(error){fileStates.set(id,{status:'error',reason:error.message||'网络读取失败'});}renderFiles();}
-  function click(event){const r=event.target.closest('[data-ov-retry]'),f=event.target.closest('[data-ov-file-retry]');if(r)load(r.dataset.ovRetry);if(f)loadFile(f.dataset.ovFileRetry);if(event.target.closest('[data-ov-files-refresh]'))Promise.all(fileIds.map(loadFile));}
+  let filesRequest=0;
+  async function loadFiles(force=false){
+    const request=++filesRequest;fileStates.clear();renderFiles();
+    try{
+      const catalog=await fetchData('datasets',{force});if(destroyed||request!==filesRequest)return;
+      if(!Array.isArray(catalog.datasets))throw Error('数据目录结构不完整。');
+      for(const id of fileIds){
+        const row=catalog.datasets.find(row=>row.id===id);
+        if(!row){fileStates.set(id,{status:'error',reason:'数据目录尚未登记此来源。'});continue;}
+        if(row.status!=='ready'){fileStates.set(id,{id,status:'unavailable',reason:row.reason||'来源尚未同步',generatedAt:row.generatedAt});continue;}
+        if(!Number.isSafeInteger(row.records)||row.records<0){fileStates.set(id,{status:'error',reason:'数据目录未提供有效记录数。'});continue;}
+        fileStates.set(id,{id,status:'ready',count:row.records,generatedAt:row.generatedAt});
+      }
+    }catch(error){successfulData.delete('datasets');if(destroyed||request!==filesRequest)return;for(const id of fileIds)fileStates.set(id,{status:'error',reason:error.message||'网络读取失败'});}
+    renderFiles();
+  }
+  function click(event){const r=event.target.closest('[data-ov-retry]'),f=event.target.closest('[data-ov-file-retry]');if(r)load(r.dataset.ovRetry,true);if(f||event.target.closest('[data-ov-files-refresh]'))loadFiles(true);}
   function tip(event){const target=event.target.closest?.('[data-ov-tip]');if(!target)return;const area=target.closest('.ov-chart-area'),tooltip=area?.querySelector('.ov-tooltip');if(!tooltip)return;tooltip.textContent=target.dataset.ovTip;tooltip.hidden=false;const rect=area.getBoundingClientRect(),point=target.getBoundingClientRect();tooltip.style.left=`${Math.max(8,Math.min(rect.width-210,point.x-rect.x))}px`;tooltip.style.top=`${Math.max(4,point.y-rect.y-32)}px`;}
   function hideTip(event){if(event.relatedTarget?.closest?.('[data-ov-tip]'))return;for(const el of container.querySelectorAll('.ov-tooltip'))el.hidden=true;}
   container.addEventListener('click',click);container.addEventListener('pointerover',tip);container.addEventListener('focusin',tip);container.addEventListener('pointerout',hideTip);container.addEventListener('focusout',hideTip);
-  const ready=Promise.all([...active.filter(d=>d.id!=='files').map(d=>load(d.id)),...(cards.has('files')?fileIds.map(loadFile):[])]);
+  const ready=Promise.all([...active.filter(d=>d.id!=='files').map(d=>load(d.id)),...(cards.has('files')?[loadFiles()]:[])]);
   return { ready, destroy(){destroyed=true;for(const controller of controllers)controller.abort();container.removeEventListener('click',click);container.removeEventListener('pointerover',tip);container.removeEventListener('focusin',tip);container.removeEventListener('pointerout',hideTip);container.removeEventListener('focusout',hideTip);container.replaceChildren();} };
 }
