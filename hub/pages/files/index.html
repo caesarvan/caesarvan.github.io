@@ -7,8 +7,8 @@
   <meta name="referrer" content="no-referrer">
   <title>资料导航 · Life OS</title>
   <link rel="stylesheet" href="./files.css">
-  <script src="./files.js" defer></script>
-  <link rel="stylesheet" href="../../embed.css">
+  <script src="./files.js?v=20261023-unified" defer></script>
+  <link rel="stylesheet" href="../../embed.css?v=20261023-unified">
   <script defer src="../../embed.js"></script>
 </head>
 <body>
@@ -24,13 +24,13 @@
       <div id="load-status" class="status" role="status" aria-live="polite">正在读取资料索引…</div>
     </section>
     <section class="stats" aria-label="资料统计">
-      <article class="stat lavender"><span>索引记录</span><strong id="total-count">0</strong><small id="index-name">正在载入索引</small></article>
-      <article class="stat peach"><span>可打开的外部入口</span><strong id="external-count">0</strong><small>HTTPS 网站与来源邮件</small></article>
-      <article class="stat mint"><span>文件与目录条目</span><strong id="file-count">0</strong><small>附件原文件未发布</small></article>
+      <article class="stat lavender"><span>索引记录</span><strong id="total-count">—</strong><small id="index-name">正在载入索引</small></article>
+      <article class="stat peach"><span>可打开的外部入口</span><strong id="external-count">—</strong><small>HTTPS 网站与来源邮件</small></article>
+      <article class="stat mint"><span>文件与目录条目</span><strong id="file-count">—</strong><small>附件原文件未发布</small></article>
     </section>
     <section class="library" aria-labelledby="library-title">
       <div class="library-toolbar"><div><p class="eyebrow">EXPLORE</p><h2 id="library-title">资料与书签</h2></div><label class="search"><span aria-hidden="true">⌕</span><span class="visually-hidden">搜索名称、路径或主题</span><input id="search-input" type="search" placeholder="搜索名称、路径或主题" autocomplete="off"></label></div>
-      <div class="filter-row"><div class="tabs" aria-label="筛选链接"><button type="button" class="tab active" data-filter="all" aria-pressed="true">全部</button><button type="button" class="tab" data-filter="local" aria-pressed="false">文件索引</button><button type="button" class="tab" data-filter="external" aria-pressed="false">外部入口</button></div><span id="result-count" class="result-count">0 条记录</span></div>
+      <div class="filter-row"><div class="tabs" aria-label="筛选链接"><button type="button" class="tab active" data-filter="all" aria-pressed="true">全部</button><button type="button" class="tab" data-filter="local" aria-pressed="false">文件索引</button><button type="button" class="tab" data-filter="external" aria-pressed="false">外部入口</button></div><span id="result-count" class="result-count">正在载入…</span></div>
       <div id="results" class="results"></div>
       <div id="empty-state" class="empty-state"><div class="empty-icon" aria-hidden="true">▧</div><h3 id="empty-heading">正在载入资料索引</h3><p id="empty-description">页面正在读取已发布的索引，请稍候。</p></div>
       <nav id="pagination" class="pagination" aria-label="索引分页" hidden><button id="previous-button" class="button secondary" type="button">上一页</button><span id="page-count"></span><button id="next-button" class="button secondary" type="button">下一页</button></nav>

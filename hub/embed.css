@@ -101,3 +101,9 @@ html[data-life-hub-embed="true"][data-theme="dark"] :is(.lavender,.peach,.mint,.
 html[data-life-hub-embed="true"][data-theme="dark"] .search{background:#191a23;border-color:#363949}
 html[data-life-hub-embed="true"][data-theme="dark"] .search input{color:#e9e9f1}
 html[data-life-hub-embed="true"][data-theme="dark"] :is(.stat>span,.stat small,.record-description,.status){color:#adb0c4}
+/* Show the useful data status, while the shared shell owns introductory banners. */
+html[data-life-hub-embed="true"] .published-data-toolbar p:not(.published-data-time){display:none}
+html[data-life-hub-embed="true"] .import-panel :is(.import-intro,.privacy-note){display:none}
+html[data-life-hub-embed="true"] .import-panel{padding:10px 0;border:0;border-radius:0;background:transparent;box-shadow:none;display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:12px}
+html[data-life-hub-embed="true"] .import-panel .actions{margin:0 0 0 auto;order:2;flex-shrink:0}
+html[data-life-hub-embed="true"] .import-panel .status{border:0;margin:0;padding:0;flex:1;min-width:180px}

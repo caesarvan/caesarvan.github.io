@@ -60,16 +60,17 @@
     $('source-panel').setAttribute('aria-busy', String(loading));
     $('reload-button').disabled = loading;
     $('reload-button').textContent = loading ? '正在载入…' : '重新加载';
-    $('total-count').textContent = state.entries.length.toLocaleString('zh-CN');
-    $('external-count').textContent = state.entries.filter(entry => entry.type === 'external' || entry.sourceHref).length.toLocaleString('zh-CN');
-    $('file-count').textContent = state.entries.filter(entry => entry.type === 'local').length.toLocaleString('zh-CN');
+    const hasCounts = state.status === 'ready' || state.entries.length > 0;
+    $('total-count').textContent = hasCounts ? state.entries.length.toLocaleString('zh-CN') : '—';
+    $('external-count').textContent = hasCounts ? state.entries.filter(entry => entry.type === 'external' || entry.sourceHref).length.toLocaleString('zh-CN') : '—';
+    $('file-count').textContent = hasCounts ? state.entries.filter(entry => entry.type === 'local').length.toLocaleString('zh-CN') : '—';
     const generated = Date.parse(state.generatedAt);
-    $('index-name').textContent = Number.isFinite(generated) ? `更新于 ${new Intl.DateTimeFormat('zh-CN', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Asia/Shanghai' }).format(generated)}` : loading ? '正在载入索引' : '尚无可用索引';
+    $('index-name').textContent = Number.isFinite(generated) ? `${state.status === 'unavailable' ? '索引未同步 · 状态记录于' : state.status === 'error' ? '上次成功载入于' : '更新于'} ${new Intl.DateTimeFormat('zh-CN', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Asia/Shanghai' }).format(generated)}` : loading ? '正在载入索引' : '尚无可用索引';
     const query = fold($('search-input').value.trim());
     const results = state.entries.filter(entry => (state.filter === 'all' || (state.filter === 'local' ? entry.type === 'local' : entry.type === 'external' || entry.sourceHref)) && (!query || fold(`${entry.label} ${entry.path} ${entry.group} ${entry.description || ''}`).includes(query)));
     const pages = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
     state.page = Math.min(state.page, pages - 1);
-    $('result-count').textContent = `${results.length.toLocaleString('zh-CN')} 条记录`;
+    $('result-count').textContent = hasCounts ? `${results.length.toLocaleString('zh-CN')} 条记录` : state.status === 'unavailable' ? '索引未同步' : loading ? '正在载入…' : '读取失败';
     $('results').replaceChildren();
     $('empty-state').hidden = results.length > 0;
     if (!results.length) {
