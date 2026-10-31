@@ -28,10 +28,10 @@
       "type": "snapshot",
       "file": "./webank.json",
       "status": "ready",
-      "generatedAt": "2026-10-22T23:58:48+08:00",
-      "records": 1059,
-      "bytes": 462693,
-      "sha256": "b368083241ecd0e91ab74bca8b9351a96fd5101bed5abba07813887655648112"
+      "generatedAt": "2026-10-31T03:21:37+08:00",
+      "records": 1331,
+      "bytes": 577202,
+      "sha256": "fabb1c8c28916ada8277f260b9a9848b2cd4ba7047cbc49685f7402d9dd9fdac"
     },
     {
       "id": "investment",
