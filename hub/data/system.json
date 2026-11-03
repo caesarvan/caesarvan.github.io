@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 1,
+  "id": "system",
+  "title": "系统运行状态",
+  "summary": "本机自动化已补充执行预算与断点规则；月度计划的时区配置已修复，未来真实触发仍待验。最近容量采样高于预警线，云端任务全量与部分运行验收仍有缺口。",
+  "sourceAsOf": "2026-11-04",
+  "generatedAt": "2026-11-04T01:39:35+08:00",
+  "cadence": "每日23:15汇总",
+  "status": "partial",
+  "coverage": {
+    "summary": "覆盖本机审计、月度调度修复、最近容量记录与必要协调状态；来源时点分别保留，未声称实时或全系统验收。",
+    "gaps": [
+      "本机审计未取得独立云端定时任务的完整清单。",
+      "提示词预算不等于所有底层调用均有强制超时。",
+      "月度计划下一次真实定时触发尚未发生。",
+      "核心备份、扩展证据和云端同步需分别验收，不能合称全部备份完成。",
+      "知识工具的插件界面加载与真实回复仍待验收。"
+    ]
+  },
+  "sources": [
+    {
+      "id": "system-audit",
+      "label": "本机自动化审计",
+      "asOf": "2026-11-03",
+      "kind": "report",
+      "readStatus": "read"
+    },
+    {
+      "id": "system-monthly-schedule",
+      "label": "月度调度修复记录",
+      "asOf": "2026-11-04",
+      "kind": "report",
+      "readStatus": "read"
+    },
+    {
+      "id": "system-capacity",
+      "label": "最近容量监测记录",
+      "asOf": "2026-11-04",
+      "kind": "report",
+      "readStatus": "read"
+    },
+    {
+      "id": "system-coordination",
+      "label": "近期事项协调核对",
+      "asOf": "2026-11-04",
+      "kind": "report",
+      "readStatus": "partial"
+    },
+    {
+      "id": "system-tool-verification",
+      "label": "知识工具续验状态",
+      "asOf": "2026-11-04",
+      "kind": "report",
+      "readStatus": "read"
+    }
+  ],
+  "metrics": [
+    {
+      "label": "最近可用空间",
+      "value": 73.43,
+      "unit": "GB",
+      "note": "11月4日01:14采样，非实时容量。"
+    },
+    {
+      "label": "本机审计范围",
+      "value": 14,
+      "unit": "项自动化",
+      "note": "11月3日本机范围，不代表云端全覆盖。"
+    },
+    {
+      "label": "执行边界已补充",
+      "value": 11,
+      "unit": "项启用任务",
+      "note": "配置与规则核验，不等于长期运行验收。"
+    },
+    {
+      "label": "月度时区配置",
+      "value": "已修复",
+      "note": "下一次真实触发待验。"
+    }
+  ],
+  "items": [
+    {
+      "id": "system-bounded-runs",
+      "title": "自动化按有限批次续接",
+      "summary": "本机启用任务已补充整轮预算、批次上限、检查点和无变化跳过规则，减少长时间无进展与持锁。",
+      "status": "completed",
+      "date": "2026-11-03",
+      "sourceId": "system-audit",
+      "tags": [
+        "自动化",
+        "断点"
+      ]
+    },
+    {
+      "id": "system-monthly-timezone",
+      "title": "月度调度配置已修复",
+      "summary": "当前运行应用回读确认下次月度计划为原定本地时刻；真实触发仍需后续回执验收。",
+      "status": "completed",
+      "date": "2026-11-04",
+      "sourceId": "system-monthly-schedule",
+      "tags": [
+        "调度",
+        "时区"
+      ]
+    },
+    {
+      "id": "system-disk-capacity",
+      "title": "最近容量采样正常",
+      "summary": "最近采样高于既有预警线，本次监测未触发清理；完整巡检与独立备份状态分别记录。",
+      "status": "confirmed",
+      "date": "2026-11-04",
+      "sourceId": "system-capacity",
+      "tags": [
+        "容量",
+        "监测"
+      ]
+    },
+    {
+      "id": "system-cloud-audit",
+      "title": "云端任务全量仍待核对",
+      "summary": "本机审计无法替代独立云端计划审计；完整清单与持续运行回执仍需补齐。",
+      "status": "needs_verification",
+      "date": "2026-11-03",
+      "sourceId": "system-audit",
+      "tags": [
+        "云端",
+        "覆盖"
+      ]
+    },
+    {
+      "id": "system-tool-runtime",
+      "title": "知识工具运行验收待续",
+      "summary": "命令行最小回复已通过，插件加载与界面真实回复仍未完成验收，不能仅凭安装清单判断可用。",
+      "status": "needs_verification",
+      "date": "2026-11-04",
+      "sourceId": "system-tool-verification",
+      "tags": [
+        "工具",
+        "运行验收"
+      ]
+    },
+    {
+      "id": "system-dependency-gaps",
+      "title": "跨领域事项保留等待条件",
+      "summary": "近期协调继续保留缺账单、云端验证与设备权限等真实依赖；未将等待项记为完成。",
+      "status": "in_progress",
+      "date": "2026-11-04",
+      "sourceId": "system-coordination",
+      "tags": [
+        "协调",
+        "依赖"
+      ]
+    }
+  ],
+  "nextActions": [
+    "按原计划在真实触发后核对时间与完成回执。",
+    "分别补齐云端任务范围与故障场景验收。",
+    "续验知识工具的插件加载和真实回复。",
+    "备份按核心、扩展证据与云端验证分层记录。"
+  ],
+  "publicScope": "仅公开系统运行摘要、容量采样与待验事项；不含本机路径、凭证、网络配置、账户、原始日志、数据库或恢复资料。"
+}

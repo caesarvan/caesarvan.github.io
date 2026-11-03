@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "id": "family",
+  "title": "家庭协作",
+  "summary": "原有家庭例会的提前提醒已回读确认；共同待办、家庭财务与近期出行仍需在例会中逐项确认进展。",
+  "sourceAsOf": "2026-11-04T00:49:28+08:00",
+  "generatedAt": "2026-11-04T01:39:35+08:00",
+  "cadence": "每日23:15汇总",
+  "status": "partial",
+  "coverage": {
+    "summary": "已覆盖最近一次会议提醒核验与既有议题分类；家庭行动完成情况仍需逐项确认。",
+    "gaps": [
+      "动态议题提醒仍未启用。",
+      "议题来自既有讨论，未确认的行动进展不能视为已完成。",
+      "历史会议纪要和全部家庭事项未逐项复核。"
+    ]
+  },
+  "sources": [
+    {
+      "id": "family-review",
+      "label": "家庭会议续办核验",
+      "asOf": "2026-11-04T00:49:28+08:00",
+      "kind": "report",
+      "readStatus": "read"
+    }
+  ],
+  "metrics": [
+    {
+      "label": "例会提醒",
+      "value": "已回读确认",
+      "note": "沿用原周期会议，未新增重复会议。"
+    },
+    {
+      "label": "动态议题提醒",
+      "value": "尚未启用",
+      "note": "既有任务额度限制仍在。"
+    },
+    {
+      "label": "议题状态",
+      "value": "待共同确认"
+    }
+  ],
+  "items": [
+    {
+      "id": "family-reminder",
+      "title": "例会提醒已核验",
+      "summary": "原周期会议及当日实例的会前30分钟提醒均已回读确认。",
+      "status": "completed",
+      "date": "2026-11-04",
+      "sourceId": "family-review",
+      "tags": [
+        "例会",
+        "提醒"
+      ]
+    },
+    {
+      "id": "family-actions",
+      "title": "回访共同待办",
+      "summary": "根据既有纪要核对上次行动项，逐项确认进展、下一步与责任分工。",
+      "status": "pending",
+      "date": null,
+      "sourceId": "family-review",
+      "tags": [
+        "行动回访"
+      ]
+    },
+    {
+      "id": "family-finance",
+      "title": "家庭财务议题",
+      "summary": "共同财务安排、近期共同支出与旅行预算列为待讨论分类，未据此形成新的财务决定。",
+      "status": "pending",
+      "date": null,
+      "sourceId": "family-review",
+      "tags": [
+        "共同安排"
+      ]
+    },
+    {
+      "id": "family-plans",
+      "title": "近期出行与周末安排",
+      "summary": "讨论近期出行准备、周末计划及日程冲突；是否成行与具体安排仍待确认。",
+      "status": "pending",
+      "date": null,
+      "sourceId": "family-review",
+      "tags": [
+        "出行",
+        "日程"
+      ]
+    },
+    {
+      "id": "family-dynamic-agenda",
+      "title": "动态议题提醒待续",
+      "summary": "现有日历提醒不会自动整理当天议题；智能议题提醒尚未启用。",
+      "status": "pending",
+      "date": null,
+      "sourceId": "family-review",
+      "tags": [
+        "协作机制"
+      ]
+    }
+  ],
+  "nextActions": [
+    "在原有例会中回访共同待办。",
+    "将新决定整理为行动项，并保留真实确认日期。",
+    "保留既有会议与提醒，动态议题功能沿原任务处理。"
+  ],
+  "publicScope": "仅公开家庭协作机制与议题分类摘要；不含家庭原话、姓名、联系方式、成员明细、财务金额或完整纪要。"
+}

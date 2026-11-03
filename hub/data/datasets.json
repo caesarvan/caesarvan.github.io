@@ -1,7 +1,7 @@
 {
   "version": 1,
   "publicationMode": "authorized-public-snapshots",
-  "preparedAt": "2026-11-04T00:51:51+08:00",
+  "preparedAt": "2026-11-04T01:39:55+08:00",
   "datasets": [
     {
       "id": "finance",
@@ -104,6 +104,54 @@
       "records": 89,
       "bytes": 15312,
       "sha256": "52bd32db0816897701b6151d62524f410754148f8cdc1e1368ec9fd6a7d12b9a"
+    },
+    {
+      "id": "family",
+      "type": "digest",
+      "file": "./family.json",
+      "status": "ready",
+      "coverage": "partial",
+      "generatedAt": "2026-11-04T01:39:35+08:00",
+      "sourceAsOf": "2026-11-04T00:49:28+08:00",
+      "records": 5,
+      "bytes": 3363,
+      "sha256": "5a5aede0271833104f9b69971f9930380e8b1b512125f73f8a5be294a852e188"
+    },
+    {
+      "id": "health",
+      "type": "digest",
+      "file": "./health.json",
+      "status": "ready",
+      "coverage": "partial",
+      "generatedAt": "2026-11-04T01:39:35+08:00",
+      "sourceAsOf": "2026-11-03",
+      "records": 4,
+      "bytes": 3177,
+      "sha256": "541dd4e07cc64736006e5804fcca6c4d05176329e4b753c7fbfba29d29fac7df"
+    },
+    {
+      "id": "knowledge",
+      "type": "digest",
+      "file": "./knowledge.json",
+      "status": "ready",
+      "coverage": "partial",
+      "generatedAt": "2026-11-04T01:39:35+08:00",
+      "sourceAsOf": "2026-11-04",
+      "records": 6,
+      "bytes": 5620,
+      "sha256": "f85cf8caea5dc629eda2a6ece2d28ba83ae8c775843b1f1b45488351d90cf944"
+    },
+    {
+      "id": "system",
+      "type": "digest",
+      "file": "./system.json",
+      "status": "ready",
+      "coverage": "partial",
+      "generatedAt": "2026-11-04T01:39:35+08:00",
+      "sourceAsOf": "2026-11-04",
+      "records": 6,
+      "bytes": 5370,
+      "sha256": "63ff2bd1ceccb60cef1bf97d9c4c98bca6ee1a9331175bd9a6f6576080bed153"
     }
   ]
 }

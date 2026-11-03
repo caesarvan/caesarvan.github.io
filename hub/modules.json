@@ -145,6 +145,58 @@
       "mode": "static",
       "order": 100,
       "enabled": true
+    },
+    {
+      "id": "family",
+      "title": "家庭协作",
+      "description": "会议议题、已确认决定与提醒进展。",
+      "icon": "⌂",
+      "color": "#b5764e",
+      "group": "personal",
+      "type": "page",
+      "href": "./pages/life/index.html?kind=family",
+      "mode": "published",
+      "order": 1,
+      "enabled": true
+    },
+    {
+      "id": "health",
+      "title": "健康与训练",
+      "description": "行动、训练方向与数据覆盖。",
+      "icon": "♡",
+      "color": "#2b8a78",
+      "group": "personal",
+      "type": "page",
+      "href": "./pages/life/index.html?kind=health",
+      "mode": "published",
+      "order": 2,
+      "enabled": true
+    },
+    {
+      "id": "knowledge",
+      "title": "知识与决策",
+      "description": "近期主题、已确认决定与待验证问题。",
+      "icon": "✦",
+      "color": "#7d65b4",
+      "group": "personal",
+      "type": "page",
+      "href": "./pages/life/index.html?kind=knowledge",
+      "mode": "published",
+      "order": 3,
+      "enabled": true
+    },
+    {
+      "id": "system",
+      "title": "系统运行状态",
+      "description": "自动化、备份与待处理运行事项。",
+      "icon": "◉",
+      "color": "#497cb7",
+      "group": "personal",
+      "type": "page",
+      "href": "./pages/life/index.html?kind=system",
+      "mode": "published",
+      "order": 4,
+      "enabled": true
     }
   ]
 }

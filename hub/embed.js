@@ -15,7 +15,8 @@
   const page = /^pages\/([^/]+)\//.exec(path)?.[1];
   const fileKinds = new Set(['icloud', 'onedrive', 'outlook', 'mail', 'youtube']);
   const requestedKind = new URLSearchParams(location.search).get('kind');
-  let moduleId = page === 'files' ? fileKinds.has(requestedKind) ? requestedKind : 'icloud' : page || '';
+  const lifeKinds = new Set(['family', 'health', 'knowledge', 'system']);
+  let moduleId = page === 'life' ? (lifeKinds.has(requestedKind) ? requestedKind : 'family') : page === 'files' ? fileKinds.has(requestedKind) ? requestedKind : 'icloud' : page || '';
   root.dataset.lifeHubEmbed = 'true';
   root.dataset.lifeHubModule = moduleId;
 

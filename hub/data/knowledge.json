@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "id": "knowledge",
+  "title": "知识与决策",
+  "summary": "已确认建设四类信息模块，并基于已有自动化每日汇总公开摘要；近期技术学习已归纳为主题，聊天归档继续分批补缺。学习讨论与已确认决定分别保留证据状态。",
+  "sourceAsOf": "2026-11-04",
+  "generatedAt": "2026-11-04T01:39:35+08:00",
+  "cadence": "每日23:15汇总",
+  "status": "partial",
+  "coverage": {
+    "summary": "近期主题来自已读取的讨论与主题笔记；归档进度截止11月4日续接记录，归档目标日仍为11月2日。",
+    "gaps": [
+      "本轮只读取有限近期讨论与一篇主题笔记，未覆盖全部聊天。",
+      "配置对比讨论中的原附件未在本轮重新读取。",
+      "部分回答正文与附件仍缺失，归档整体为部分覆盖。",
+      "最新续接批次仍有12项候选待续，云端同步未核验。"
+    ]
+  },
+  "sources": [
+    {
+      "id": "knowledge-fastmodel",
+      "label": "虚拟平台学习讨论",
+      "asOf": "2026-11-03",
+      "kind": "discussion",
+      "readStatus": "read"
+    },
+    {
+      "id": "knowledge-linux-boot",
+      "label": "Linux启动资料学习讨论",
+      "asOf": "2026-11-03",
+      "kind": "discussion",
+      "readStatus": "read"
+    },
+    {
+      "id": "knowledge-config-review",
+      "label": "配置与执行对比讨论",
+      "asOf": "2026-11-03",
+      "kind": "discussion",
+      "readStatus": "partial"
+    },
+    {
+      "id": "knowledge-layered-method",
+      "label": "分层定位方法主题笔记",
+      "asOf": "2026-11-02",
+      "kind": "report",
+      "readStatus": "read"
+    },
+    {
+      "id": "knowledge-archive",
+      "label": "聊天归档续接记录",
+      "asOf": "2026-11-04",
+      "kind": "report",
+      "readStatus": "read"
+    },
+    {
+      "id": "decision-hub-expansion",
+      "label": "信息中枢建设决定",
+      "asOf": "2026-11-04",
+      "kind": "discussion",
+      "readStatus": "read"
+    }
+  ],
+  "metrics": [
+    {
+      "label": "近期主题",
+      "value": 4,
+      "unit": "类",
+      "note": "仅计本页已读取的主题。"
+    },
+    {
+      "label": "归档状态",
+      "value": "部分覆盖"
+    },
+    {
+      "label": "最新待续候选",
+      "value": 12,
+      "unit": "项",
+      "note": "来自11月4日续接记录，不等于缺失消息数。"
+    }
+  ],
+  "items": [
+    {
+      "id": "knowledge-hub-decision",
+      "title": "已确认的信息中枢建设决定",
+      "summary": "已明确建设家庭协作、健康与训练、知识与决策、系统运行状态四类模块，并使用既有自动化每日向公开主页推送最新摘要。此处记录已确认方向，持续运行效果另行验收。",
+      "status": "confirmed",
+      "date": "2026-11-04",
+      "sourceId": "decision-hub-expansion",
+      "tags": [
+        "已确认决定",
+        "信息中枢"
+      ]
+    },
+    {
+      "id": "knowledge-virtual-platform",
+      "title": "虚拟硬件模型与验证边界",
+      "summary": "近期讨论涉及FastModel及虚拟平台的用途，并区分模型内功能观察与真实硬件验证。此处记录学习主题，未声称完成实验。",
+      "status": "confirmed",
+      "date": "2026-11-03",
+      "sourceId": "knowledge-fastmodel",
+      "tags": [
+        "虚拟平台",
+        "验证边界"
+      ]
+    },
+    {
+      "id": "knowledge-linux-boot-files",
+      "title": "Linux启动资料的职责分工",
+      "summary": "近期已讨论内核镜像、设备树与根文件系统的分工，可继续整理为通用学习索引；未据此认定某个环境已经启动成功。",
+      "status": "confirmed",
+      "date": "2026-11-03",
+      "sourceId": "knowledge-linux-boot",
+      "tags": [
+        "Linux",
+        "启动过程"
+      ]
+    },
+    {
+      "id": "knowledge-config-comparison",
+      "title": "脚本预期与实际执行交叉核对",
+      "summary": "对比预期配置、实际输入、接口回读与业务验证的方法已讨论；原附件未在本轮重读，具体结论仍需原始证据复核。",
+      "status": "needs_verification",
+      "date": "2026-11-03",
+      "sourceId": "knowledge-config-review",
+      "tags": [
+        "配置核对",
+        "证据"
+      ]
+    },
+    {
+      "id": "knowledge-layered-diagnosis",
+      "title": "分层定位与多层证据对照",
+      "summary": "已有主题笔记整理沿调用边界对照输入输出、区分接口成功与实际状态的方法。案例保留用户报告属性，未在本轮重跑。",
+      "status": "confirmed",
+      "date": "2026-11-02",
+      "sourceId": "knowledge-layered-method",
+      "tags": [
+        "定位方法",
+        "复盘"
+      ]
+    },
+    {
+      "id": "knowledge-archive-continuation",
+      "title": "聊天归档分批补缺",
+      "summary": "11月2日日报和主题笔记已保存；最新续接批次未新增可归档正文，保留12项候选继续处理。",
+      "status": "in_progress",
+      "date": "2026-11-04",
+      "sourceId": "knowledge-archive",
+      "tags": [
+        "归档",
+        "待补"
+      ]
+    }
+  ],
+  "nextActions": [
+    "继续从既有检查点补齐候选与缺失正文。",
+    "将可复用方法整理为主题索引，并保留原始来源。",
+    "实验结论另附复现条件、日志与验证回执后再标记完成。"
+  ],
+  "publicScope": "仅公开通用学习主题、方法摘要与归档覆盖状态；不含聊天全文、工作附件、内部配置、设备标识、原始案例细节或私有链接。"
+}

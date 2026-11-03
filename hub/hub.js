@@ -1,7 +1,8 @@
 import {mountOverview} from './overview.js?v=20261023-summary-v2';
+import {mountLifeOverview} from './life-overview.js?v=20261104';
 const $=s=>document.querySelector(s),main=$('#main');
-let registry,filter='all',search='',overview,frameCleanup=()=>{};
-const groups={all:'全部领域',life:'生活与财务',files:'资料与收藏',more:'关于我'};
+let registry,filter='all',search='',overview,lifeOverview,frameCleanup=()=>{};
+const groups={all:'全部领域',personal:'协作与成长',life:'生活与财务',files:'资料与收藏',more:'关于我'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const enabled=()=>registry.modules.filter(m=>m.enabled).sort((a,b)=>a.order-b.order);
 function route(){try{return location.hash.startsWith('#/')?decodeURIComponent(location.hash.slice(2)).split('?')[0]:'home'}catch{return 'home'}}
@@ -23,13 +24,13 @@ function attachFrame(frame){
   frameCleanup=()=>{clearTimeout(timer);removeEventListener('message',receive);frame.removeEventListener('load',loaded)};
 }
 function render(){
-  overview?.destroy();overview=null;frameCleanup();nav();
+  overview?.destroy();overview=null;lifeOverview?.destroy();lifeOverview=null;frameCleanup();nav();
   document.body.classList.remove('menu-open');$('#menu-toggle').setAttribute('aria-expanded','false');
   const id=route();
   if(id==='home'){
     document.title='Caesar · Life OS';$('#breadcrumb').textContent='我的空间 / 生活总览';main.className='overview-main';
-    main.innerHTML=`<section class="welcome"><div><div class="eyebrow">CAESAR'S PERSONAL SPACE</div><h1>生活的每一面，都在这里。</h1><p class="intro">从总览看见变化，沿着数据进入每个领域。</p></div><a class="profile-shortcut" href="#/profile"><span class="avatar">C</span><span><strong>Caesar Fan</strong><small>经历 · 项目 · 关于我 →</small></span></a></section><div id="overview-data" aria-live="polite"></div><details class="directory"><summary>全部领域与入口 <span>${enabled().length} 个领域</span></summary><div class="toolbar"><div class="filters" aria-label="筛选领域">${Object.entries(groups).map(([k,v])=>`<button data-filter="${k}" aria-pressed="${filter===k}">${v}</button>`).join('')}</div><label class="search">⌕ <input type="search" id="space-search" aria-label="搜索领域" placeholder="搜索领域…" value="${esc(search)}"></label></div><div class="grid" id="spaces"></div></details>`;
-    overview=mountOverview($('#overview-data'),{modules:enabled()});grid();$('#space-search').addEventListener('input',e=>{search=e.target.value;grid()});return;
+    main.innerHTML=`<section class="welcome"><div><div class="eyebrow">CAESAR'S PERSONAL SPACE</div><h1>生活的每一面，都在这里。</h1><p class="intro">从总览看见变化，沿着数据进入每个领域。</p></div><a class="profile-shortcut" href="#/profile"><span class="avatar">C</span><span><strong>Caesar Fan</strong><small>经历 · 项目 · 关于我 →</small></span></a></section><div id="life-overview-data" aria-live="polite"></div><div id="overview-data" aria-live="polite"></div><details class="directory"><summary>全部领域与入口 <span>${enabled().length} 个领域</span></summary><div class="toolbar"><div class="filters" aria-label="筛选领域">${Object.entries(groups).map(([k,v])=>`<button data-filter="${k}" aria-pressed="${filter===k}">${v}</button>`).join('')}</div><label class="search">⌕ <input type="search" id="space-search" aria-label="搜索领域" placeholder="搜索领域…" value="${esc(search)}"></label></div><div class="grid" id="spaces"></div></details>`;
+    overview=mountOverview($('#overview-data'),{modules:enabled()});lifeOverview=mountLifeOverview($('#life-overview-data'),{modules:enabled()});grid();$('#space-search').addEventListener('input',e=>{search=e.target.value;grid()});return;
   }
   const m=enabled().find(m=>m.id===id);
   if(!m){main.innerHTML='<h1>未找到这个领域</h1><p><a class="open" href="#/home">返回生活总览</a></p>';return}
