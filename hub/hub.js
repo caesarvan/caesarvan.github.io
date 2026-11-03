@@ -1,5 +1,5 @@
 import {mountOverview} from './overview.js?v=20261023-summary-v2';
-import {mountLifeOverview} from './life-overview.js?v=20261104';
+import {mountLifeOverview} from './life-overview.js?v=20261104-visual';
 const $=s=>document.querySelector(s),main=$('#main');
 let registry,filter='all',search='',overview,lifeOverview,frameCleanup=()=>{};
 const groups={all:'全部领域',personal:'协作与成长',life:'生活与财务',files:'资料与收藏',more:'关于我'};

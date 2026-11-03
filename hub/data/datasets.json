@@ -1,7 +1,7 @@
 {
   "version": 1,
   "publicationMode": "authorized-public-snapshots",
-  "preparedAt": "2026-11-04T01:39:55+08:00",
+  "preparedAt": "2026-11-04T01:57:30+08:00",
   "datasets": [
     {
       "id": "finance",
@@ -111,11 +111,11 @@
       "file": "./family.json",
       "status": "ready",
       "coverage": "partial",
-      "generatedAt": "2026-11-04T01:39:35+08:00",
+      "generatedAt": "2026-11-04T01:56:30+08:00",
       "sourceAsOf": "2026-11-04T00:49:28+08:00",
       "records": 5,
-      "bytes": 3363,
-      "sha256": "5a5aede0271833104f9b69971f9930380e8b1b512125f73f8a5be294a852e188"
+      "bytes": 6104,
+      "sha256": "1e14fe4eb8bc9ae9473f384489cb966516aa0beafbdf3ed58d74b185a80dacf6"
     },
     {
       "id": "health",

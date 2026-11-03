@@ -8,6 +8,7 @@ export const LIFE_KINDS = Object.freeze({
 export const LIFE_STATUS = Object.freeze({
   confirmed: '已确认', needs_verification: '待核实', in_progress: '进行中', pending: '待推进', completed: '已完成',
 });
+export const LIFE_STATUS_COLOR = Object.freeze({confirmed:'#527fb0',needs_verification:'#b98b4f',in_progress:'#8870ba',pending:'#9a9eaf',completed:'#4a9484'});
 export const lifeEscape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export const lifeText = (value, fallback = '') => typeof value === 'string' || (typeof value === 'number' && Number.isFinite(value)) ? String(value) : fallback;
 const array = value => Array.isArray(value) ? value : [];
@@ -34,6 +35,15 @@ export function lifeFreshness(value, now = Date.now()) {
   if (now - timestamp > 48 * 60 * 60 * 1000) return { label: '来源待更新', state: 'stale' };
   return { label: '48 小时内有来源记录', state: 'recent' };
 }
+export function lifeStatusCounts(items) {
+  return Object.keys(LIFE_STATUS).map(status => ({status,label:LIFE_STATUS[status],count:items.filter(item=>item.status===status).length}));
+}
+export function lifeStatusVisual(items, {compact=false,id='life-status'}={}) {
+  const rows=lifeStatusCounts(items),esc=lifeEscape,total=items.length;
+  if(compact) return `<div class="lo-status-visual"><div class="lo-chart-heading"><strong>已收录事项状态</strong><span>${total} 条</span></div><div class="lo-status-stack" role="img" aria-label="${esc(rows.map(r=>`${r.label}${r.count}条`).join('，'))}">${total?rows.filter(r=>r.count).map(r=>`<span style="flex:${r.count};background:${LIFE_STATUS_COLOR[r.status]}" title="${r.label} ${r.count}条"></span>`).join(''):'<span class="lo-stack-empty"></span>'}</div><div class="lo-status-legend">${rows.map(r=>`<span><i style="background:${LIFE_STATUS_COLOR[r.status]}"></i>${r.label} <b>${r.count}</b></span>`).join('')}</div><p class="lo-chart-note">仅本页事项分布，不是生活整体完成率。</p></div>`;
+  const max=Math.max(total,1),w=440,h=182,left=91,right=42,width=w-left-right;
+  return `<svg class="lp-bar-chart" viewBox="0 0 ${w} ${h}" role="img" aria-labelledby="${id}-title ${id}-desc"><title id="${id}-title">当前筛选事项的状态分布</title><desc id="${id}-desc">${esc(rows.map(r=>`${r.label}${r.count}条`).join('，'))}。横轴从零至${total}条，仅表示收录事项数量。</desc><line x1="${left}" x2="${left}" y1="8" y2="151" class="lp-chart-axis"/>${rows.map((r,i)=>{const y=13+i*28;return `<text x="0" y="${y+13}" class="lp-chart-label">${r.label}</text><rect x="${left}" y="${y}" width="${width}" height="18" rx="3" class="lp-bar-track"/><rect x="${left}" y="${y}" width="${width*r.count/max}" height="18" rx="3" fill="${LIFE_STATUS_COLOR[r.status]}"/><text x="${w-5}" y="${y+13}" text-anchor="end" class="lp-chart-value">${r.count} 条</text>`;}).join('')}<text x="${left}" y="174" class="lp-chart-tick">0</text><text x="${left+width}" y="174" text-anchor="end" class="lp-chart-tick">${total || '0'} 条事项</text></svg>`;
+}
 export function lifeIcon(name) {
   const paths = {
     home: '<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1Z"/>',
@@ -54,6 +64,7 @@ export function normalizeLifeData(raw, id) {
     sources: raw.sources.map((s, i) => ({ id: lifeText(s?.id, `source-${i}`), label: lifeText(s?.label, '未命名来源'), asOf: lifeText(s?.asOf), kind: lifeText(s?.kind), readStatus: lifeText(s?.readStatus) })),
     metrics: array(raw.metrics).map(m => ({ label: lifeText(m?.label, '摘要指标'), value: lifeText(m?.value, '待补'), unit: lifeText(m?.unit), note: lifeText(m?.note) })),
     items: raw.items.map((item, i) => ({ id: lifeText(item?.id, `item-${i}`), title: lifeText(item?.title, '未命名事项'), summary: lifeText(item?.summary), status: Object.hasOwn(LIFE_STATUS, item?.status) ? item.status : 'needs_verification', date: lifeText(item?.date), sourceId: lifeText(item?.sourceId), tags: array(item?.tags).map(v => lifeText(v)).filter(Boolean) })),
+    meetings: array(raw.meetings).map((m,i)=>({id:lifeText(m?.id,`meeting-${i}`),title:lifeText(m?.title,'家庭例会'),date:lifeText(m?.date),weekOf:lifeText(m?.weekOf),status:['minutes_available','minutes_missing','scheduled'].includes(m?.status)?m.status:'minutes_missing',summary:lifeText(m?.summary),decisions:array(m?.decisions).map(v=>lifeText(v)).filter(Boolean),actions:array(m?.actions).map((a,j)=>({id:lifeText(a?.id,`action-${j}`),title:lifeText(a?.title,'待补行动说明'),status:Object.hasOwn(LIFE_STATUS,a?.status)?a.status:'needs_verification',dueDate:lifeText(a?.dueDate)})),sourceId:lifeText(m?.sourceId)})),
     nextActions: array(raw.nextActions).map(v => lifeText(v) || lifeText(v?.title) || lifeText(v?.summary) || lifeText(v?.action)).filter(Boolean),
     publicScope: lifeText(raw.publicScope, '公开范围说明待补。'),
   };
@@ -85,10 +96,12 @@ function renderCard(data) {
   const sourceLabels = [...new Set(data.sources.map(s => s.label))];
   return `<div class="lo-card-content"><div class="lo-state-row"><span class="lo-badge ${data.status === 'partial' ? 'lo-partial' : ''}">${data.status === 'partial' ? '摘要有缺口' : '已有公开摘要'}</span><span class="lo-freshness lo-${freshness.state}">${esc(freshness.label)}</span></div>
     <p class="lo-summary">${esc(data.summary || '摘要说明待补。')}</p>
+    ${lifeStatusVisual(data.items,{compact:true,id:`lo-${data.id}`})}
     ${metrics.length ? `<dl class="lo-metrics">${metrics.map(m => `<div><dt>${esc(m.label)}</dt><dd>${esc(m.value)}${m.unit ? `<small>${esc(m.unit)}</small>` : ''}</dd>${m.note ? `<p>${esc(m.note)}</p>` : ''}</div>`).join('')}</dl>` : ''}
     <ul class="lo-items">${data.items.length ? data.items.slice(0, 2).map(item => `<li><span class="lo-item-state lo-status-${item.status}">${esc(LIFE_STATUS[item.status])}</span><span>${esc(item.title)}</span></li>`).join('') : '<li class="lo-muted">尚未收录可公开事项。</li>'}</ul>
     <details class="lo-coverage"><summary>来源与缺口</summary><p>${esc(data.coverage.summary)}</p>${data.coverage.gaps.length ? `<ul>${data.coverage.gaps.map(g => `<li>${esc(g)}</li>`).join('')}</ul>` : ''}<ul class="lo-sources">${data.sources.map(s => `<li>${esc(s.label)} · ${esc(lifeDate(s.asOf))}</li>`).join('')}</ul></details>
     <div class="lo-dates"><span>来源截至 <time>${esc(lifeDate(data.sourceAsOf))}</time></span><span>摘要整理 <time>${esc(lifeDate(data.generatedAt))}</time></span></div>
+    <div class="lo-freshness-counts" aria-label="逐来源时间新鲜度">${[['recent','48小时内'],['stale','待更新'],['unknown','日期待补']].map(([key,label])=>`<span class="lo-${key}"><i></i>${label} <b>${data.sources.filter(s=>lifeFreshness(s.asOf).state===key).length}</b></span>`).join('')}</div>
     <p class="lo-card-note">${esc(sourceLabels.length ? `${sourceLabels.length} 项来源 · ${data.cadence}` : `来源待补 · ${data.cadence}`)}${freshness.state === 'stale' ? ' · 超过 48 小时仅提示待更新，不代表采集失败。' : ''}</p></div>`;
 }
 
