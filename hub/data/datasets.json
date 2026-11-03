@@ -48,10 +48,10 @@
       "type": "snapshot",
       "file": "./travel.json",
       "status": "ready",
-      "generatedAt": "2026-10-22T20:15:36+08:00",
-      "records": 133,
-      "bytes": 74161,
-      "sha256": "03f3b46640e918a8fd8c942c2b5c9b73d1e0607c76b31ed14b584cda6bf9ee4d"
+      "generatedAt": "2026-11-04T00:41:34+08:00",
+      "records": 136,
+      "bytes": 105806,
+      "sha256": "efb6db39ab11e4292010d00f37ef728012a5bccbb324c46b00ab1f0b3d31fde8"
     },
     {
       "id": "icloud",
