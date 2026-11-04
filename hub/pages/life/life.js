@@ -1,4 +1,4 @@
-import { LIFE_KINDS, LIFE_STATUS, lifeEscape as esc, lifeText, lifeDate, lifeFreshness, lifeIcon, lifeStatusVisual, loadLifeData } from '../../life-overview.js?v=20261104-visual';
+import { LIFE_KINDS, LIFE_STATUS, lifeEscape as esc, lifeText, lifeDate, lifeFreshness, lifeIcon, lifeStatusVisual, loadLifeData } from '../../life-overview.js?v=20261105-colour';
 
 const root = document.documentElement;
 const kind = new URLSearchParams(location.search).get('kind') || 'family';

@@ -8,7 +8,7 @@ export const LIFE_KINDS = Object.freeze({
 export const LIFE_STATUS = Object.freeze({
   confirmed: '已确认', needs_verification: '待核实', in_progress: '进行中', pending: '待推进', completed: '已完成',
 });
-export const LIFE_STATUS_COLOR = Object.freeze({confirmed:'#527fb0',needs_verification:'#b98b4f',in_progress:'#8870ba',pending:'#9a9eaf',completed:'#4a9484'});
+export const LIFE_STATUS_COLOR = Object.freeze({confirmed:'#4284ed',needs_verification:'#e6a338',in_progress:'#9863ec',pending:'#96a2bb',completed:'#17a889'});
 export const lifeEscape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export const lifeText = (value, fallback = '') => typeof value === 'string' || (typeof value === 'number' && Number.isFinite(value)) ? String(value) : fallback;
 const array = value => Array.isArray(value) ? value : [];
