@@ -1,7 +1,7 @@
 {
   "version": 1,
   "publicationMode": "authorized-public-snapshots",
-  "preparedAt": "2026-11-04T23:40:14+08:00",
+  "preparedAt": "2026-11-05T01:31:47+08:00",
   "datasets": [
     {
       "id": "finance",
@@ -18,10 +18,10 @@
       "type": "ledger",
       "file": "./finance-unified.json",
       "status": "ready",
-      "generatedAt": "2026-11-04T00:50:46+08:00",
-      "records": 19972,
-      "bytes": 28451942,
-      "sha256": "5e47fa8d8953b70dafc3a7d35b9de81f2a93b04bef8afa28ca057e3e7a7f69b9"
+      "generatedAt": "2026-11-05T01:31:47+08:00",
+      "records": 20878,
+      "bytes": 35855390,
+      "sha256": "22c60d2a73d65433c7512deef702d89dcfe07068ca4bd309c4a83077cbb99d25"
     },
     {
       "id": "webank",
