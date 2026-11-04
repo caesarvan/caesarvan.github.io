@@ -38,10 +38,10 @@
       "type": "snapshot",
       "file": "./investment.json",
       "status": "ready",
-      "generatedAt": "2026-11-03T20:03:38+08:00",
-      "records": 5036,
-      "bytes": 1087440,
-      "sha256": "8fed8b4fbd77428f268400136bd8cb189a87cf95df74a575ba1f7f70ea0a1e66"
+      "generatedAt": "2026-11-04T18:01:28+08:00",
+      "records": 5105,
+      "bytes": 1113304,
+      "sha256": "ce34ad942ebf9bd0582e18385469f9af3c16659ae92941348c51c5b39c764220"
     },
     {
       "id": "travel",
