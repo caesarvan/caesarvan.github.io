@@ -84,21 +84,18 @@ function pnlChart(accounts) {
 
 
 function renderHousehold(data,card) {
-  if(data.schemaVersion!=='household-budget/1.0'||data.members?.map(x=>x.name).join('|')!=='樊高一格|黄宇辰'||data.sharedWallet?.contributionRateBps!==5000)throw Error('共同预算资料结构不完整。');
+  if(data.schemaVersion!=='household-budget/1.0'||data.members?.map(x=>x.name).join('|')!=='樊高一格|黄宇辰')throw Error('共同预算资料结构不完整。');
+  const p=data.weeklyDateBudget;
+  if(data.activeBudgetModel!=='weekly_date_budget'||!p||p.weeklyCapCents!==100000||p.monthlyDepositPlanCents!==2000000||p.fourDatesCents!==p.weeklyCapCents*4||p.fiveDatesCents!==p.weeklyCapCents*5)throw Error('每周约会预算资料不完整。');
   const rows=query(data,'monthly').map(r=>({month:r.month,fg:Number.isSafeInteger(r.fgCents)?r.fgCents/100:null,hyc:Number.isSafeInteger(r.hycCents)?r.hycCents/100:null}));
-  const p=data.sharedWallet.proposal;
-  const cents=[p.diningPerDayCents*p.commonDays,p.transportPerReunionCents*p.reunions,p.activityPerTimeCents*p.activities,p.commonConsumablesCents,p.contingencyCents];
-  if(cents.some(v=>!Number.isSafeInteger(v)||v<0)||!Array.isArray(p.reserveRows)||p.reserveRows.some(r=>!Number.isSafeInteger(r.cents)||r.cents<0))throw Error('共同预算金额不完整。');
-  const routine=cents.reduce((a,b)=>a+b,0),reserve=p.reserveRows.reduce((a,b)=>a+b.cents,0);
-  card.querySelector('.ov-body').innerHTML=`<p class="ov-date">用户自报更新 2026-11-04 · 通常合计缴入约20,000元，流水核验与共同消费基线仍待核</p>
-    <div class="ov-metrics">${metric('用户自报合计月缴入',fmt(data.sharedWallet.reportedContributionTotalCents/100),'CNY','通常各约10,000；未独立流水核验')}${metric('共同常规试算',fmt(routine/100),'CNY',`${p.commonDays}个共同日、${p.reunions}次相聚的提案`)}${metric('共同专项预留试算',fmt(reserve/100),'CNY','未来消费准备，不当自由储蓄')}</div>
-    <p class="ov-note"><strong>结论：约20,000元共同缴入，应先定消费与旅行计划，再定可留存金额。</strong>常规试算7,300、专项试算5,000后，尚有约7,700元待扣未覆盖义务与周转金缺口；旅行每月3,000仅备款3.6万元/年。若从零均摊备足既有全年旅行上限10万元，常规加专项需约17,633.33，剩约2,366.67待扣义务。上限不要求花满，两套均为提案，不能称已实现储蓄。</p>
+  card.querySelector('.ov-body').innerHTML=`<p class="ov-date">用户确认计划 2026-11-04 · 共同月缴计划与实际流水分列</p>
+    <div class="ov-metrics">${metric('每月合计缴入计划',fmt(p.monthlyDepositPlanCents/100),'CNY','计划金额；实际缴入待账单核对')}${metric('每周约会总上限',fmt(p.weeklyCapCents/100),'CNY','两人合计，餐饮、活动、交通和购物轮换')}${metric('每月约会额度',`${fmt(p.fourDatesCents/100)} / ${fmt(p.fiveDatesCents/100)}`,'CNY','分别对应4个 / 5个约会周末')}</div>
+    <p class="ov-note"><strong>每周约会合计最多1,000元，没用完的钱留在小荷包。</strong>正餐、活动、下午茶和购物按周轮换，购物预留包含在周上限内。旅行及其他共同用途按已定计划另计；历史结余不自动增加下个月约会额度。每周查看共同花费和余额积累，月底核对实际结余。</p>
     <div class="ov-chart-heading"><h3>双方已记录消费 · 历史参考 · CNY</h3><span class="ov-legend"><i style="--mark:#278774"></i>樊高一格 <i style="--mark:#426fd0"></i>黄宇辰</span></div>
     <div class="ov-chart-area">${lineChart(rows,'month',[{key:'fg',label:'樊高一格',color:'#278774'},{key:'hyc',label:'黄宇辰',color:'#426fd0'}],'双方已记录消费历史，包含个人用途，非小荷包消费基线',{unit:'CNY'})}<div class="ov-tooltip" role="tooltip" hidden></div></div>
-    <p class="ov-note">樊高一格记录截至10/28，黄宇辰截至11/3。历史28,899.20元月均包含个人用途，原4,899.20元比较差额不能作为小荷包储蓄；共同池流水识别及家庭抵销仍未完成。房贷车贷与樊高一格当前月租5,450由樊高一格个人承担；黄宇辰月租3,000仅作成本参考，其至2027年5月租金已由樊高一格在2026年5月预付，覆盖期内当前待付款为0，不重复扣共同池。</p>
-    <p class="ov-note"><strong>租金预付更正：当前月租现金待付合计5,450元。</strong>试行共同安排加当前待付租金为17,750元，距24,000元现金预算尚余6,250元；满额旅行备款口径合计23,083.33元，尚余916.67元，均需再核个人生活、贷款等现金支出。已付租金保留历史付款与按租期成本，不当新增收入或实际储蓄；预付总额与原交易尚未匹配。</p>
+    <p class="ov-note">樊高一格记录截至10/28，黄宇辰截至11/3；家庭内部抵销及共同池流水仍待核。约会预算是上限，月缴是计划，均不代表已实现储蓄。房贷车贷与樊高一格当前月租5,450由樊高一格个人承担；黄宇辰房租已预付至2027年5月，覆盖期内当前待付款为0。</p>
     ${table(['月份','樊高一格 CNY','黄宇辰 CNY'],rows.map(r=>[r.month,fmt(r.fg),fmt(r.hyc)]))}
-    ${sourceDetails('household-budget',data,'此前全部已有财务资料归属樊高一格，本次支付及银行三份归属黄宇辰。用户确认双方各缴税后实收50%、通常各缴约10000元，共同消费使用小荷包。沿用10月19日已记录约定：超过100元评审，黄宇辰15日、樊高一格30日缴入，周转金目标余额5000元（非已核余额或每月支出），共同旅行全年上限100000元（非必须支出）。缴入是内部转账；个人支出移出共同池不会自动减少全家总消费。共同常规、专项与尚未覆盖的共同固定应付分别处理；未知不填零，预留和真实储蓄不重复计。')}`;
+    ${sourceDetails('household-budget',data,'此前已有财务资料归属樊高一格，本次支付及银行三份归属黄宇辰。本轮用户确认每月共同缴入计划20000元、每周两人约会总上限1000元，项目轮换；4/5个约会周末分别4000/5000元，按52个约会周末换算全年52000元和月均4333.33元，月均仅供换算。旧7300及12300为已替代估算，不自动叠加旧专项。既有超过100元评审、15/30日缴入、5000元周转目标存量及旅行全年上限100000元保留。实际缴入、消费和储蓄未核，不以计划差额替代实际结余。')}`;
 }
 
 const FINANCE_MEMBERS_KEY = 'lifeos-finance-members';

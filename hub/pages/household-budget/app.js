@@ -43,6 +43,20 @@ export function sharedWalletModel(wallet,{commonDays=wallet.proposal.commonDays,
   const conditionalRemainderCents=beforeFixedObligationsCents===null||fixedObligationsCents===null?null:sum([beforeFixedObligationsCents,-fixedObligationsCents]);
   return {commonDays,reunions,activities,routineRows,routineCents,reserveCents,contributionMode,fgContributionCents,hycContributionCents,contributionCents,fixedObligationsCents,beforeFixedObligationsCents,conditionalRemainderCents};
 }
+export function weeklyDateBudgetModel(plan,dateCount=4){
+  if(!plan||plan.status!=='user-confirmed-weekly-cap'||!valid(plan.weeklyCapCents)||plan.weeklyCapCents!==100000||!valid(plan.monthlyDepositPlanCents)||plan.monthlyDepositPlanCents!==2000000)throw Error('每周约会规则缺失或无效');
+  if(!valid(dateCount)||![4,5].includes(dateCount))throw Error('本月约会周末数须为4或5');
+  return {dateCount,weeklyCapCents:plan.weeklyCapCents,monthlyDateCapCents:plan.weeklyCapCents*dateCount,monthlyDepositPlanCents:plan.monthlyDepositPlanCents};
+}
+function renderWeeklyDateBudget(){
+  if(!data)return;
+  const plan=data.weeklyDateBudget,m=weeklyDateBudgetModel(plan,Number($('weekly-date-count').value));
+  $('weekly-metrics').innerHTML=metric('小荷包月缴入计划',fmt(m.monthlyDepositPlanCents)+' 元','计划金额，实际缴入待核')+metric('每周约会总上限',fmt(m.weeklyCapCents)+' 元','餐饮、活动、交通、购物在内轮换')+metric('本月约会预算上限',fmt(m.monthlyDateCapCents)+' 元',m.dateCount+'个约会周末，不含另外确定的旅行等支出');
+  $('weekly-month-chart').innerHTML=[4,5].map(count=>'<div class="weekly-bar-row"><span>'+count+'个周末</span><div class="weekly-bar-track"><div class="weekly-bar" style="width:'+count*20+'%" role="img" aria-label="'+count+'个周末，预算上限'+count*1000+'元"></div></div><strong>'+fmt(count*plan.weeklyCapCents)+' 元</strong></div>').join('');
+  $('weekly-rotations').innerHTML=plan.rotationExamples.map(example=>'<article class="weekly-example"><h3>'+esc(example.label)+'</h3>'+table(['项目','两人合计（元）'],example.rows.map(row=>[row.label,fmt(row.cents)]))+'<p class="weekly-total">合计 <strong>'+fmt(example.totalCents)+' 元</strong></p></article>').join('');
+  $('weekly-conclusion').textContent='本月按'+m.dateCount+'个约会周末安排，上限'+fmt(m.monthlyDateCapCents)+'元；每周在1,000元内轮换，不额外叠加购物预留。';
+  $('weekly-annual-scope').textContent=plan.annualizedBasis+'按52个周末换算全年52,000元，月均约4,333.33元；这些是预算换算，不是已发生消费或实际储蓄。';
+}
 export function salaryObservationModel(rows,contributionCents,currentRentCashDueCents){
   const ordered=rows.filter(row=>row.member==='hyc').slice().sort((a,b)=>a.date.localeCompare(b.date)),recent=ordered.slice(-3);
   const recentMeanCents=recent.length===3&&recent.every(row=>valid(row.cents))?Math.round(sum(recent.map(row=>row.cents))/3):null;
@@ -66,6 +80,13 @@ export function validateSnapshot(next){
   require(timestamp(next.generatedAt),'生成时间');
   require(Array.isArray(next.members)&&next.members.length===2&&next.members[0]?.id==='fg'&&next.members[0]?.name==='樊高一格'&&next.members[1]?.id==='hyc'&&next.members[1]?.name==='黄宇辰','成员');
   const context=next.context;require(context?.currency==='CNY','仅支持人民币整数分');
+  require(next.activeBudgetModel==='weekly_date_budget','现行预算模型');
+  const weekly=next.weeklyDateBudget;weeklyDateBudgetModel(weekly);
+  require(weekly.fourDatesCents===400000&&weekly.fiveDatesCents===500000&&weekly.annual52DatesCents===5200000&&weekly.monthlyAnnualizedCents===433333&&weekly.annualRoundingRemainderCents===4,'周月年预算换算');
+  require(weekly.monthlyDepositStatus==='user-selected-plan-not-verified-actual'&&weekly.actualDateSpendingCents===null&&weekly.actualMonthlySavingsCents===null,'计划与实际分列');
+  require(weekly.shoppingIncludedWithinWeeklyCap===true&&weekly.rotationRequired===true&&Array.isArray(weekly.rotationExamples)&&weekly.rotationExamples.length===3,'周预算范围与轮换');
+  const rotationIds=new Set();for(const example of weekly.rotationExamples){require(['dining','activity','shopping'].includes(example.id)&&!rotationIds.has(example.id)&&text(example.label)&&Array.isArray(example.rows)&&example.rows.length===4,'轮换组合');rotationIds.add(example.id);for(const row of example.rows)require(text(row.label)&&valid(row.cents)&&row.cents>=0,'轮换项目金额');require(example.totalCents===sum(example.rows.map(row=>row.cents))&&example.totalCents<=weekly.weeklyCapCents,'轮换合计须在周上限内');}
+
   require(valid(context.baselineMonthlyCents)&&context.baselineMonthlyCents>0,'月均基线');
   require(monthValid(context.comparisonStart)&&monthValid(context.comparisonEnd)&&context.comparisonStart<=context.comparisonEnd,'基线期间');
   require(calendarDate(context.analysisDate)&&calendarDate(context.ownershipConfirmedAt)&&typeof context.householdReconciliationComplete==='boolean','分析日期与核对状态');
@@ -175,7 +196,7 @@ function renderSharedWallet(){
   try{
     const wallet=data.sharedWallet,mode=$('contribution-mode').value;$('income-verification').hidden=mode!=='income';
     const m=sharedWalletModel(wallet,{commonDays:$('common-days').value===''?NaN:Number($('common-days').value),reunions:$('reunions').value===''?NaN:Number($('reunions').value),fgIncomeCents:mode==='income'?inputCents($('fg-income').value):null,hycIncomeCents:mode==='income'?inputCents($('hyc-income').value):null,fixedObligationsCents:inputCents($('shared-fixed').value),contributionMode:mode});
-    $('wallet-metrics').innerHTML=metric('共同常规试算',fmt(m.routineCents)+' 元／月',m.commonDays+'个共同日、'+m.reunions+'次团聚')+metric('共同专项预留提案',fmt(m.reserveCents)+' 元／月','属于专项资金安排，不能重复扣款')+metric('尚未覆盖的共担固定义务 F',valid(m.fixedObligationsCents)?fmt(m.fixedObligationsCents)+' 元／月':'待核','空白为未知；明确输入0才按0计算');
+    $('wallet-metrics').innerHTML=metric('旧共同常规试算',fmt(m.routineCents)+' 元／月',m.commonDays+'个共同日、'+m.reunions+'次团聚')+metric('旧共同专项预留提案',fmt(m.reserveCents)+' 元／月','属于专项资金安排，不能重复扣款')+metric('尚未覆盖的共担固定义务 F',valid(m.fixedObligationsCents)?fmt(m.fixedObligationsCents)+' 元／月':'待核','空白为未知；明确输入0才按0计算');
     $('wallet-breakdown').innerHTML=table(['共同常规项目（提案）','数量','单价（元）','月试算（元）'],m.routineRows.map(r=>[r.label,r.count+r.unit,fmt(r.unitCents),fmt(r.cents)]));
     $('wallet-reserves').innerHTML=table(['共同专项预留（提案）','月预留（元）'],wallet.proposal.reserveRows.map(r=>[r.label,fmt(r.cents)]));
     const reported=m.contributionMode==='reported',approx=reported?'约 ':'',basis=reported?'用户自报通常月缴入；流水未核':'本人税后实收 × 50%，按分舍入';
@@ -212,7 +233,7 @@ function renderSharedWallet(){
 }
 function renderSupporting(){
   const rows=data.queries.management.rows;$('management').innerHTML=table(['项目','已记录信息','处理'],rows.map(r=>[r.label,r.value,r.note]));
-  $('sources').innerHTML='<p>此前全部已有资料归属樊高一格；新增三份支付及银行资料归属黄宇辰，依据2026年11月4日用户明确确认。</p>'+table(['来源','数据截止','覆盖说明'],data.sources.map(r=>[r.label,r.asOf,r.coverage]))+'<p class="note">金额以整数分计算。消费、退款、还款、资金转移及投资分别处理；未把中行付款重复加入支付渠道消费。来源缺失不填零，不跨币种或不同时点拼成当前总资产。预算和储蓄为待讨论情景。</p>';
+  $('sources').innerHTML='<p>此前全部已有资料归属樊高一格；新增三份支付及银行资料归属黄宇辰，依据2026年11月4日用户明确确认。</p>'+table(['来源','数据截止','覆盖说明'],data.sources.map(r=>[r.label,r.asOf,r.coverage]))+'<p class="note">金额以整数分计算。消费、退款、还款、资金转移及投资分别处理；未把中行付款重复加入支付渠道消费。来源缺失不填零，不跨币种或不同时点拼成当前总资产。每周约会上限已确认，轮换组合与历史情景仅作参考。</p>';
 }
 function renderIncomeUtilities(){
   const salary=data.queries.observed_salary,wallet=data.sharedWallet,observed=salaryObservationModel(salary.rows,wallet.reportedMonthlyContributions.find(row=>row.member==='hyc').cents,wallet.personalMonthlyRentCashDueCents.hyc);
@@ -235,11 +256,12 @@ export async function load(){
     $('baseline').textContent=fmt(data.context.baselineMonthlyCents);
     $('budget-table').innerHTML=table(['消费方案（提案）','月上限（元）','较基线少支出／月（元）','持续12个月差额（元）'],data.queries.budgets.rows.map(r=>[r.label,fmt(r.budgetCents),fmt(r.differenceCents),fmt(r.differenceCents*12)]));
     $('common-days').value=data.sharedWallet.proposal.commonDays;$('reunions').value=data.sharedWallet.proposal.reunions;$('fg-income').value='';$('hyc-income').value='';$('shared-fixed').value=data.sharedWallet.sharedFixedObligationsCents===null?'':cellAmount(data.sharedWallet.sharedFixedObligationsCents);const hasReported=Array.isArray(data.sharedWallet.reportedMonthlyContributions);$('contribution-mode').innerHTML='<option value="reported"'+(hasReported?'':' disabled')+'>用户自报通常缴入（约数）</option><option value="income">按税后实收50%核验</option>';$('contribution-mode').value=hasReported?'reported':'income';
-    renderSharedWallet();renderIncomeUtilities();renderMonthly();renderCategories();renderBudget();renderSupporting();$('status').hidden=true;$('analysis').hidden=false;
+    renderWeeklyDateBudget();renderSharedWallet();renderIncomeUtilities();renderMonthly();renderCategories();renderBudget();renderSupporting();$('status').hidden=true;$('analysis').hidden=false;
   }catch(e){if(sequence!==loadSequence)return;data=undefined;monthly=[];currentMonthly=null;$('export-monthly').disabled=true;$('analysis').hidden=true;$('status').hidden=false;$('status').textContent='数据读取失败，暂不显示分析。'+e.message+'，请点击重读快照。';}
   finally{clearTimeout(timer);if(sequence===loadSequence){$('analysis').setAttribute('aria-busy','false');loadController=null;}}
 }
 for(const id of ['member','start','end'])$(id).addEventListener('change',renderMonthly);
+$('weekly-date-count').addEventListener('change',renderWeeklyDateBudget);
 $('category-member').addEventListener('change',renderCategories);$('budget').addEventListener('input',renderBudget);for(const id of ['fg-income','hyc-income','shared-fixed','common-days','reunions'])$(id).addEventListener('input',renderSharedWallet);
 $('contribution-mode').addEventListener('change',renderSharedWallet);
 $('wallet-reset').addEventListener('click',()=>{if(!data)return;$('common-days').value=data.sharedWallet.proposal.commonDays;$('reunions').value=data.sharedWallet.proposal.reunions;renderSharedWallet();});

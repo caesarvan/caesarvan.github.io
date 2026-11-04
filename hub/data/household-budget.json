@@ -1,7 +1,7 @@
 {
   "schemaVersion": "household-budget/1.0",
   "id": "household-budget",
-  "generatedAt": "2026-11-04T15:00:43+08:00",
+  "generatedAt": "2026-11-04T23:40:14+08:00",
   "members": [
     {
       "id": "fg",
@@ -77,6 +77,12 @@
       "label": "用户确认的黄宇辰房租预付更正",
       "asOf": "2026-11-04",
       "coverage": "樊高一格2026年5月已代付，覆盖至2027年5月；当前待付款剔除3000/月；总额、起始账期及原交易未核，不重复新增历史支出"
+    },
+    {
+      "id": "weekly-date-budget-confirmation",
+      "label": "用户确认每周约会总额1000元及项目轮换",
+      "asOf": "2026-11-04",
+      "coverage": "月合计存入20000元为用户选择的计划，周约会1000元为上限；实际缴入、共同消费和储蓄尚未流水核验；三套轮换组合为示例。"
     }
   ],
   "queries": {
@@ -714,7 +720,8 @@
     "旧双方消费总额提案中，6000元计划性大额预留已含在24000消费安排，不是可自由储蓄。",
     "当前筹资与共同消费分别规划；旧全量消费月均不是小荷包支出基线，旧控制差额不是小荷包储蓄。",
     "个人用途在个人账户范围内安排；共同用途不由支付日期或付款人自动确定。",
-    "7300元共同常规及5000元专项是可调整示例，不是已核刚需或已批准预算。"
+    "7300元共同常规及5000元专项是可调整示例，不是已核刚需或已批准预算。",
+    "现行约会预算按每周1000元总上限执行，4个约会周末4000、5个5000；餐饮/活动/购物轮换，旧7300和12300提案仅保留历史参考，不与现行上限叠加。"
   ],
   "sharedWallet": {
     "contributionRateBps": 5000,
@@ -745,7 +752,7 @@
           "cents": 100000
         }
       ],
-      "status": "new-trial-proposal-not-approved"
+      "status": "superseded-by-user-confirmed-weekly-cap"
     },
     "scope": "共同活动、共同采购和共同旅行按共同用途安排；个人住房、水电、家电、清洁及单独旅行个人承担；历史共同消费尚未完整识别",
     "fixedObligationsDefinition": "常规与专项尚未覆盖、双方约定共同承担的固定应付与承诺；不重复扣已有预留",
@@ -835,5 +842,108 @@
     },
     "rentReferenceDefinition": "5450与3000为此前自报月租参考成本；黄宇辰覆盖期内租金已预付，当前月待付款0；预付总额与精确起止日未核"
   },
-  "activeBudgetModel": "shared_wallet"
+  "activeBudgetModel": "weekly_date_budget",
+  "weeklyDateBudget": {
+    "status": "user-confirmed-weekly-cap",
+    "confirmedAt": "2026-11-04T23:40:14+08:00",
+    "weeklyCapCents": 100000,
+    "monthlyDepositPlanCents": 2000000,
+    "monthlyDepositStatus": "user-selected-plan-not-verified-actual",
+    "fourDatesCents": 400000,
+    "fiveDatesCents": 500000,
+    "annual52DatesCents": 5200000,
+    "monthlyAnnualizedCents": 433333,
+    "annualRoundingRemainderCents": 4,
+    "annualizedBasis": "52个约会周末的换算示例；每月按实际约会周末数，不固定每月4周；月均按分舍入，12期合计差4分。",
+    "included": [
+      "周末共同餐饮",
+      "约会活动",
+      "下午茶",
+      "往返过路费与充电费",
+      "该周购物预留"
+    ],
+    "shoppingIncludedWithinWeeklyCap": true,
+    "rotationRequired": true,
+    "rotationExamplesStatus": "illustrative-options-not-approved-category-quotas",
+    "rotationExamples": [
+      {
+        "id": "dining",
+        "label": "餐饮周",
+        "rows": [
+          {
+            "label": "2顿正餐（150元/人）",
+            "cents": 60000
+          },
+          {
+            "label": "2顿简餐（50元/人）",
+            "cents": 20000
+          },
+          {
+            "label": "1顿下午茶（50元/人）",
+            "cents": 10000
+          },
+          {
+            "label": "交通",
+            "cents": 10000
+          }
+        ],
+        "totalCents": 100000
+      },
+      {
+        "id": "activity",
+        "label": "活动周",
+        "rows": [
+          {
+            "label": "4顿简餐（50元/人）",
+            "cents": 40000
+          },
+          {
+            "label": "约会活动（200元/人）",
+            "cents": 40000
+          },
+          {
+            "label": "1顿下午茶（50元/人）",
+            "cents": 10000
+          },
+          {
+            "label": "交通",
+            "cents": 10000
+          }
+        ],
+        "totalCents": 100000
+      },
+      {
+        "id": "shopping",
+        "label": "购物周",
+        "rows": [
+          {
+            "label": "1顿正餐（150元/人）",
+            "cents": 30000
+          },
+          {
+            "label": "3顿简餐（50元/人）",
+            "cents": 30000
+          },
+          {
+            "label": "交通",
+            "cents": 10000
+          },
+          {
+            "label": "购物预留",
+            "cents": 25000
+          }
+        ],
+        "totalCents": 95000
+      }
+    ],
+    "scope": "每周整个周末两人约会合计上限1000元，餐饮、活动、交通和购物在总额内轮换；购物250元包含在购物周总额内，不额外叠加。",
+    "otherSharedSpending": "旅行及其他共同支出按已确定计划另行安排；本次不自动叠加旧3000元旅行或2000元其他专项提案。",
+    "carryoverRule": "未用完的共同资金留存；以前结余不自动增加下一周约会额度。",
+    "actualDateSpendingCents": null,
+    "actualMonthlySavingsCents": null,
+    "supersedes": [
+      "共同常规7300元/月提案",
+      "共同安排12300元/月提案"
+    ]
+  }
 }

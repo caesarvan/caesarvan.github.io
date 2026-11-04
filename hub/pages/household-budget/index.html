@@ -11,17 +11,32 @@
   <a class="skip" href="#main">跳到分析</a>
   <header data-life-hub-global><a href="../../#/home">Life OS</a><span>共同预算与历史消费</span><a href="../../#/finance">按成员看财务 ↗</a></header>
   <main id="main">
-    <div class="title-row"><div><h1>共同预算先安排共同用途</h1><p>樊高一格 · 黄宇辰 · 小荷包</p></div><button id="reload" type="button">重读快照</button></div>
+    <div class="title-row"><div><h1>每周约会预算1,000元</h1><p>樊高一格 · 黄宇辰 · 小荷包</p></div><button id="reload" type="button">重读快照</button></div>
     <p id="data-date" class="muted"></p>
     <div id="status" role="status" aria-live="polite">正在读取已发布数据…</div>
     <div id="analysis" hidden>
+      <section class="weekly-budget" aria-labelledby="weekly-title">
+        <div class="section-head"><h2 id="weekly-title">约会项目轮换，每周合计不超过1,000元</h2><span class="tag">用户已确认</span></div>
+        <p>每月小荷包合计计划存入20,000元，共同消费从里面支付，没用完的留存。</p>
+        <div id="weekly-metrics" class="metrics"></div>
+        <div class="weekly-controls"><label>本月约会周末数<select id="weekly-date-count"><option value="4">4个周末</option><option value="5">5个周末</option></select></label></div>
+        <div id="weekly-month-chart" class="weekly-month-chart" aria-label="4个与5个约会周末预算对比"></div>
+        <h3>同一周末两天，三套轮换示例</h3>
+        <p class="note">下面每套均覆盖同一周末两天的4顿餐，两人合计。示例可调整，选择一种即可。</p>
+        <div id="weekly-rotations" class="weekly-rotations"></div>
+        <p id="weekly-conclusion" class="conclusion" aria-live="polite"></p>
+        <p class="note">旅行及其他共同支出按已确定计划另行安排；实际花费、余额与储蓄仍待流水核对。</p>
+        <details><summary>沿用的约定与个人住房安排</summary><p>既有100元支出评审、15日/30日缴入及5,000元周转金余额目标继续保留。房贷、车贷和樊高一格个人房租另留足；黄宇辰至2027年5月房租已由樊高一格预付，当前不重复扣租金。</p><p id="weekly-annual-scope" class="note"></p></details>
+      </section>
+      <details id="superseded-wallet" class="superseded-wallet"><summary>已替代的7,300元／12,300元旧提案与计算参考</summary>
+      <p class="note">本折叠区保留历史讨论过程。现行规则见上方每周1,000元约会总上限，以下旧常规与专项均不自动叠加。</p>
       <section class="shared-wallet" aria-labelledby="wallet-title">
-        <div class="section-head"><h2 id="wallet-title">共同预算：按通常缴入安排共同用途</h2><span class="tag">缴入为用户自报 · 支出金额提案</span></div>
+        <div class="section-head"><h2 id="wallet-title">旧提案：常规与专项试算（已替代）</h2><span class="tag">历史提案 · 非现行约会预算</span></div>
         <p>双方按税后实收各缴50%的规则安排共同池。默认先使用用户自报的通常月缴入，不把近似缴入视为流水已核。共同用途从小荷包支出；个人50%还需承担个人生活与个人义务，不能全部视为可自由花费。</p>
         <p id="rent-prepayment-note" class="rent-prepayment note"></p>
         <div id="prior-agreements" class="prior-agreements"></div><p id="prior-travel-scope" class="note"></p>
         <div class="wallet-controls"><label>共同日数<input id="common-days" type="number" min="0" max="31" step="1" value="8" inputmode="numeric"></label><label>团聚次数<input id="reunions" type="number" min="0" max="31" step="1" value="4" inputmode="numeric"></label><button id="wallet-reset" type="button">恢复来源提案</button></div>
-        <p class="note">以下为新增预算试算：按共同日数测算共同餐饮，按团聚次数测算共同交通；每次团聚暂按1次共同活动。单价、机动及专项分配均为待讨论提案，不能覆盖既有评审门槛、缴入日期、周转金目标与旅行上限。</p>
+        <p class="note">以下为已替代的历史预算试算：按共同日数测算共同餐饮，按团聚次数测算共同交通；每次团聚暂按1次共同活动。单价、机动及专项分配均为待讨论提案，不能覆盖现行每周约会上限及既有评审门槛、缴入日期、周转金目标与旅行上限。</p>
         <div id="wallet-metrics" class="metrics"></div>
         <div class="wallet-tables"><div id="wallet-breakdown" class="table-wrap"></div><div id="wallet-reserves" class="table-wrap"></div></div>
         <p class="note">专项预留按用途留存，发生支付时从对应专项余额扣减。共同旅行、大件与已约定共担年度费用不得在F中再扣一次；个人自由支出不从共同池另设额度。</p>
@@ -42,6 +57,8 @@
         <details><summary>个人月租参考成本与当前现金应付：分列核对</summary><div id="personal-costs" class="table-wrap"></div><p id="personal-obligation-scope" class="note"></p></details>
         <details><summary>已确认规则与实际金额缺口</summary><div id="wallet-actual" class="table-wrap"></div><p id="wallet-scope" class="note"></p></details>
       </section>
+      </details>
+      <details class="personal-reference"><summary>工资入账、水电与个人现金参考</summary>
       <section class="personal-evidence" aria-labelledby="income-evidence-title">
         <div class="section-head"><h2 id="income-evidence-title">工资入账与个人水电：已观察金额和缺口</h2><span class="tag">工资条与完整月账仍缺</span></div>
         <div id="salary-metrics" class="metrics"></div><div id="salary-table" class="table-wrap"></div><p id="salary-scope" class="note"></p>
@@ -51,7 +68,8 @@
         <h3>工资与大额公共服务的解释</h3><div id="income-utilities-insights" class="table-wrap"></div>
         <p class="note">公共服务中的缴税用于解释历史峰值，不是水电或经常生活费，也不认定为当前工资预扣税。扣缴入与当前房租现金应付后的工资观察余量仍需个人水电、工作餐、通勤和其他生活费；不能直接称为自由储蓄。房租已预付只改变当前重复付款需求，不使按期租赁成本或5月历史现金支出消失。</p>
       </section>
-      <section aria-labelledby="decision-title"><h2 id="decision-title">本次需要共同确认的事项</h2><ol class="decisions"><li><strong>共同范围：</strong>按最终共同受益归属识别消费，个人支出由各自个人部分承担。</li><li><strong>常规与专项：</strong>讨论共同日数、团聚次数、单价、机动与专项留存；核清F，避免重复扣款。</li><li><strong>实际留存：</strong>收入到账后核对各自50%缴入，月末核对共同支出、专项余额与实际小荷包余额。</li><li><strong>分工提案：</strong>樊高一格核对总账与预算，黄宇辰补类别和用途；双方共同复盘，调整金额需共同确认。</li></ol><p class="conclusion">先核实缴入与共同义务，再确定可执行的共同预算；条件余量要靠实际留存验证。</p></section>
+      </details>
+      <section aria-labelledby="decision-title"><h2 id="decision-title">每周只看两件事</h2><ol class="decisions"><li>本周共同约会实际花了多少，是否在1,000元内。</li><li>本月共同支出后，小荷包实际积累了多少。</li></ol><p class="conclusion">没用完的留存，结余不自动变成下周可多花的额度。</p></section>
       <details id="history-reference" class="history-reference"><summary>历史全量消费参考：含个人与共同用途，不能当共同池基线</summary>
       <p class="note">以下保留双方原记录的月度与分类分析，尚未完成小荷包交易识别和家庭抵销。历史28,899.20元月均不能作为共同预算基线，历史差额也不能当小荷包储蓄。</p>
       <section aria-labelledby="monthly-title">
