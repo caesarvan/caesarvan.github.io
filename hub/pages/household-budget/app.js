@@ -43,10 +43,10 @@ export function sharedWalletModel(wallet,{commonDays=wallet.proposal.commonDays,
   const conditionalRemainderCents=beforeFixedObligationsCents===null||fixedObligationsCents===null?null:sum([beforeFixedObligationsCents,-fixedObligationsCents]);
   return {commonDays,reunions,activities,routineRows,routineCents,reserveCents,contributionMode,fgContributionCents,hycContributionCents,contributionCents,fixedObligationsCents,beforeFixedObligationsCents,conditionalRemainderCents};
 }
-export function salaryObservationModel(rows,contributionCents,rentCents){
+export function salaryObservationModel(rows,contributionCents,currentRentCashDueCents){
   const ordered=rows.filter(row=>row.member==='hyc').slice().sort((a,b)=>a.date.localeCompare(b.date)),recent=ordered.slice(-3);
   const recentMeanCents=recent.length===3&&recent.every(row=>valid(row.cents))?Math.round(sum(recent.map(row=>row.cents))/3):null;
-  const afterContributionRentCents=recentMeanCents===null||!valid(contributionCents)||!valid(rentCents)?null:sum([recentMeanCents,-contributionCents,-rentCents]);
+  const afterContributionRentCents=recentMeanCents===null||!valid(contributionCents)||!valid(currentRentCashDueCents)?null:sum([recentMeanCents,-contributionCents,-currentRentCashDueCents]);
   return {ordered,recent,recentMeanCents,afterContributionRentCents};
 }
 export function travelFundingModel(wallet,commonModel){
@@ -55,8 +55,8 @@ export function travelFundingModel(wallet,commonModel){
 export function workingCapitalGap(wallet){return valid(wallet.currentBalanceCents)?Math.max(0,wallet.priorAgreements.workingCapitalTargetCents-wallet.currentBalanceCents):null;}
 export function familyBudgetConstraintModel(wallet,scenarios,budgetCents=2400000){
   if(!valid(budgetCents)||budgetCents<0)throw Error('家庭预算对照金额无效');
-  const rentCents=sum([wallet.personalMonthlyRentCents.fg,wallet.personalMonthlyRentCents.hyc]);
-  return scenarios.map(row=>{const listedAllocationCents=sum([rentCents,row.totalAllocationCents]);return {id:row.id,label:row.label,rentCents,commonAllocationCents:row.totalAllocationCents,listedAllocationCents,budgetCents,differenceCents:sum([budgetCents,-listedAllocationCents])};});
+  const rentCents=sum([wallet.personalMonthlyRentCashDueCents.fg,wallet.personalMonthlyRentCashDueCents.hyc]),referenceRentCents=sum([wallet.personalMonthlyRentCents.fg,wallet.personalMonthlyRentCents.hyc]);
+  return scenarios.map(row=>{const listedAllocationCents=sum([rentCents,row.totalAllocationCents]);return {id:row.id,label:row.label,rentCents,referenceRentCents,commonAllocationCents:row.totalAllocationCents,listedAllocationCents,budgetCents,differenceCents:sum([budgetCents,-listedAllocationCents])};});
 }
 export function validateSnapshot(next){
   const require=(condition,label)=>{if(!condition)throw Error('快照校验失败：'+label);};
@@ -97,6 +97,8 @@ export function validateSnapshot(next){
     require(valid(wallet.reportedContributionTotalCents)&&sum(wallet.reportedMonthlyContributions.map(r=>r.cents))===wallet.reportedContributionTotalCents,'用户自报缴入合计');
   }
   if(wallet.personalMonthlyRentCents!==undefined){require(wallet.personalMonthlyRentCents&&['fg','hyc'].every(member=>valid(wallet.personalMonthlyRentCents[member])&&wallet.personalMonthlyRentCents[member]>=0),'各自个人房租');sum(Object.values(wallet.personalMonthlyRentCents));}
+  require(wallet.personalMonthlyRentCashDueCents&&['fg','hyc'].every(member=>valid(wallet.personalMonthlyRentCashDueCents[member])&&wallet.personalMonthlyRentCashDueCents[member]>=0),'当前个人房租现金应付须显性提供，不能缺失填0');
+  const prepay=wallet.rentPrepayment;require(prepay&&prepay.beneficiary==='hyc'&&prepay.payer==='fg'&&prepay.evidence==='user_confirmed'&&monthValid(prepay.paymentMonth)&&monthValid(prepay.coverageThroughMonth)&&typeof prepay.transactionMatched==='boolean','房租预付用户确认与覆盖截止');require(prepay.amountCents===null||(valid(prepay.amountCents)&&prepay.amountCents>=0),'预付金额须为整数分或未知');require(prepay.coverageStartMonth===null||(monthValid(prepay.coverageStartMonth)&&prepay.coverageStartMonth<=prepay.coverageThroughMonth),'预付覆盖起月');if(wallet.personalMonthlyRentCashDueCents.hyc===0)require(context.analysisDate.slice(0,7)>=prepay.paymentMonth&&context.analysisDate.slice(0,7)<=prepay.coverageThroughMonth,'当前0应付须在已确认预付期间内');
   if(wallet.reportedGrossSalaryCents!==undefined)for(const [member,cents] of Object.entries(wallet.reportedGrossSalaryCents))require(['fg','hyc'].includes(member)&&valid(cents)&&cents>=0,'用户自报税前工资');
   if(wallet.obligationScope!==undefined)require(text(wallet.obligationScope),'个人与共同义务归属');
   if(wallet.priorAgreements!==undefined){const prior=wallet.priorAgreements;require(prior&&prior.status==='prior-recorded-agreement'&&calendarDate(prior.sourceDate),'既有共同约定来源');for(const key of ['reviewThresholdCents','workingCapitalTargetCents','annualTravelBudgetCapCents'])require(valid(prior[key])&&prior[key]>=0,'既有共同约定金额');for(const key of ['hycContributionDay','fgContributionDay'])require(valid(prior[key])&&prior[key]>=1&&prior[key]<=31,'既有缴入日');}
@@ -106,7 +108,7 @@ export function validateSnapshot(next){
   const salaries=rows('observed_salary');require(next.queries.observed_salary.status==='bank-credits-not-payroll-components'&&text(next.queries.observed_salary.note),'工资观察口径');const salaryKeys=new Set();for(const row of salaries){require(['fg','hyc'].includes(row.member)&&calendarDate(row.date)&&(row.cents===null||(valid(row.cents)&&row.cents>=0)),'工资观察字段');const key=row.member+'|'+row.date;require(!salaryKeys.has(key),'工资观察重复');salaryKeys.add(key);}
   const utilities=rows('utilities_review');require(next.queries.utilities_review.status==='identified-payments-not-complete-monthly-bills','水电观察口径');const utilityKeys=new Set();for(const row of utilities){require(['fg','hyc'].includes(row.member)&&text(row.category)&&text(row.note)&&(row.count===null||(valid(row.count)&&row.count>=0))&&(row.cents===null||(valid(row.cents)&&row.cents>=0)),'水电金额或笔数');const key=row.member+'|'+row.category;require(!utilityKeys.has(key),'水电类别重复');utilityKeys.add(key);}
   const insights=rows('income_utilities_insights');require(next.queries.income_utilities_insights.status==='source-backed-with-explicit-gaps','收入水电结论口径');for(const row of insights)require(text(row.label)&&text(row.note)&&(row.cents===null||valid(row.cents)),'收入水电结论字段');
-  const observed=salaryObservationModel(salaries,wallet.reportedMonthlyContributions?.find(row=>row.member==='hyc')?.cents,wallet.personalMonthlyRentCents?.hyc);for(const [label,value] of [['黄宇辰近三笔工资入账均值',observed.recentMeanCents],['扣自报月缴入及房租后的观察均值',observed.afterContributionRentCents]]){const row=insights.find(row=>row.label===label);require(row&&row.cents===value,'工资观察均值或个人余量不一致');}
+  const observed=salaryObservationModel(salaries,wallet.reportedMonthlyContributions?.find(row=>row.member==='hyc')?.cents,wallet.personalMonthlyRentCashDueCents.hyc),meanInsight=insights.find(row=>row.label==='黄宇辰近三笔工资入账均值'),cashInsight=insights.find(row=>row.label.startsWith('扣自报月缴入')&&row.label.endsWith('观察均值'));require(meanInsight&&meanInsight.cents===observed.recentMeanCents&&cashInsight&&cashInsight.cents===observed.afterContributionRentCents,'工资观察均值或当前现金余量不一致');
   return next;
 }
 export function monthlyModel(rows,member,start,end){
@@ -186,11 +188,13 @@ function renderSharedWallet(){
     $('wallet-actual').innerHTML=table(['小荷包信息','金额（元）','依据与状态'],facts.map(([label,cents,note])=>[label,valid(cents)?fmt(cents):'待核',note]));
     $('wallet-scope').textContent=wallet.scope+'。用户自报与流水核验分列，实际信息不由历史消费、资产或输入情景反推。';
     const rent=wallet.personalMonthlyRentCents,personal=[];
-    if(rent){personal.push(['樊高一格个人月租',fmt(rent.fg)+' 元','用户自报；个人承担，不扣共同池'],['黄宇辰个人月租',fmt(rent.hyc)+' 元','用户自报；个人承担，不扣共同池'],['双方个人月租合计',fmt(sum([rent.fg,rent.hyc]))+' 元','个人成本参考，不自动扣入共同预算']);}
+    if(rent){personal.push(['樊高一格月租合同／参考成本',fmt(rent.fg)+' 元','成本参考，与当前现金应付分列'],['黄宇辰月租合同／参考成本',fmt(rent.hyc)+' 元','参考成本保留；不能再按月重复扣已预付现金'],['双方月租参考成本合计',fmt(sum([rent.fg,rent.hyc]))+' 元','非当前现金应付合计，不自动扣入共同池']);}
+    const cashRent=wallet.personalMonthlyRentCashDueCents,prepay=wallet.rentPrepayment;personal.push(['樊高一格当前房租现金应付',fmt(cashRent.fg)+' 元','当前现金安排参考；个人住房不扣共同池'],['黄宇辰当前房租现金应付',fmt(cashRent.hyc)+' 元','用户确认樊高一格已预付；0不是缺失补值'],['当前房租现金应付合计',fmt(sum([cashRent.fg,cashRent.hyc]))+' 元','用于当前现金预算对照，不代表租赁成本消失']);
     for(const [member,cents] of Object.entries(wallet.reportedGrossSalaryCents||{}))personal.push([memberName(member)+'自报税前月薪',fmt(cents)+' 元','税前口径；不能作为实发或由缴入反推净薪']);
     $('personal-costs').innerHTML=personal.length?table(['个人成本与收入参考','用户自报金额','口径'],personal):'<p class="note">个人成本参考资料待补。</p>';
+    $('rent-prepayment-note').textContent='用户确认：樊高一格已于'+prepay.paymentMonth+'为黄宇辰预付房租，覆盖至'+prepay.coverageThroughMonth+'；覆盖起月'+(prepay.coverageStartMonth===null?'待核':prepay.coverageStartMonth)+'，预付总额'+(prepay.amountCents===null?'待核':fmt(prepay.amountCents)+'元')+'，'+(prepay.transactionMatched?'来源标记已匹配流水':'尚未匹配具体流水')+'。当前黄宇辰现金应付按0处理，月租参考成本仍保留。预付现金发生在5月，按期租赁成本仍可存在；不能因此称全年租金消失、增加收入；不认定黄宇辰欠款。';
     const prior=wallet.priorAgreements;
-    $('personal-obligation-scope').textContent=prior?'按'+prior.sourceDate+'既有约定，个人住房、水电、家电、清洁及个人单独旅行由个人承担。房贷车贷由樊高一格个人承担，房租各自承担，不在共同池重复扣除；例外共同承担事项需另行确认。':(wallet.obligationScope||'个人与共同义务范围待核')+'。个人贷款和各自房租不在共同池重复扣除；未明确共同承担的项目不自动计入F。';
+    $('personal-obligation-scope').textContent=prior?'按'+prior.sourceDate+'既有约定，个人住房、水电、家电、清洁及个人单独旅行属个人范围。房贷车贷由樊高一格个人承担；黄宇辰房租按最新用户确认已由樊高一格预付，不在当前共同池或个人现金预算重复扣除。代付不自动形成双方债务；其他例外需共同确认。':(wallet.obligationScope||'个人与共同义务范围待核')+'。个人贷款和已预付房租不在共同池重复扣除；未明确共同承担的项目不自动计入F。';
     if(prior){
       $('prior-agreements').innerHTML='<h3>'+esc(prior.sourceDate)+'已记录的共同约定</h3>'+table(['既有约定','沿用规则'],[['共同范围','共同活动、共同采购与双方共同旅行；个人单独旅行不属共同'],['个人承担','个人住房、水电、家电、清洁由个人承担'],['支出评审门槛','不超过'+fmt(prior.reviewThresholdCents)+'元默认可付；超过须评审'],['共同池缴入日','黄宇辰每月'+prior.hycContributionDay+'日；樊高一格每月'+prior.fgContributionDay+'日'],['周转金余额目标',fmt(prior.workingCapitalTargetCents)+'元：目标存量，不是已存余额或每月另扣支出'],['双方共同旅行全年上限',fmt(prior.annualTravelBudgetCapCents)+'元：支出上限，不等于必须花满']]);
       const travel=wallet.proposal.reserveRows.find(r=>/旅行/.test(r.label)),fullCapMonthly=Math.round(prior.annualTravelBudgetCapCents/12);
@@ -202,8 +206,8 @@ function renderSharedWallet(){
     const gap=workingCapitalGap(wallet);
     $('working-capital-result').textContent=gap===null?'先核周转金：目标'+fmt(prior.workingCapitalTargetCents)+'元，当前余额未核，缺口仍未知。先核余额并补足周转金缺口，再讨论未分配余量；上述两套条件空间都不能整笔称为自由储蓄。':gap>0?'周转金目标尚差'+fmt(gap)+'元。应优先用扣F后的条件余量补足缺口；目标是存量，不是每月重复扣款。':'已核余额达到周转金目标；是否形成储蓄仍需核对实际缴入、支出、专项与F，不能只凭预算差额判断。';
     const constraints=familyBudgetConstraintModel(wallet,scenarios);
-    $('family-budget-constraint-table').innerHTML=table(['备款口径','个人房租合计（元）','共同安排（元）','已列备款小计（元）','24,000元对照差额（元）'],constraints.map(row=>[row.label,fmt(row.rentCents),fmt(row.commonAllocationCents),fmt(row.listedAllocationCents),fmt(row.differenceCents)]));
-    $('family-budget-constraint-result').textContent='按当前共同日数，旅行3000试算加两人房租已列备款'+fmt(constraints[0].listedAllocationCents)+'元，24,000元对照'+(constraints[0].differenceCents>=0?'只余'+fmt(constraints[0].differenceCents)+'元':'已超出'+fmt(-constraints[0].differenceCents)+'元')+'；满额全年旅行备款口径'+(constraints[1].differenceCents<0?'已超24,000元'+fmt(-constraints[1].differenceCents)+'元':'尚余'+fmt(constraints[1].differenceCents)+'元')+'，均未计尚未覆盖的F、个人水电、工作餐、通勤及待核贷款现金支出。若保留全家24,000元约束，需缩减共同日常或实际旅行计划，或共同讨论重定总额。';
+    $('family-budget-constraint-table').innerHTML=table(['备款口径','当前房租现金应付（元）','共同安排（元）','已列现金备款小计（元）','24,000元对照差额（元）'],constraints.map(row=>[row.label,fmt(row.rentCents),fmt(row.commonAllocationCents),fmt(row.listedAllocationCents),fmt(row.differenceCents)]));
+    $('family-budget-constraint-result').textContent='按当前共同日数与房租现金应付，旅行3000试算已列备款'+fmt(constraints[0].listedAllocationCents)+'元，24,000元对照'+(constraints[0].differenceCents>=0?'尚余'+fmt(constraints[0].differenceCents)+'元':'已超出'+fmt(-constraints[0].differenceCents)+'元')+'；满额全年旅行备款口径为'+fmt(constraints[1].listedAllocationCents)+'元，'+(constraints[1].differenceCents<0?'已超24,000元'+fmt(-constraints[1].differenceCents)+'元':'仅余'+fmt(constraints[1].differenceCents)+'元')+'，仍未计F、个人水电、工作餐、通勤及待核贷款现金支出，空间很紧。此为当前现金预算；历史预付和按期租赁成本须另列，不能因当前不重复付款而认定全年租金消失。';
   }catch(error){for(const id of ['wallet-metrics','wallet-breakdown','wallet-reserves','wallet-contributions','wallet-actual','travel-funding-table','family-budget-constraint-table'])$(id).innerHTML='';for(const id of ['travel-funding-scope','working-capital-result','family-budget-constraint-result'])$(id).textContent='';$('wallet-result').textContent='共同预算输入无效：'+error.message+'；未输出条件余量。';}
 }
 function renderSupporting(){
@@ -211,9 +215,9 @@ function renderSupporting(){
   $('sources').innerHTML='<p>此前全部已有资料归属樊高一格；新增三份支付及银行资料归属黄宇辰，依据2026年11月4日用户明确确认。</p>'+table(['来源','数据截止','覆盖说明'],data.sources.map(r=>[r.label,r.asOf,r.coverage]))+'<p class="note">金额以整数分计算。消费、退款、还款、资金转移及投资分别处理；未把中行付款重复加入支付渠道消费。来源缺失不填零，不跨币种或不同时点拼成当前总资产。预算和储蓄为待讨论情景。</p>';
 }
 function renderIncomeUtilities(){
-  const salary=data.queries.observed_salary,wallet=data.sharedWallet,observed=salaryObservationModel(salary.rows,wallet.reportedMonthlyContributions.find(row=>row.member==='hyc').cents,wallet.personalMonthlyRentCents.hyc);
-  $('salary-metrics').innerHTML=metric('近三笔工资入账均值',fmt(observed.recentMeanCents)+' 元','观察值；工资条组成和所属期缺失')+metric('自报月缴入及个人房租',fmt(sum([wallet.reportedMonthlyContributions.find(row=>row.member==='hyc').cents,wallet.personalMonthlyRentCents.hyc]))+' 元','缴入约数；房租个人承担')+metric('扣上述两项后观察均值',fmt(observed.afterContributionRentCents)+' 元','仍需个人水电、生活与其他义务');
-  $('salary-table').innerHTML=table(['入账日','成员','已观察工资入账（元）'],salary.rows.map(row=>[row.date,memberName(row.member),fmt(row.cents)]));$('salary-scope').textContent=salary.note+'。这些是银行工资入账观察，不能据此确认标准净薪，不自动填入50%收入核验栏，也不作未来稳定收入预测。';
+  const salary=data.queries.observed_salary,wallet=data.sharedWallet,observed=salaryObservationModel(salary.rows,wallet.reportedMonthlyContributions.find(row=>row.member==='hyc').cents,wallet.personalMonthlyRentCashDueCents.hyc);
+  $('salary-metrics').innerHTML=metric('近三笔工资入账均值',fmt(observed.recentMeanCents)+' 元','观察值；工资条组成和所属期缺失')+metric('自报月缴入及当前房租应付',fmt(sum([wallet.reportedMonthlyContributions.find(row=>row.member==='hyc').cents,wallet.personalMonthlyRentCashDueCents.hyc]))+' 元','缴入约数；本期已预付租金不再扣')+metric('扣当前现金两项后观察均值',fmt(observed.afterContributionRentCents)+' 元','仍需个人水电、生活与其他义务');
+  $('salary-table').innerHTML=table(['入账日（非工资所属期）','成员','已观察工资入账（元）'],salary.rows.map(row=>[row.date,memberName(row.member),fmt(row.cents)]));$('salary-scope').textContent=salary.note+'。7月起记录的是入账日期，不代表工资所属月份；这些银行入账不能据此确认标准净薪，不自动填入50%收入核验栏，也不作未来稳定收入预测。';
   const utilities=data.queries.utilities_review.rows,categories=[...new Set(utilities.map(row=>row.category))];
   $('utilities-table').innerHTML=table(['类别','樊高一格已识别付款（元）','笔数','黄宇辰已识别付款（元）','笔数','账期与覆盖说明'],categories.map(category=>{const fg=utilities.find(row=>row.member==='fg'&&row.category===category),hyc=utilities.find(row=>row.member==='hyc'&&row.category===category);return [category,fg?.cents===null||!fg?'未识别':fmt(fg.cents),valid(fg?.count)?fg.count:'未知',hyc?.cents===null||!hyc?'未识别':fmt(hyc.cents),valid(hyc?.count)?hyc.count:'未知',[fg?'樊高一格：'+fg.note:'樊高一格资料缺失',hyc?'黄宇辰：'+hyc.note:'黄宇辰资料缺失'].join('；')];}));
   $('income-utilities-insights').innerHTML=table(['观察与解释','金额（元）','限制'],data.queries.income_utilities_insights.rows.map(row=>[row.label,fmt(row.cents),row.note]));

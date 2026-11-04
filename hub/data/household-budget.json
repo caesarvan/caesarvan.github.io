@@ -1,7 +1,7 @@
 {
   "schemaVersion": "household-budget/1.0",
   "id": "household-budget",
-  "generatedAt": "2026-11-04T14:15:39+08:00",
+  "generatedAt": "2026-11-04T15:00:43+08:00",
   "members": [
     {
       "id": "fg",
@@ -71,6 +71,12 @@
       "label": "支付与中行账单工资及水电复核",
       "asOf": "2026-11-04",
       "coverage": "工资仅4笔明确入账；未获可核对工资条；水电为已识别记录，非当前住房完整月账"
+    },
+    {
+      "id": "rent-prepayment-correction",
+      "label": "用户确认的黄宇辰房租预付更正",
+      "asOf": "2026-11-04",
+      "coverage": "樊高一格2026年5月已代付，覆盖至2027年5月；当前待付款剔除3000/月；总额、起始账期及原交易未核，不重复新增历史支出"
     }
   ],
   "queries": {
@@ -683,9 +689,9 @@
           "note": "观察值，非确认的固定税后工资"
         },
         {
-          "label": "扣自报月缴入及房租后的观察均值",
-          "cents": 669679,
-          "note": "19696.79−10000−3000；仍需个人水电与生活费"
+          "label": "扣自报月缴入后、预付租金覆盖期内的观察均值",
+          "cents": 969679,
+          "note": "19696.79−10000−0；黄房租当前无重复付款，仍需个人水电及生活；非新增收入或实际储蓄"
         },
         {
           "label": "黄宇辰公共服务中的缴税",
@@ -765,7 +771,7 @@
     "reportedGrossSalaryCents": {
       "hyc": 2400000
     },
-    "obligationScope": "房贷车贷由樊高一格个人承担；房租各自承担；个人水电按10月19日既有约定个人承担，例外另确认",
+    "obligationScope": "房贷车贷及樊高一格月租5450由樊高一格个人承担；黄宇辰至2027年5月房租已由樊高一格于2026年5月预付，覆盖期内不再列每月待付款；个人水电各自承担",
     "priorAgreements": {
       "reviewThresholdCents": 10000,
       "hycContributionDay": 15,
@@ -802,14 +808,32 @@
     "householdBudgetConstraint": {
       "targetCents": 2400000,
       "status": "prior-discussion-target-not-actual-spending",
-      "basis": "月度预算与备款安排，专项预留不是当月消费；贷款现金支出另核",
-      "personalRentCents": 845000,
-      "trialAllocationWithRentCents": 2075000,
-      "trialRemainingForPersonalCents": 325000,
-      "fullTravelAllocationWithRentCents": 2608333,
-      "fullTravelExcessBeforePersonalCents": 208333,
-      "note": "小荷包筹资比例不替代全家总预算；坚持24000需缩共同日常或实际旅行计划，或讨论调整总额"
-    }
+      "basis": "当前月待付款现金与专项备款口径，预付租金覆盖期不重扣；专项不是当月消费；贷款现金支出另核",
+      "personalRentCents": 545000,
+      "trialAllocationWithRentCents": 1775000,
+      "trialRemainingForPersonalCents": 625000,
+      "fullTravelAllocationWithRentCents": 2308333,
+      "fullTravelExcessBeforePersonalCents": 0,
+      "note": "当前现金预算除去黄宇辰已预付房租3000/月；预付历史现金与按租期成本仍保留，释放现金空间不是新增收入或已实现储蓄；未付义务、贷款与个人生活另核",
+      "personalRentCashDueCents": 545000,
+      "personalRentCostReferenceCents": 845000,
+      "fullTravelRemainingForPersonalCents": 91667
+    },
+    "personalMonthlyRentCashDueCents": {
+      "fg": 545000,
+      "hyc": 0
+    },
+    "rentPrepayment": {
+      "beneficiary": "hyc",
+      "payer": "fg",
+      "paymentMonth": "2026-05",
+      "coverageThroughMonth": "2027-05",
+      "amountCents": null,
+      "coverageStartMonth": null,
+      "evidence": "user_confirmed",
+      "transactionMatched": false
+    },
+    "rentReferenceDefinition": "5450与3000为此前自报月租参考成本；黄宇辰覆盖期内租金已预付，当前月待付款0；预付总额与精确起止日未核"
   },
   "activeBudgetModel": "shared_wallet"
 }

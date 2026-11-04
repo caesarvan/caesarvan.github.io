@@ -18,6 +18,7 @@
       <section class="shared-wallet" aria-labelledby="wallet-title">
         <div class="section-head"><h2 id="wallet-title">共同预算：按通常缴入安排共同用途</h2><span class="tag">缴入为用户自报 · 支出金额提案</span></div>
         <p>双方按税后实收各缴50%的规则安排共同池。默认先使用用户自报的通常月缴入，不把近似缴入视为流水已核。共同用途从小荷包支出；个人50%还需承担个人生活与个人义务，不能全部视为可自由花费。</p>
+        <p id="rent-prepayment-note" class="rent-prepayment note"></p>
         <div id="prior-agreements" class="prior-agreements"></div><p id="prior-travel-scope" class="note"></p>
         <div class="wallet-controls"><label>共同日数<input id="common-days" type="number" min="0" max="31" step="1" value="8" inputmode="numeric"></label><label>团聚次数<input id="reunions" type="number" min="0" max="31" step="1" value="4" inputmode="numeric"></label><button id="wallet-reset" type="button">恢复来源提案</button></div>
         <p class="note">以下为新增预算试算：按共同日数测算共同餐饮，按团聚次数测算共同交通；每次团聚暂按1次共同活动。单价、机动及专项分配均为待讨论提案，不能覆盖既有评审门槛、缴入日期、周转金目标与旅行上限。</p>
@@ -37,8 +38,8 @@
         <h3>两套旅行备款对比：共同安排能否持续</h3>
         <div id="travel-funding-table" class="table-wrap"></div><p id="travel-funding-scope" class="note"></p>
         <p id="working-capital-result" class="conclusion"></p>
-        <div class="budget-constraint"><h3>原24,000元家庭总预算的约束</h3><p>24,000元不是共同池每月可花目标。下面按月备款口径对照个人房租与共同安排；专项预留是资金留存，不是当月消费，两种口径不能混淆。</p><div id="family-budget-constraint-table" class="table-wrap"></div><p id="family-budget-constraint-result" class="conclusion"></p><p class="note">这是预算约束的可持续性对照，不是实际支出；尚未覆盖的F、双方个人生活及贷款现金支出需另核，不能将对照差额视为可自由花费。</p></div>
-        <details><summary>各自个人成本参考：不重复扣共同池</summary><div id="personal-costs" class="table-wrap"></div><p id="personal-obligation-scope" class="note"></p></details>
+        <div class="budget-constraint"><h3>原24,000元家庭总预算的当前现金约束</h3><p>24,000元不是共同池每月可花目标。下面按当前现金备款口径对照本期房租应付与共同安排；历史预付现金和按期租赁成本另列。专项预留是资金留存，不是当月消费，两种口径不能混淆。</p><div id="family-budget-constraint-table" class="table-wrap"></div><p id="family-budget-constraint-result" class="conclusion"></p><p class="note">这是当前现金预算的可持续性对照，不是实际消费；尚未覆盖的F、双方个人生活及贷款现金支出需另核，不能将对照差额视为可自由花费。</p></div>
+        <details><summary>个人月租参考成本与当前现金应付：分列核对</summary><div id="personal-costs" class="table-wrap"></div><p id="personal-obligation-scope" class="note"></p></details>
         <details><summary>已确认规则与实际金额缺口</summary><div id="wallet-actual" class="table-wrap"></div><p id="wallet-scope" class="note"></p></details>
       </section>
       <section class="personal-evidence" aria-labelledby="income-evidence-title">
@@ -48,7 +49,7 @@
         <h3>水电燃气已识别付款对比</h3><div id="utilities-table" class="table-wrap"></div>
         <p class="note">付款日不等于账期，现有付款混合账期与住所，不能当作完整当前月账或每月固定生活费。未识别金额及笔数保留未知；个人水电按既有约定个人承担，不自动扣共同池。</p>
         <h3>工资与大额公共服务的解释</h3><div id="income-utilities-insights" class="table-wrap"></div>
-        <p class="note">公共服务中的缴税用于解释历史峰值，不是水电或经常生活费，也不认定为当前工资预扣税。扣缴入与房租后的工资观察余量仍需个人水电、工作餐、通勤和其他生活费；不能直接称为自由储蓄。</p>
+        <p class="note">公共服务中的缴税用于解释历史峰值，不是水电或经常生活费，也不认定为当前工资预扣税。扣缴入与当前房租现金应付后的工资观察余量仍需个人水电、工作餐、通勤和其他生活费；不能直接称为自由储蓄。房租已预付只改变当前重复付款需求，不使按期租赁成本或5月历史现金支出消失。</p>
       </section>
       <section aria-labelledby="decision-title"><h2 id="decision-title">本次需要共同确认的事项</h2><ol class="decisions"><li><strong>共同范围：</strong>按最终共同受益归属识别消费，个人支出由各自个人部分承担。</li><li><strong>常规与专项：</strong>讨论共同日数、团聚次数、单价、机动与专项留存；核清F，避免重复扣款。</li><li><strong>实际留存：</strong>收入到账后核对各自50%缴入，月末核对共同支出、专项余额与实际小荷包余额。</li><li><strong>分工提案：</strong>樊高一格核对总账与预算，黄宇辰补类别和用途；双方共同复盘，调整金额需共同确认。</li></ol><p class="conclusion">先核实缴入与共同义务，再确定可执行的共同预算；条件余量要靠实际留存验证。</p></section>
       <details id="history-reference" class="history-reference"><summary>历史全量消费参考：含个人与共同用途，不能当共同池基线</summary>
