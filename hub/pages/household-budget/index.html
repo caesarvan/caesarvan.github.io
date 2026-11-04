@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>家庭消费、预算与储蓄 · 樊高一格与黄宇辰</title>
+  <link rel="stylesheet" href="style.css"><link rel="stylesheet" href="../../embed.css">
+  <script src="../../embed.js" defer></script><script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">跳到分析</a>
+  <header data-life-hub-global><a href="../../#/home">Life OS</a><span>家庭消费、预算与储蓄</span><a href="../../#/finance">樊高一格财务明细 ↗</a></header>
+  <main id="main">
+    <div class="title-row"><div><h1>家庭消费、预算与储蓄</h1><p>樊高一格 · 黄宇辰</p></div><button id="reload" type="button">重读快照</button></div>
+    <p id="data-date" class="muted"></p>
+    <div id="status" role="status" aria-live="polite">正在读取已发布数据…</div>
+    <div id="analysis" hidden>
+      <section aria-labelledby="monthly-title">
+        <div class="section-head"><h2 id="monthly-title">消费的高峰集中在哪些月份</h2><div class="controls"><label>成员<select id="member"><option value="all">双方记录小计</option><option value="fg">樊高一格</option><option value="hyc">黄宇辰</option></select></label><label>开始月<select id="start"></select></label><label>结束月<select id="end"></select></label></div></div>
+        <div id="consumption-metrics" class="metrics"></div>
+        <div id="monthly-legend" class="legend"><span><i class="fg"></i>樊高一格</span><span><i class="hyc"></i>黄宇辰</span></div>
+        <div id="monthly-chart" class="chart"></div>
+        <p id="monthly-conclusion" class="conclusion" aria-live="polite"></p>
+        <p id="monthly-scope" class="note"></p>
+        <details><summary>查看本图逐月金额与导出</summary><button type="button" id="export-monthly" disabled>导出当前成员与月份 CSV</button><div id="monthly-table" class="table-wrap"></div></details>
+      </section>
+      <section aria-labelledby="category-title">
+        <div class="section-head"><h2 id="category-title">消费类别的可控空间</h2><label>成员<select id="category-member"><option value="fg">樊高一格 · 原支付</option><option value="hyc">黄宇辰 · 对应退款后净额</option></select></label></div>
+        <p id="category-scope" class="note"></p><div id="category-chart" class="chart"></div>
+        <p id="category-conclusion" class="conclusion"></p>
+        <details><summary>查看完整分类金额</summary><div id="category-table" class="table-wrap"></div></details>
+      </section>
+      <section aria-labelledby="budget-title">
+        <div class="section-head"><h2 id="budget-title">把月消费预算变成可执行的上限</h2><span class="tag">会议提案 · 未批准</span></div>
+        <p class="note">固定基线：双方 1—10 月记录月均 <strong id="baseline"></strong> 元。以下为消费预算情景，不包含贷款本金和未核的大额境外用途；不随上方图表筛选改变。</p>
+        <div id="budget-table" class="table-wrap"></div>
+        <div class="scenario-control"><label for="budget">调整月消费预算 <output id="budget-output"></output> 元</label><input id="budget" type="range" min="18000" max="36000" step="500" value="24000"><button id="reset" type="button">恢复 24,000 元提案</button></div>
+        <div id="budget-metrics" class="metrics"></div>
+        <p class="conclusion">24,000 元可先拆为常规消费与机动 18,000 元、计划性大额预留 6,000 元。大额项目滚存后再支付；预留款不等于可自由储蓄。</p>
+        <p class="note">每周核对常规消费；共同确认大额门槛；退款按原消费归因。类别和双方额度需要结合报销、共同用途与实际刚需再分配，不能机械按历史金额分摊。</p>
+      </section>
+      <section aria-labelledby="savings-title">
+        <div class="section-head"><h2 id="savings-title">消费控制差额可以支持多大的储蓄计划</h2><span class="tag">情景测算</span></div>
+        <div id="savings-chart" class="chart"></div><p class="note">图中零轴右侧表示较基线少支出；左侧负值表示较基线多支出。金额为人民币元。</p><div id="savings-table" class="table-wrap"></div>
+        <p id="savings-conclusion" class="conclusion"></p>
+        <p class="note">这是相对历史记录月均的消费控制差额；未假设投资收益，也未扣除尚未确认的债务及学费等资金需求，因此不是实际储蓄或储蓄率。</p>
+        <details open><summary>核对真正可以转存的金额</summary><div class="cash-inputs"><label>双方稳定税后月收入（元）<input id="income" type="number" min="0" step="100" placeholder="待双方核实"></label><label>消费预算以外的应还与预留（元）<input id="obligations" type="number" min="0" step="100" placeholder="避免与消费重复"></label></div><p id="cash-result" class="conclusion"></p><p class="note">可安排余额 = 稳定实收 − 消费预算 − 预算外应还与预留。信用卡还款若对应已计消费，不再扣第二次；一次性到期本金和大额计划须留足。</p></details>
+      </section>
+      <section aria-labelledby="decision-title"><h2 id="decision-title">今晚需要形成的决定</h2><ol class="decisions"><li><strong>消费上限：</strong>选择 20,000／24,000／28,000 元或自定额度，确认共同与个人支出的范围。</li><li><strong>预算控制：</strong>决定大额门槛、常规消费额度，以及旅行和采购的预留规则。</li><li><strong>储蓄计划：</strong>选择具体目标及用途，核清实际可存金额后定期转存，月末按余额验证。</li><li><strong>执行分工：</strong>樊高一格负责总账与预算核对，黄宇辰补类别和用途；双方每周共同复盘。以上均为分工提案。</li></ol><p class="conclusion">先确定一个能执行的月预算，再用真实留存金额验证储蓄计划。</p></section>
+      <details class="management"><summary>后续财务管理：大额资金流、收入、资产、债务与投资</summary><div id="management"></div><p class="conclusion">这些项目会影响真正可储蓄的资金，应在消费预算后单独核对，不能与消费机械相加。</p></details>
+      <details><summary>数据来源、归属与计算口径</summary><div id="sources"></div><p class="conclusion">樊高一格与黄宇辰已显性区分；资料覆盖与家庭内部抵销仍影响最终合计。</p></details>
+    </div>
+  </main>
+</body></html>

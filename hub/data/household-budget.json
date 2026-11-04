@@ -1,0 +1,525 @@
+{
+  "schemaVersion": "household-budget/1.0",
+  "id": "household-budget",
+  "generatedAt": "2026-11-04T13:17:39+08:00",
+  "members": [
+    {
+      "id": "fg",
+      "name": "樊高一格"
+    },
+    {
+      "id": "hyc",
+      "name": "黄宇辰"
+    }
+  ],
+  "context": {
+    "currency": "CNY",
+    "analysisDate": "2026-11-04",
+    "baselineMonthlyCents": 2889920,
+    "comparisonStart": "2026-01",
+    "comparisonEnd": "2026-10",
+    "ownershipConfirmedAt": "2026-11-04",
+    "householdReconciliationComplete": false,
+    "actualSavingsCents": null,
+    "actualSavingsRate": null
+  },
+  "sources": [
+    {
+      "id": "fg-primary",
+      "label": "樊高一格原财务主账",
+      "asOf": "2026-10-28",
+      "coverage": "已接受记录，账户覆盖不完整；退款按发生月"
+    },
+    {
+      "id": "hyc-channels",
+      "label": "黄宇辰支付宝与微信",
+      "asOf": "2026-11-03",
+      "coverage": "本次1,203条记录；微信类别与22笔用途待核"
+    },
+    {
+      "id": "hyc-bank",
+      "label": "黄宇辰中国银行",
+      "asOf": "2026-11-04",
+      "coverage": "571条，末笔11/3；次级证据不重复计消费"
+    },
+    {
+      "id": "fg-webank",
+      "label": "樊高一格微众资产",
+      "asOf": "2026-10-25",
+      "coverage": "资产快照，不代表即时可用现金"
+    },
+    {
+      "id": "fg-investment",
+      "label": "樊高一格平台投资",
+      "asOf": "2026-11-03T20:03:38+08:00",
+      "coverage": "当前可读策略；平台计价单位未确认"
+    }
+  ],
+  "queries": {
+    "monthly": {
+      "grain": "member-month",
+      "rows": [
+        {
+          "month": "2026-01",
+          "fgCents": 2560313,
+          "hycCents": 678157
+        },
+        {
+          "month": "2026-02",
+          "fgCents": 1128316,
+          "hycCents": 197509
+        },
+        {
+          "month": "2026-03",
+          "fgCents": 981877,
+          "hycCents": 65968
+        },
+        {
+          "month": "2026-04",
+          "fgCents": 1425957,
+          "hycCents": 243391
+        },
+        {
+          "month": "2026-05",
+          "fgCents": 3262524,
+          "hycCents": 998910
+        },
+        {
+          "month": "2026-06",
+          "fgCents": 1752462,
+          "hycCents": 403905
+        },
+        {
+          "month": "2026-07",
+          "fgCents": 2505360,
+          "hycCents": 3297791
+        },
+        {
+          "month": "2026-08",
+          "fgCents": 3345494,
+          "hycCents": 2107699
+        },
+        {
+          "month": "2026-09",
+          "fgCents": 1138533,
+          "hycCents": 671784
+        },
+        {
+          "month": "2026-10",
+          "fgCents": 1444946,
+          "hycCents": 688301
+        },
+        {
+          "month": "2026-11",
+          "fgCents": null,
+          "hycCents": 155472
+        }
+      ]
+    },
+    "categories": {
+      "grain": "member-category-observed-period",
+      "rows": [
+        {
+          "member": "fg",
+          "category": "待分类消费",
+          "basis": "gross",
+          "valueCents": 5663154
+        },
+        {
+          "member": "fg",
+          "category": "旅行住宿",
+          "basis": "gross",
+          "valueCents": 3355878
+        },
+        {
+          "member": "fg",
+          "category": "餐饮",
+          "basis": "gross",
+          "valueCents": 3220859
+        },
+        {
+          "member": "fg",
+          "category": "购物",
+          "basis": "gross",
+          "valueCents": 2925757
+        },
+        {
+          "member": "fg",
+          "category": "交通出行",
+          "basis": "gross",
+          "valueCents": 787957
+        },
+        {
+          "member": "fg",
+          "category": "宠物",
+          "basis": "gross",
+          "valueCents": 662899
+        },
+        {
+          "member": "fg",
+          "category": "订阅软件",
+          "basis": "gross",
+          "valueCents": 659992
+        },
+        {
+          "member": "fg",
+          "category": "金融利息手续费",
+          "basis": "gross",
+          "valueCents": 561126
+        },
+        {
+          "member": "fg",
+          "category": "医疗健康",
+          "basis": "gross",
+          "valueCents": 550347
+        },
+        {
+          "member": "fg",
+          "category": "水电燃气通信",
+          "basis": "gross",
+          "valueCents": 537656
+        },
+        {
+          "member": "fg",
+          "category": "食品日用",
+          "basis": "gross",
+          "valueCents": 524414
+        },
+        {
+          "member": "fg",
+          "category": "生活服务",
+          "basis": "gross",
+          "valueCents": 418058
+        },
+        {
+          "member": "fg",
+          "category": "保险",
+          "basis": "gross",
+          "valueCents": 407619
+        },
+        {
+          "member": "fg",
+          "category": "服饰鞋包",
+          "basis": "gross",
+          "valueCents": 402646
+        },
+        {
+          "member": "fg",
+          "category": "数码电器",
+          "basis": "gross",
+          "valueCents": 369202
+        },
+        {
+          "member": "fg",
+          "category": "休闲娱乐",
+          "basis": "gross",
+          "valueCents": 117072
+        },
+        {
+          "member": "fg",
+          "category": "家居家装",
+          "basis": "gross",
+          "valueCents": 96620
+        },
+        {
+          "member": "fg",
+          "category": "居住物业",
+          "basis": "gross",
+          "valueCents": 82000
+        },
+        {
+          "member": "fg",
+          "category": "教育文化",
+          "basis": "gross",
+          "valueCents": 45000
+        },
+        {
+          "member": "fg",
+          "category": "税费",
+          "basis": "gross",
+          "valueCents": 19900
+        },
+        {
+          "member": "fg",
+          "category": "礼金公益",
+          "basis": "gross",
+          "valueCents": 29
+        },
+        {
+          "member": "hyc",
+          "category": "待分类消费",
+          "basis": "net_linked_refund",
+          "valueCents": 2787310
+        },
+        {
+          "member": "hyc",
+          "category": "餐饮美食",
+          "basis": "net_linked_refund",
+          "valueCents": 1714364
+        },
+        {
+          "member": "hyc",
+          "category": "公共服务",
+          "basis": "net_linked_refund",
+          "valueCents": 1178842
+        },
+        {
+          "member": "hyc",
+          "category": "交通出行",
+          "basis": "net_linked_refund",
+          "valueCents": 924104
+        },
+        {
+          "member": "hyc",
+          "category": "数码电器",
+          "basis": "net_linked_refund",
+          "valueCents": 922869
+        },
+        {
+          "member": "hyc",
+          "category": "日用百货",
+          "basis": "net_linked_refund",
+          "valueCents": 546935
+        },
+        {
+          "member": "hyc",
+          "category": "酒店旅游",
+          "basis": "net_linked_refund",
+          "valueCents": 536173
+        },
+        {
+          "member": "hyc",
+          "category": "文化休闲",
+          "basis": "net_linked_refund",
+          "valueCents": 281998
+        },
+        {
+          "member": "hyc",
+          "category": "服饰装扮",
+          "basis": "net_linked_refund",
+          "valueCents": 117500
+        },
+        {
+          "member": "hyc",
+          "category": "爱车养车",
+          "basis": "net_linked_refund",
+          "valueCents": 109451
+        },
+        {
+          "member": "hyc",
+          "category": "教育培训",
+          "basis": "net_linked_refund",
+          "valueCents": 94600
+        },
+        {
+          "member": "hyc",
+          "category": "宠物",
+          "basis": "net_linked_refund",
+          "valueCents": 84102
+        },
+        {
+          "member": "hyc",
+          "category": "其他",
+          "basis": "net_linked_refund",
+          "valueCents": 49439
+        },
+        {
+          "member": "hyc",
+          "category": "医疗健康",
+          "basis": "net_linked_refund",
+          "valueCents": 43721
+        },
+        {
+          "member": "hyc",
+          "category": "家居家装",
+          "basis": "net_linked_refund",
+          "valueCents": 36958
+        },
+        {
+          "member": "hyc",
+          "category": "运动户外",
+          "basis": "net_linked_refund",
+          "valueCents": 31481
+        },
+        {
+          "member": "hyc",
+          "category": "生活服务",
+          "basis": "net_linked_refund",
+          "valueCents": 27511
+        },
+        {
+          "member": "hyc",
+          "category": "充值缴费",
+          "basis": "net_linked_refund",
+          "valueCents": 15220
+        },
+        {
+          "member": "hyc",
+          "category": "商业服务",
+          "basis": "net_linked_refund",
+          "valueCents": 4280
+        },
+        {
+          "member": "hyc",
+          "category": "美容美发",
+          "basis": "net_linked_refund",
+          "valueCents": 2000
+        },
+        {
+          "member": "hyc",
+          "category": "公益捐赠",
+          "basis": "net_linked_refund",
+          "valueCents": 29
+        }
+      ]
+    },
+    "budgets": {
+      "grain": "proposal",
+      "rows": [
+        {
+          "label": "保守（收紧消费）",
+          "budgetCents": 2000000,
+          "routineCents": 1500000,
+          "reserveCents": 500000,
+          "differenceCents": 889920
+        },
+        {
+          "label": "基准（建议试行讨论）",
+          "budgetCents": 2400000,
+          "routineCents": 1800000,
+          "reserveCents": 600000,
+          "differenceCents": 489920
+        },
+        {
+          "label": "宽松（保留弹性）",
+          "budgetCents": 2800000,
+          "routineCents": 2100000,
+          "reserveCents": 700000,
+          "differenceCents": 89920
+        }
+      ]
+    },
+    "projections": {
+      "grain": "proposal-duration",
+      "rows": [
+        {
+          "budgetCents": 2000000,
+          "months": 3,
+          "differenceCents": 2669760
+        },
+        {
+          "budgetCents": 2000000,
+          "months": 6,
+          "differenceCents": 5339520
+        },
+        {
+          "budgetCents": 2000000,
+          "months": 12,
+          "differenceCents": 10679040
+        },
+        {
+          "budgetCents": 2400000,
+          "months": 3,
+          "differenceCents": 1469760
+        },
+        {
+          "budgetCents": 2400000,
+          "months": 6,
+          "differenceCents": 2939520
+        },
+        {
+          "budgetCents": 2400000,
+          "months": 12,
+          "differenceCents": 5879040
+        },
+        {
+          "budgetCents": 2800000,
+          "months": 3,
+          "differenceCents": 269760
+        },
+        {
+          "budgetCents": 2800000,
+          "months": 6,
+          "differenceCents": 539520
+        },
+        {
+          "budgetCents": 2800000,
+          "months": 12,
+          "differenceCents": 1079040
+        }
+      ]
+    },
+    "summary": {
+      "grain": "reviewed-metric",
+      "rows": [
+        {
+          "key": "recordedJanOct",
+          "cents": 28899197
+        },
+        {
+          "key": "observedMedian",
+          "cents": 2144807
+        },
+        {
+          "key": "julyAugust",
+          "cents": 11256344
+        },
+        {
+          "key": "fgJanOct",
+          "cents": 19545782
+        },
+        {
+          "key": "hycJanOct",
+          "cents": 9353415
+        }
+      ]
+    },
+    "management": {
+      "grain": "source-specific-fact",
+      "rows": [
+        {
+          "label": "樊高一格登记收入",
+          "value": "CNY 874,544.27",
+          "note": "含一次性离职结算274,356.76；不可平均当未来月薪"
+        },
+        {
+          "label": "黄宇辰明示工资",
+          "value": "CNY 68,455.37",
+          "note": "仅7—10月4笔，不代表全年"
+        },
+        {
+          "label": "黄宇辰购汇 / 汇款",
+          "value": "CNY购汇217,716.81；SGD汇款39,600",
+          "note": "最终用途待核；可能同一资金链，不相加不重复计消费"
+        },
+        {
+          "label": "黄宇辰跨行转出 / 取现",
+          "value": "CNY转出286,359.40；TWD取现10,000",
+          "note": "需穿透最终用途，不直接当家庭消费"
+        },
+        {
+          "label": "樊高一格微众资产",
+          "value": "10/25 CNY 796,865.95",
+          "note": "现金余额0；产品即时可用金额待核，不代表全家可用现金"
+        },
+        {
+          "label": "樊高一格还款与旧债务",
+          "value": "年内CNY还款238,871.34",
+          "note": "当前余额、最低应还和结清状态仍待核；不与消费重计"
+        },
+        {
+          "label": "樊高一格投资杠杆",
+          "value": "42 / 84笔未平仓杠杆至少10倍，最高40倍",
+          "note": "按可读仓位笔数；非资金风险比例，计价单位未确认"
+        }
+      ]
+    }
+  },
+  "methods": [
+    "金额在本地按Decimal核算，公开使用整数分。",
+    "记录小计尚未完成家庭代付、报销与重复抵销。",
+    "樊高一格类别为消费原额，黄宇辰类别为扣对应退款净额，不直接相加。",
+    "预算基线为1—10月记录月均四舍五入至分，情景按固定月差额乘持续月数。",
+    "6000元计划性大额预留已含在24000消费安排，不是可自由储蓄。"
+  ]
+}

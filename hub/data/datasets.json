@@ -1,7 +1,7 @@
 {
   "version": 1,
   "publicationMode": "authorized-public-snapshots",
-  "preparedAt": "2026-11-04T01:57:30+08:00",
+  "preparedAt": "2026-11-04T13:17:39+08:00",
   "datasets": [
     {
       "id": "finance",
@@ -152,6 +152,17 @@
       "records": 6,
       "bytes": 5370,
       "sha256": "63ff2bd1ceccb60cef1bf97d9c4c98bca6ee1a9331175bd9a6f6576080bed153"
+    },
+    {
+      "id": "household-budget",
+      "type": "snapshot",
+      "file": "./household-budget.json",
+      "status": "ready",
+      "coverage": "partial",
+      "generatedAt": "2026-11-04T13:17:39+08:00",
+      "records": 77,
+      "bytes": 13502,
+      "sha256": "3890a3e2ce8dc2aefdd9686f709b19c764376c896335d7829f6d521cb9cbc953"
     }
   ]
 }

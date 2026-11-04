@@ -82,6 +82,21 @@ function pnlChart(accounts) {
   return `<svg class="ov-pnl-chart" viewBox="0 0 ${width} ${h}" role="img" aria-label="按唯一账户展示平台累计盈亏，平台计价单位"><title>账户累计盈亏 · 平台计价单位</title><line x1="${zero}" x2="${zero}" y1="0" y2="${h}" class="ov-baseline"/>${accounts.map((a,i)=>{const yy=top+i*rowH,xx=x(a.total_pnl),tip=`${a.account} · 平台累计盈亏 ${signed(a.total_pnl)} 平台单位`;return `<g class="ov-chart-point" tabindex="0" role="graphics-symbol" aria-label="${esc(tip)}" data-ov-tip="${esc(tip)}"><title>${esc(tip)}</title><text x="${left-12}" y="${yy+15}" text-anchor="end" class="ov-account-label">${esc(a.account.length>15?`${a.account.slice(0,14)}…`:a.account)}</text><rect x="${Math.min(zero,xx)}" y="${yy+3}" width="${Math.max(1,Math.abs(xx-zero))}" height="15" rx="3" fill="${a.total_pnl<0?'#b58668':'#7d6bd4'}"/><text x="${width-3}" y="${yy+15}" text-anchor="end" class="ov-account-value">${esc(signed(a.total_pnl))}</text></g>`;}).join('')}</svg>`;
 }
 
+
+function renderHousehold(data,card) {
+  if(data.schemaVersion!=='household-budget/1.0'||data.members?.map(x=>x.name).join('|')!=='樊高一格|黄宇辰')throw Error('家庭资料结构不完整。');
+  const rows=query(data,'monthly').map(r=>({month:r.month,fg:Number.isSafeInteger(r.fgCents)?r.fgCents/100:null,hyc:Number.isSafeInteger(r.hycCents)?r.hycCents/100:null}));
+  const baseline=data.context?.baselineMonthlyCents,budget=query(data,'budgets').find(r=>r.budgetCents===2400000);
+  if(!Number.isSafeInteger(baseline)||!budget||!Number.isSafeInteger(budget.differenceCents))throw Error('家庭预算金额不完整。');
+  card.querySelector('.ov-body').innerHTML=`<p class="ov-date">樊高一格截至 2026-10-28 · 黄宇辰截至 2026-11-03</p>
+    <div class="ov-metrics">${metric('1—10月记录月均',fmt(baseline/100),'CNY','双方小计，待核家庭抵销')}${metric('建议讨论月消费上限',fmt(budget.budgetCents/100),'CNY','预算提案，未作决议')}${metric('持续6个月少支出情景',fmt(budget.differenceCents*6/100),'CNY','消费控制差额，非实际储蓄')}</div>
+    <div class="ov-chart-heading"><h3>双方已记录月度净消费 · CNY</h3><span class="ov-legend"><i style="--mark:#278774"></i>樊高一格 <i style="--mark:#426fd0"></i>黄宇辰</span></div>
+    <div class="ov-chart-area">${lineChart(rows,'month',[{key:'fg',label:'樊高一格',color:'#278774'},{key:'hyc',label:'黄宇辰',color:'#426fd0'}],'双方已记录月度净消费，人民币元；缺资料保留空缺',{unit:'CNY'})}<div class="ov-tooltip" role="tooltip" hidden></div></div>
+    <p class="ov-note"><strong>结论：7—8月占1—10月记录小计的39.0%，优先为计划性大额支出预留。</strong>24,000元提案含6,000元大额预留，该预留仍属于消费安排；稳定收入和预算外应还未核清，实际可存金额暂不确定。</p>
+    ${table(['月份','樊高一格 CNY','黄宇辰 CNY'],rows.map(r=>[r.month,fmt(r.fg),fmt(r.hyc)]))}
+    ${sourceDetails('household-budget',data,'此前全部已有财务资料归属樊高一格；本次支付与银行三份资料归属黄宇辰。金额来自已接受记录，覆盖仍不完整。退款按发生月；家庭代付、报销及重复抵销未完成。11月樊高一格缺资料，未计为零；中行资金流不重复加入消费。')}`;
+}
+
 function renderFinance(data, card) {
   const state={currency:'CNY',range:'12'};
   function render() {
@@ -133,7 +148,7 @@ export function fileSummary(id,data) {
 export function mountOverview(container, {modules=[]}={}) {
   if (!(container instanceof Element)) throw Error('首页摘要需要有效容器。');
   let destroyed=false; const controllers=new Set(), cards=new Map();
-  const definitions=[{id:'finance',label:'财务总览',icon:'◫',wide:true,subtitle:'消费、收入与资金流，一起看清'},{id:'investment',label:'投资表现',icon:'↗',subtitle:'账户权益与盈亏的同屏视图'},{id:'webank',label:'微众资产',icon:'▤',subtitle:'资产构成与独立报告口径'},{id:'travel',label:'旅行手记',icon:'✈',subtitle:'下一程与过去的足迹'},{id:'files',label:'资料与收藏',icon:'▱',subtitle:'知识、附件与收藏的统一入口'}];
+  const definitions=[{id:'household-budget',label:'家庭消费与预算',icon:'⌂',wide:true,subtitle:'樊高一格与黄宇辰 · 消费、预算与储蓄计划'},{id:'finance',label:'樊高一格财务',icon:'◫',wide:true,subtitle:'消费、收入与资金流，一起看清'},{id:'investment',label:'樊高一格投资',icon:'↗',subtitle:'账户权益与盈亏的同屏视图'},{id:'webank',label:'樊高一格微众资产',icon:'▤',subtitle:'资产构成与独立报告口径'},{id:'travel',label:'旅行手记',icon:'✈',subtitle:'下一程与过去的足迹'},{id:'files',label:'资料与收藏',icon:'▱',subtitle:'知识、附件与收藏的统一入口'}];
   const enabled=id=>modules.length===0 || modules.some(m=>m.id===id && m.enabled!==false);
   const active=definitions.filter(d=>d.id==='files'?['icloud','onedrive','outlook','mail','youtube'].some(enabled):enabled(d.id));
   container.classList.add('ov-overview'); container.innerHTML=`<div class="ov-overview-status"><span>各领域摘要 · 数据截止见各卡片</span><span class="ov-snapshot-label"><i></i> 已发布快照</span></div><div class="ov-overview-grid">${active.map(d=>`<article class="ov-card${d.wide?' ov-wide':''} ov-${d.id}" data-ov-card="${d.id}" aria-label="${esc(d.label)}首页摘要"><div class="ov-card-top"><div class="ov-card-title"><span class="ov-icon" aria-hidden="true">${d.icon}</span><div><h2>${esc(d.label)}</h2><p>${esc(d.subtitle)}</p></div></div>${d.id!=='files'?`<a class="ov-enter" href="#/${d.id}" aria-label="进入${esc(d.label)}">查看详情 <span aria-hidden="true">↗</span></a>`:''}</div><div class="ov-body"><div class="ov-loading" role="status"><span></span>正在读取已发布数据…</div></div>${['finance','webank','investment'].includes(d.id)?related(['finance','webank','investment'].filter(id=>id!==d.id),modules):''}</article>`).join('')}</div><p class="ov-global-note">每个领域保留自己的来源与数据截止。不同币种、平台单位及统计日期的资产分别展示。</p>`;
@@ -151,7 +166,7 @@ export function mountOverview(container, {modules=[]}={}) {
   async function load(id,force=false) {
     const card=cards.get(id);if(!card||destroyed)return;
     card.querySelector('.ov-body').innerHTML='<div class="ov-loading" role="status"><span></span>正在读取已发布数据…</div>';
-    try {const data=await fetchData(id,{force});if(destroyed)return;({finance:renderFinance,investment:renderInvestment,webank:renderWebank,travel:renderTravel}[id])(data,card);}
+    try {const data=await fetchData(id,{force});if(destroyed)return;({'household-budget':renderHousehold,finance:renderFinance,investment:renderInvestment,webank:renderWebank,travel:renderTravel}[id])(data,card);}
     catch(error){successfulData.delete(id);if(destroyed)return;card.querySelector('.ov-body').innerHTML=`<div class="ov-error" role="status"><strong>这份数据暂时无法显示</strong><p>${esc(error.message || '网络读取失败')}</p><button type="button" data-ov-retry="${id}">重新读取</button></div>`;}
   }
   const fileIds=['icloud','outlook','youtube','onedrive','mail'].filter(enabled),fileStates=new Map();
