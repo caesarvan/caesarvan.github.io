@@ -1,4 +1,4 @@
-import {mountOverview} from './overview.js?v=20261023-summary-v2';
+import {mountOverview} from './overview.js?v=20261104-finance-members';
 import {mountLifeOverview} from './life-overview.js?v=20261104-visual';
 const $=s=>document.querySelector(s),main=$('#main');
 let registry,filter='all',search='',overview,lifeOverview,frameCleanup=()=>{};

@@ -9,7 +9,7 @@
 </head>
 <body>
   <a class="skip" href="#main">跳到分析</a>
-  <header data-life-hub-global><a href="../../#/home">Life OS</a><span>共同预算与历史消费</span><a href="../../#/finance">樊高一格财务明细 ↗</a></header>
+  <header data-life-hub-global><a href="../../#/home">Life OS</a><span>共同预算与历史消费</span><a href="../../#/finance">按成员看财务 ↗</a></header>
   <main id="main">
     <div class="title-row"><div><h1>共同预算先安排共同用途</h1><p>樊高一格 · 黄宇辰 · 小荷包</p></div><button id="reload" type="button">重读快照</button></div>
     <p id="data-date" class="muted"></p>
@@ -55,7 +55,7 @@
       <details id="history-reference" class="history-reference"><summary>历史全量消费参考：含个人与共同用途，不能当共同池基线</summary>
       <p class="note">以下保留双方原记录的月度与分类分析，尚未完成小荷包交易识别和家庭抵销。历史28,899.20元月均不能作为共同预算基线，历史差额也不能当小荷包储蓄。</p>
       <section aria-labelledby="monthly-title">
-        <div class="section-head"><h2 id="monthly-title">历史全量记录的月度高峰</h2><div class="controls"><label>成员<select id="member"><option value="all">双方记录小计</option><option value="fg">樊高一格</option><option value="hyc">黄宇辰</option></select></label><label>开始月<select id="start"></select></label><label>结束月<select id="end"></select></label></div></div>
+        <div class="section-head"><h2 id="monthly-title">历史全量记录的月度高峰</h2><div class="controls"><label>成员<select id="member"><option value="all">全选（双方记录小计）</option><option value="fg">樊高一格</option><option value="hyc">黄宇辰</option></select></label><label>开始月<select id="start"></select></label><label>结束月<select id="end"></select></label></div></div>
         <div id="consumption-metrics" class="metrics"></div>
         <div id="monthly-legend" class="legend"><span><i class="fg"></i>樊高一格</span><span><i class="hyc"></i>黄宇辰</span></div>
         <div id="monthly-chart" class="chart"></div>
