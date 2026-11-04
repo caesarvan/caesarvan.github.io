@@ -79,7 +79,7 @@ function lineChart(rows, key, series, label, options={}) {
 function pnlChart(accounts) {
   const width=520,left=133,right=100,rowH=29,top=8,h=top+accounts.length*rowH+8;
   const low=Math.min(0,...accounts.map(r=>r.total_pnl)),high=Math.max(0,...accounts.map(r=>r.total_pnl)),span=high-low||1,x=v=>left+(v-low)/span*(width-left-right),zero=x(0);
-  return `<svg class="ov-pnl-chart" viewBox="0 0 ${width} ${h}" role="img" aria-label="按唯一账户展示平台累计盈亏，平台计价单位"><title>账户累计盈亏 · 平台计价单位</title><line x1="${zero}" x2="${zero}" y1="0" y2="${h}" class="ov-baseline"/>${accounts.map((a,i)=>{const yy=top+i*rowH,xx=x(a.total_pnl),tip=`${a.account} · 平台累计盈亏 ${signed(a.total_pnl)} 平台单位`;return `<g class="ov-chart-point" tabindex="0" role="graphics-symbol" aria-label="${esc(tip)}" data-ov-tip="${esc(tip)}"><title>${esc(tip)}</title><text x="${left-12}" y="${yy+15}" text-anchor="end" class="ov-account-label">${esc(a.account.length>15?`${a.account.slice(0,14)}…`:a.account)}</text><rect x="${Math.min(zero,xx)}" y="${yy+3}" width="${Math.max(1,Math.abs(xx-zero))}" height="15" rx="3" fill="${a.total_pnl<0?'#ee795b':'#7944dd'}"/><text x="${width-3}" y="${yy+15}" text-anchor="end" class="ov-account-value">${esc(signed(a.total_pnl))}</text></g>`;}).join('')}</svg>`;
+  return `<svg class="ov-pnl-chart" viewBox="0 0 ${width} ${h}" role="img" aria-label="按唯一账户展示平台累计盈亏，USD"><title>账户累计盈亏 · USD</title><line x1="${zero}" x2="${zero}" y1="0" y2="${h}" class="ov-baseline"/>${accounts.map((a,i)=>{const yy=top+i*rowH,xx=x(a.total_pnl),tip=`${a.account} · 平台累计盈亏 ${signed(a.total_pnl)} USD`;return `<g class="ov-chart-point" tabindex="0" role="graphics-symbol" aria-label="${esc(tip)}" data-ov-tip="${esc(tip)}"><title>${esc(tip)}</title><text x="${left-12}" y="${yy+15}" text-anchor="end" class="ov-account-label">${esc(a.account.length>15?`${a.account.slice(0,14)}…`:a.account)}</text><rect x="${Math.min(zero,xx)}" y="${yy+3}" width="${Math.max(1,Math.abs(xx-zero))}" height="15" rx="3" fill="${a.total_pnl<0?'#ee795b':'#7944dd'}"/><text x="${width-3}" y="${yy+15}" text-anchor="end" class="ov-account-value">${esc(signed(a.total_pnl))}</text></g>`;}).join('')}</svg>`;
 }
 
 
@@ -159,11 +159,11 @@ function renderFinance(data, card) {
 }
 function renderInvestment(data,card) {
   const m=investmentModel(data),show=m.daily;
-  card.querySelector('.ov-body').innerHTML=`<p class="ov-date">读取 ${esc(time(m.generatedAt))} · 仅 Vergex 连接账户</p><div class="ov-metrics">${metric('账户权益',fmt(m.equity),'平台单位',`${m.accounts.length} 个唯一账户`)}${metric('平台累计盈亏',signed(m.pnl),'平台单位','部分账户历史不完整')}</div>
-    <div class="ov-chart-heading"><h3>日末权益轨迹</h3><span class="ov-subtle">平台单位</span></div><div class="ov-chart-area">${lineChart(show,'day',[{key:'equity',label:'账户权益',color:'#7944dd'}],'Vergex日末权益轨迹，平台计价单位',{area:true,unit:'平台单位',compact:true})}<div class="ov-tooltip" role="tooltip" hidden></div></div>
+  card.querySelector('.ov-body').innerHTML=`<p class="ov-date">读取 ${esc(time(m.generatedAt))} · 仅 Vergex 连接账户</p><div class="ov-metrics">${metric('账户权益',fmt(m.equity),'USD',`${m.accounts.length} 个唯一账户`)}${metric('平台累计盈亏',signed(m.pnl),'USD','部分账户历史不完整')}</div>
+    <div class="ov-chart-heading"><h3>日末权益轨迹</h3><span class="ov-subtle">USD</span></div><div class="ov-chart-area">${lineChart(show,'day',[{key:'equity',label:'账户权益',color:'#7944dd'}],'Vergex日末权益轨迹，USD',{area:true,unit:'USD',compact:true})}<div class="ov-tooltip" role="tooltip" hidden></div></div>
     <div class="ov-chart-heading ov-tight"><h3>账户累计盈亏</h3><span class="ov-subtle">含已实现与未实现</span></div><div class="ov-chart-area">${pnlChart(m.accounts)}<div class="ov-tooltip" role="tooltip" hidden></div></div>
     <p class="ov-note">历史权益受出入金和采样覆盖影响，轨迹不代表投资收益率。源接口未提供统一币种，不能折算或并入人民币资产。</p>
-    ${table(['账户','权益（平台单位）','累计盈亏（平台单位）'],m.accounts.map(r=>[r.account,fmt(r.equity),signed(r.total_pnl)]))}
+    ${table(['账户','权益（USD）','累计盈亏（USD）'],m.accounts.map(r=>[r.account,fmt(r.equity),signed(r.total_pnl)]))}
     ${sourceDetails('investment',data,'账户按原看板唯一账户口径汇总，策略共用余额不重复计。日末权益取每个上海日期最后一个已记录样本，最新账户汇总与历史采样时刻可能不同。平台累计盈亏沿用原字段，不与已平仓仓位盈亏混算。')}`;
 }
 function renderWebank(data,card) {
