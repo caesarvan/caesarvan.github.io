@@ -1,7 +1,7 @@
 {
   "schemaVersion": "household-budget/1.0",
   "id": "household-budget",
-  "generatedAt": "2026-11-04T13:17:39+08:00",
+  "generatedAt": "2026-11-04T14:15:39+08:00",
   "members": [
     {
       "id": "fg",
@@ -53,6 +53,24 @@
       "label": "樊高一格平台投资",
       "asOf": "2026-11-03T20:03:38+08:00",
       "coverage": "当前可读策略；平台计价单位未确认"
+    },
+    {
+      "id": "shared-wallet-rule",
+      "label": "用户确认的共同筹资及用途规则",
+      "asOf": "2026-11-04",
+      "coverage": "用户自报各缴税后实收50%、通常各缴约10000；个人房租及贷款分工已确认；金额未独立逐笔核验"
+    },
+    {
+      "id": "prior-council-agreement",
+      "label": "10月19日家庭会议既有约定",
+      "asOf": "2026-10-19",
+      "coverage": "本次读回既有纪要：评审100元、15/30日缴入、周转金目标5000、双方旅行全年上限100000；原邮件未公开"
+    },
+    {
+      "id": "income-utilities-review",
+      "label": "支付与中行账单工资及水电复核",
+      "asOf": "2026-11-04",
+      "coverage": "工资仅4笔明确入账；未获可核对工资条；水电为已识别记录，非当前住房完整月账"
     }
   ],
   "queries": {
@@ -397,7 +415,8 @@
           "reserveCents": 700000,
           "differenceCents": 89920
         }
-      ]
+      ],
+      "status": "historical-full-household-proposals"
     },
     "projections": {
       "grain": "proposal-duration",
@@ -447,7 +466,8 @@
           "months": 12,
           "differenceCents": 1079040
         }
-      ]
+      ],
+      "status": "historical-full-household-comparison-not-shared-wallet-savings"
     },
     "summary": {
       "grain": "reviewed-metric",
@@ -513,6 +533,171 @@
           "note": "按可读仓位笔数；非资金风险比例，计价单位未确认"
         }
       ]
+    },
+    "walletProposalDaily": {
+      "grain": "illustrative-common-category",
+      "rows": [
+        {
+          "label": "共同餐饮食材",
+          "cents": 280000
+        },
+        {
+          "label": "团聚交通",
+          "cents": 200000
+        },
+        {
+          "label": "共同活动",
+          "cents": 100000
+        },
+        {
+          "label": "共同生活耗材",
+          "cents": 50000
+        },
+        {
+          "label": "共同机动",
+          "cents": 100000
+        }
+      ]
+    },
+    "walletProposalReserve": {
+      "grain": "illustrative-earmarked-category",
+      "rows": [
+        {
+          "label": "共同旅行",
+          "cents": 300000
+        },
+        {
+          "label": "共同采购（不含个人家电）",
+          "cents": 100000
+        },
+        {
+          "label": "待约定共担年度项目",
+          "cents": 100000
+        }
+      ]
+    },
+    "walletFundingScenarios": {
+      "grain": "assumed-income-not-observed",
+      "rows": [
+        {
+          "combinedTaxHomeCents": 3000000,
+          "contributionCents": 1500000,
+          "beforeUncoveredObligationsCents": 270000
+        },
+        {
+          "combinedTaxHomeCents": 4000000,
+          "contributionCents": 2000000,
+          "beforeUncoveredObligationsCents": 770000
+        },
+        {
+          "combinedTaxHomeCents": 4800000,
+          "contributionCents": 2400000,
+          "beforeUncoveredObligationsCents": 1170000
+        },
+        {
+          "combinedTaxHomeCents": 6000000,
+          "contributionCents": 3000000,
+          "beforeUncoveredObligationsCents": 1770000
+        }
+      ]
+    },
+    "observed_salary": {
+      "status": "bank-credits-not-payroll-components",
+      "rows": [
+        {
+          "member": "hyc",
+          "date": "2026-07-23",
+          "cents": 936500
+        },
+        {
+          "member": "hyc",
+          "date": "2026-08-14",
+          "cents": 1993597
+        },
+        {
+          "member": "hyc",
+          "date": "2026-09-15",
+          "cents": 2062795
+        },
+        {
+          "member": "hyc",
+          "date": "2026-10-15",
+          "cents": 1852645
+        }
+      ],
+      "note": "明确工资入账，工资所属期及个税社保组成缺失；最近3笔均值19696.79不作稳定预测"
+    },
+    "utilities_review": {
+      "status": "identified-payments-not-complete-monthly-bills",
+      "rows": [
+        {
+          "member": "fg",
+          "category": "电费",
+          "count": 9,
+          "cents": 272436,
+          "note": "混合账期与住房尚未匹配"
+        },
+        {
+          "member": "fg",
+          "category": "水费",
+          "count": 6,
+          "cents": 8100,
+          "note": "仅已识别付款"
+        },
+        {
+          "member": "fg",
+          "category": "燃气",
+          "count": 7,
+          "cents": 6900,
+          "note": "仅已识别付款"
+        },
+        {
+          "member": "hyc",
+          "category": "电费",
+          "count": 1,
+          "cents": 14970,
+          "note": "11月支付；摘要为10月账期"
+        },
+        {
+          "member": "hyc",
+          "category": "水费",
+          "count": null,
+          "cents": null,
+          "note": "未识别，不按0处理"
+        },
+        {
+          "member": "hyc",
+          "category": "燃气",
+          "count": 1,
+          "cents": 250,
+          "note": "10月支付；摘要为9月账期"
+        }
+      ]
+    },
+    "income_utilities_insights": {
+      "status": "source-backed-with-explicit-gaps",
+      "rows": [
+        {
+          "label": "黄宇辰近三笔工资入账均值",
+          "cents": 1969679,
+          "note": "观察值，非确认的固定税后工资"
+        },
+        {
+          "label": "扣自报月缴入及房租后的观察均值",
+          "cents": 669679,
+          "note": "19696.79−10000−3000；仍需个人水电与生活费"
+        },
+        {
+          "label": "黄宇辰公共服务中的缴税",
+          "cents": 1174842,
+          "note": "原公共服务11788.42还含公安服务40；缴税不作为水电或经常生活费"
+        },
+        {
+          "label": "7月单笔税款",
+          "cents": 1166849,
+          "note": "解释7月峰值的一部分；不认定为当前工资预扣税"
+        }
+      ]
     }
   },
   "methods": [
@@ -520,6 +705,111 @@
     "记录小计尚未完成家庭代付、报销与重复抵销。",
     "樊高一格类别为消费原额，黄宇辰类别为扣对应退款净额，不直接相加。",
     "预算基线为1—10月记录月均四舍五入至分，情景按固定月差额乘持续月数。",
-    "6000元计划性大额预留已含在24000消费安排，不是可自由储蓄。"
-  ]
+    "旧双方消费总额提案中，6000元计划性大额预留已含在24000消费安排，不是可自由储蓄。",
+    "当前筹资与共同消费分别规划；旧全量消费月均不是小荷包支出基线，旧控制差额不是小荷包储蓄。",
+    "个人用途在个人账户范围内安排；共同用途不由支付日期或付款人自动确定。",
+    "7300元共同常规及5000元专项是可调整示例，不是已核刚需或已批准预算。"
+  ],
+  "sharedWallet": {
+    "contributionRateBps": 5000,
+    "actualMonthlyContributionCents": null,
+    "actualCommonSpendingCents": null,
+    "currentBalanceCents": null,
+    "sharedFixedObligationsCents": null,
+    "proposal": {
+      "commonDays": 8,
+      "reunions": 4,
+      "activities": 4,
+      "diningPerDayCents": 35000,
+      "transportPerReunionCents": 50000,
+      "activityPerTimeCents": 25000,
+      "commonConsumablesCents": 50000,
+      "contingencyCents": 100000,
+      "reserveRows": [
+        {
+          "label": "共同旅行",
+          "cents": 300000
+        },
+        {
+          "label": "共同采购（不含个人家电）",
+          "cents": 100000
+        },
+        {
+          "label": "待约定共担年度项目",
+          "cents": 100000
+        }
+      ],
+      "status": "new-trial-proposal-not-approved"
+    },
+    "scope": "共同活动、共同采购和共同旅行按共同用途安排；个人住房、水电、家电、清洁及单独旅行个人承担；历史共同消费尚未完整识别",
+    "fixedObligationsDefinition": "常规与专项尚未覆盖、双方约定共同承担的固定应付与承诺；不重复扣已有预留",
+    "transferTreatment": "各自税后实收的50%分别按分四舍五入后相加；内部缴入不是新增家庭收入、消费或储蓄",
+    "status": "rule-confirmed-amounts-proposed",
+    "actualSavingsCents": null,
+    "reportedMonthlyContributions": [
+      {
+        "member": "fg",
+        "cents": 1000000
+      },
+      {
+        "member": "hyc",
+        "cents": 1000000
+      }
+    ],
+    "reportedContributionTotalCents": 2000000,
+    "contributionEvidence": "user_report_approximate",
+    "personalMonthlyRentCents": {
+      "fg": 545000,
+      "hyc": 300000
+    },
+    "reportedGrossSalaryCents": {
+      "hyc": 2400000
+    },
+    "obligationScope": "房贷车贷由樊高一格个人承担；房租各自承担；个人水电按10月19日既有约定个人承担，例外另确认",
+    "priorAgreements": {
+      "reviewThresholdCents": 10000,
+      "hycContributionDay": 15,
+      "fgContributionDay": 30,
+      "workingCapitalTargetCents": 500000,
+      "annualTravelBudgetCapCents": 10000000,
+      "sourceDate": "2026-10-19",
+      "status": "prior-recorded-agreement"
+    },
+    "travelFundingScenarios": [
+      {
+        "id": "trial",
+        "label": "每月旅行3000的试行方案",
+        "travelMonthlyCents": 300000,
+        "otherReserveMonthlyCents": 200000,
+        "routineMonthlyCents": 730000,
+        "totalAllocationCents": 1230000,
+        "beforeFixedObligationsCents": 770000,
+        "annualTravelFundingCents": 3600000
+      },
+      {
+        "id": "full-cap",
+        "label": "从零均摊备足全年旅行上限",
+        "travelMonthlyCents": 833333,
+        "otherReserveMonthlyCents": 200000,
+        "routineMonthlyCents": 730000,
+        "totalAllocationCents": 1763333,
+        "beforeFixedObligationsCents": 236667,
+        "annualTravelFundingCents": 9999996,
+        "annualRoundingRemainderCents": 4
+      }
+    ],
+    "workingCapitalTreatment": "先核当前余额；目标5000为存量，余额不足部分优先用条件余量补足；不每月重复扣5000",
+    "householdBudgetConstraint": {
+      "targetCents": 2400000,
+      "status": "prior-discussion-target-not-actual-spending",
+      "basis": "月度预算与备款安排，专项预留不是当月消费；贷款现金支出另核",
+      "personalRentCents": 845000,
+      "trialAllocationWithRentCents": 2075000,
+      "trialRemainingForPersonalCents": 325000,
+      "fullTravelAllocationWithRentCents": 2608333,
+      "fullTravelExcessBeforePersonalCents": 208333,
+      "note": "小荷包筹资比例不替代全家总预算；坚持24000需缩共同日常或实际旅行计划，或讨论调整总额"
+    }
+  },
+  "activeBudgetModel": "shared_wallet"
 }

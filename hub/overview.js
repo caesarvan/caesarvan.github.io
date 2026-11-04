@@ -84,17 +84,20 @@ function pnlChart(accounts) {
 
 
 function renderHousehold(data,card) {
-  if(data.schemaVersion!=='household-budget/1.0'||data.members?.map(x=>x.name).join('|')!=='樊高一格|黄宇辰')throw Error('家庭资料结构不完整。');
+  if(data.schemaVersion!=='household-budget/1.0'||data.members?.map(x=>x.name).join('|')!=='樊高一格|黄宇辰'||data.sharedWallet?.contributionRateBps!==5000)throw Error('共同预算资料结构不完整。');
   const rows=query(data,'monthly').map(r=>({month:r.month,fg:Number.isSafeInteger(r.fgCents)?r.fgCents/100:null,hyc:Number.isSafeInteger(r.hycCents)?r.hycCents/100:null}));
-  const baseline=data.context?.baselineMonthlyCents,budget=query(data,'budgets').find(r=>r.budgetCents===2400000);
-  if(!Number.isSafeInteger(baseline)||!budget||!Number.isSafeInteger(budget.differenceCents))throw Error('家庭预算金额不完整。');
-  card.querySelector('.ov-body').innerHTML=`<p class="ov-date">樊高一格截至 2026-10-28 · 黄宇辰截至 2026-11-03</p>
-    <div class="ov-metrics">${metric('1—10月记录月均',fmt(baseline/100),'CNY','双方小计，待核家庭抵销')}${metric('建议讨论月消费上限',fmt(budget.budgetCents/100),'CNY','预算提案，未作决议')}${metric('持续6个月少支出情景',fmt(budget.differenceCents*6/100),'CNY','消费控制差额，非实际储蓄')}</div>
-    <div class="ov-chart-heading"><h3>双方已记录月度净消费 · CNY</h3><span class="ov-legend"><i style="--mark:#278774"></i>樊高一格 <i style="--mark:#426fd0"></i>黄宇辰</span></div>
-    <div class="ov-chart-area">${lineChart(rows,'month',[{key:'fg',label:'樊高一格',color:'#278774'},{key:'hyc',label:'黄宇辰',color:'#426fd0'}],'双方已记录月度净消费，人民币元；缺资料保留空缺',{unit:'CNY'})}<div class="ov-tooltip" role="tooltip" hidden></div></div>
-    <p class="ov-note"><strong>结论：7—8月占1—10月记录小计的39.0%，优先为计划性大额支出预留。</strong>24,000元提案含6,000元大额预留，该预留仍属于消费安排；稳定收入和预算外应还未核清，实际可存金额暂不确定。</p>
+  const p=data.sharedWallet.proposal;
+  const cents=[p.diningPerDayCents*p.commonDays,p.transportPerReunionCents*p.reunions,p.activityPerTimeCents*p.activities,p.commonConsumablesCents,p.contingencyCents];
+  if(cents.some(v=>!Number.isSafeInteger(v)||v<0)||!Array.isArray(p.reserveRows)||p.reserveRows.some(r=>!Number.isSafeInteger(r.cents)||r.cents<0))throw Error('共同预算金额不完整。');
+  const routine=cents.reduce((a,b)=>a+b,0),reserve=p.reserveRows.reduce((a,b)=>a+b.cents,0);
+  card.querySelector('.ov-body').innerHTML=`<p class="ov-date">用户自报更新 2026-11-04 · 通常合计缴入约20,000元，流水核验与共同消费基线仍待核</p>
+    <div class="ov-metrics">${metric('用户自报合计月缴入',fmt(data.sharedWallet.reportedContributionTotalCents/100),'CNY','通常各约10,000；未独立流水核验')}${metric('共同常规试算',fmt(routine/100),'CNY',`${p.commonDays}个共同日、${p.reunions}次相聚的提案`)}${metric('共同专项预留试算',fmt(reserve/100),'CNY','未来消费准备，不当自由储蓄')}</div>
+    <p class="ov-note"><strong>结论：约20,000元共同缴入，应先定消费与旅行计划，再定可留存金额。</strong>常规试算7,300、专项试算5,000后，尚有约7,700元待扣未覆盖义务与周转金缺口；旅行每月3,000仅备款3.6万元/年。若从零均摊备足既有全年旅行上限10万元，常规加专项需约17,633.33，剩约2,366.67待扣义务。上限不要求花满，两套均为提案，不能称已实现储蓄。</p>
+    <div class="ov-chart-heading"><h3>双方已记录消费 · 历史参考 · CNY</h3><span class="ov-legend"><i style="--mark:#278774"></i>樊高一格 <i style="--mark:#426fd0"></i>黄宇辰</span></div>
+    <div class="ov-chart-area">${lineChart(rows,'month',[{key:'fg',label:'樊高一格',color:'#278774'},{key:'hyc',label:'黄宇辰',color:'#426fd0'}],'双方已记录消费历史，包含个人用途，非小荷包消费基线',{unit:'CNY'})}<div class="ov-tooltip" role="tooltip" hidden></div></div>
+    <p class="ov-note">樊高一格记录截至10/28，黄宇辰截至11/3。历史28,899.20元月均包含个人用途，原4,899.20元比较差额不能作为小荷包储蓄；共同池流水识别及家庭抵销仍未完成。房贷车贷由樊高一格个人承担，双方房租5,450与3,000各自承担，不重复扣共同池。</p>
     ${table(['月份','樊高一格 CNY','黄宇辰 CNY'],rows.map(r=>[r.month,fmt(r.fg),fmt(r.hyc)]))}
-    ${sourceDetails('household-budget',data,'此前全部已有财务资料归属樊高一格；本次支付与银行三份资料归属黄宇辰。金额来自已接受记录，覆盖仍不完整。退款按发生月；家庭代付、报销及重复抵销未完成。11月樊高一格缺资料，未计为零；中行资金流不重复加入消费。')}`;
+    ${sourceDetails('household-budget',data,'此前全部已有财务资料归属樊高一格，本次支付及银行三份归属黄宇辰。用户确认双方各缴税后实收50%、通常各缴约10000元，共同消费使用小荷包。沿用10月19日已记录约定：超过100元评审，黄宇辰15日、樊高一格30日缴入，周转金目标余额5000元（非已核余额或每月支出），共同旅行全年上限100000元（非必须支出）。缴入是内部转账；个人支出移出共同池不会自动减少全家总消费。共同常规、专项与尚未覆盖的共同固定应付分别处理；未知不填零，预留和真实储蓄不重复计。')}`;
 }
 
 function renderFinance(data, card) {
@@ -148,7 +151,7 @@ export function fileSummary(id,data) {
 export function mountOverview(container, {modules=[]}={}) {
   if (!(container instanceof Element)) throw Error('首页摘要需要有效容器。');
   let destroyed=false; const controllers=new Set(), cards=new Map();
-  const definitions=[{id:'household-budget',label:'家庭消费与预算',icon:'⌂',wide:true,subtitle:'樊高一格与黄宇辰 · 消费、预算与储蓄计划'},{id:'finance',label:'樊高一格财务',icon:'◫',wide:true,subtitle:'消费、收入与资金流，一起看清'},{id:'investment',label:'樊高一格投资',icon:'↗',subtitle:'账户权益与盈亏的同屏视图'},{id:'webank',label:'樊高一格微众资产',icon:'▤',subtitle:'资产构成与独立报告口径'},{id:'travel',label:'旅行手记',icon:'✈',subtitle:'下一程与过去的足迹'},{id:'files',label:'资料与收藏',icon:'▱',subtitle:'知识、附件与收藏的统一入口'}];
+  const definitions=[{id:'household-budget',label:'家庭共同预算',icon:'⌂',wide:true,subtitle:'樊高一格与黄宇辰 · 共同筹资、消费与留存'},{id:'finance',label:'樊高一格财务',icon:'◫',wide:true,subtitle:'消费、收入与资金流，一起看清'},{id:'investment',label:'樊高一格投资',icon:'↗',subtitle:'账户权益与盈亏的同屏视图'},{id:'webank',label:'樊高一格微众资产',icon:'▤',subtitle:'资产构成与独立报告口径'},{id:'travel',label:'旅行手记',icon:'✈',subtitle:'下一程与过去的足迹'},{id:'files',label:'资料与收藏',icon:'▱',subtitle:'知识、附件与收藏的统一入口'}];
   const enabled=id=>modules.length===0 || modules.some(m=>m.id===id && m.enabled!==false);
   const active=definitions.filter(d=>d.id==='files'?['icloud','onedrive','outlook','mail','youtube'].some(enabled):enabled(d.id));
   container.classList.add('ov-overview'); container.innerHTML=`<div class="ov-overview-status"><span>各领域摘要 · 数据截止见各卡片</span><span class="ov-snapshot-label"><i></i> 已发布快照</span></div><div class="ov-overview-grid">${active.map(d=>`<article class="ov-card${d.wide?' ov-wide':''} ov-${d.id}" data-ov-card="${d.id}" aria-label="${esc(d.label)}首页摘要"><div class="ov-card-top"><div class="ov-card-title"><span class="ov-icon" aria-hidden="true">${d.icon}</span><div><h2>${esc(d.label)}</h2><p>${esc(d.subtitle)}</p></div></div>${d.id!=='files'?`<a class="ov-enter" href="#/${d.id}" aria-label="进入${esc(d.label)}">查看详情 <span aria-hidden="true">↗</span></a>`:''}</div><div class="ov-body"><div class="ov-loading" role="status"><span></span>正在读取已发布数据…</div></div>${['finance','webank','investment'].includes(d.id)?related(['finance','webank','investment'].filter(id=>id!==d.id),modules):''}</article>`).join('')}</div><p class="ov-global-note">每个领域保留自己的来源与数据截止。不同币种、平台单位及统计日期的资产分别展示。</p>`;

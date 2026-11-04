@@ -7,7 +7,7 @@ let data,monthly=[],currentMonthly=null,loadSequence=0,loadController=null;
 export const LOAD_TIMEOUT_MS=15000;
 const table=(heads,rows)=>'<table><thead><tr>'+heads.map(h=>'<th>'+esc(h)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map((v,i)=>'<td'+(i?' class="number"':'')+'>'+esc(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
 const metric=(label,value,note='')=>'<div class="metric"><span>'+esc(label)+'</span><strong>'+esc(value)+'</strong><small>'+esc(note)+'</small></div>';
-const sum=values=>{const total=values.reduce((a,b)=>a+b,0);if(!valid(total))throw Error('金额合计超出整数分范围');return total;};
+const sum=values=>values.reduce((total,value)=>{const next=total+value;if(!valid(value)||!valid(next))throw Error('金额合计超出整数分范围');return next;},0);
 const median=values=>{const v=values.slice().sort((a,b)=>a-b);return v.length?Math.round(v.length%2?v[(v.length-1)/2]:(v[v.length/2-1]+v[v.length/2])/2):null;};
 const monthValid=v=>typeof v==='string'&&/^\d{4}-(0[1-9]|1[0-2])$/.test(v);
 const memberName=member=>member==='fg'?'樊高一格':member==='hyc'?'黄宇辰':'双方记录小计';
@@ -15,6 +15,49 @@ const bothCents=r=>valid(r.fgCents)&&valid(r.hycCents)?sum([r.fgCents,r.hycCents
 const cellAmount=c=>valid(c)?(c/100).toFixed(2):'缺资料';
 function calendarDate(value){if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(value))return false;const date=new Date(value+'T00:00:00Z');return Number.isFinite(date.getTime())&&date.toISOString().slice(0,10)===value;}
 function timestamp(value){return typeof value==='string'&&/^\d{4}-\d{2}-\d{2}T.+(?:Z|[+-]\d{2}:\d{2})$/.test(value)&&calendarDate(value.slice(0,10))&&Number.isFinite(Date.parse(value));}
+export function inputCents(value){
+  if(typeof value!=='string'||value.trim()==='')return null;
+  const text=value.trim();if(!/^\d+(?:\.\d{1,2})?$/.test(text))throw Error('金额须为非负数字，最多两位小数');
+  const [whole,fraction='']=text.split('.'),amount=BigInt(whole)*100n+BigInt(fraction.padEnd(2,'0'));
+  if(amount>BigInt(Number.MAX_SAFE_INTEGER))throw Error('金额超出整数分范围');return Number(amount);
+}
+export function sharedWalletModel(wallet,{commonDays=wallet.proposal.commonDays,reunions=wallet.proposal.reunions,fgIncomeCents=null,hycIncomeCents=null,fixedObligationsCents=null,contributionMode=Array.isArray(wallet.reportedMonthlyContributions)?'reported':'income'}={}){
+  if(wallet.contributionRateBps!==5000)throw Error('小荷包缴入比例须为50%');
+  if(![commonDays,reunions].every(v=>valid(v)&&v>=0&&v<=31))throw Error('共同日数和团聚次数须为0至31的整数');
+  for(const value of [fgIncomeCents,hycIncomeCents,fixedObligationsCents])if(value!==null&&(!valid(value)||value<0))throw Error('收入和共同固定义务须为非负整数分或未知');
+  const p=wallet.proposal,activities=reunions*p.activities/p.reunions;
+  if(!valid(activities))throw Error('共同活动次数试算须为整数');
+  const routineRows=[{label:'共同餐饮',count:commonDays,unit:'日',unitCents:p.diningPerDayCents,cents:commonDays*p.diningPerDayCents},{label:'共同交通',count:reunions,unit:'次团聚',unitCents:p.transportPerReunionCents,cents:reunions*p.transportPerReunionCents},{label:'共同活动',count:activities,unit:'次活动',unitCents:p.activityPerTimeCents,cents:activities*p.activityPerTimeCents},{label:'共同消耗品',count:1,unit:'月',unitCents:p.commonConsumablesCents,cents:p.commonConsumablesCents},{label:'共同机动',count:1,unit:'月',unitCents:p.contingencyCents,cents:p.contingencyCents}];
+  const routineCents=sum(routineRows.map(r=>r.cents)),reserveCents=sum(p.reserveRows.map(r=>r.cents));
+  const contribution=value=>value===null?null:Number((BigInt(value)+1n)/2n);
+  if(!['reported','income'].includes(contributionMode))throw Error('缴入测算模式无效');
+  let fgContributionCents,hycContributionCents;
+  if(contributionMode==='reported'){
+    if(wallet.contributionEvidence!=='user_report_approximate'||!Array.isArray(wallet.reportedMonthlyContributions))throw Error('用户自报缴入资料未齐');
+    const reported=Object.fromEntries(wallet.reportedMonthlyContributions.map(r=>[r.member,r.cents]));
+    if(![reported.fg,reported.hyc].every(v=>valid(v)&&v>=0)||sum([reported.fg,reported.hyc])!==wallet.reportedContributionTotalCents)throw Error('用户自报缴入合计不一致');
+    fgContributionCents=reported.fg;hycContributionCents=reported.hyc;
+  }else{fgContributionCents=contribution(fgIncomeCents);hycContributionCents=contribution(hycIncomeCents);}
+  const contributionCents=fgContributionCents===null||hycContributionCents===null?null:sum([fgContributionCents,hycContributionCents]);
+  const beforeFixedObligationsCents=contributionCents===null?null:sum([contributionCents,-routineCents,-reserveCents]);
+  const conditionalRemainderCents=beforeFixedObligationsCents===null||fixedObligationsCents===null?null:sum([beforeFixedObligationsCents,-fixedObligationsCents]);
+  return {commonDays,reunions,activities,routineRows,routineCents,reserveCents,contributionMode,fgContributionCents,hycContributionCents,contributionCents,fixedObligationsCents,beforeFixedObligationsCents,conditionalRemainderCents};
+}
+export function salaryObservationModel(rows,contributionCents,rentCents){
+  const ordered=rows.filter(row=>row.member==='hyc').slice().sort((a,b)=>a.date.localeCompare(b.date)),recent=ordered.slice(-3);
+  const recentMeanCents=recent.length===3&&recent.every(row=>valid(row.cents))?Math.round(sum(recent.map(row=>row.cents))/3):null;
+  const afterContributionRentCents=recentMeanCents===null||!valid(contributionCents)||!valid(rentCents)?null:sum([recentMeanCents,-contributionCents,-rentCents]);
+  return {ordered,recent,recentMeanCents,afterContributionRentCents};
+}
+export function travelFundingModel(wallet,commonModel){
+  return wallet.travelFundingScenarios.slice().sort((a,b)=>Number(a.id==='full-cap')-Number(b.id==='full-cap')).map(row=>{const totalAllocationCents=sum([commonModel.routineCents,row.travelMonthlyCents,row.otherReserveMonthlyCents]),beforeFixedObligationsCents=commonModel.contributionCents===null?null:sum([commonModel.contributionCents,-totalAllocationCents]),conditionalRemainderCents=beforeFixedObligationsCents===null||commonModel.fixedObligationsCents===null?null:sum([beforeFixedObligationsCents,-commonModel.fixedObligationsCents]);return {...row,routineMonthlyCents:commonModel.routineCents,totalAllocationCents,beforeFixedObligationsCents,conditionalRemainderCents};});
+}
+export function workingCapitalGap(wallet){return valid(wallet.currentBalanceCents)?Math.max(0,wallet.priorAgreements.workingCapitalTargetCents-wallet.currentBalanceCents):null;}
+export function familyBudgetConstraintModel(wallet,scenarios,budgetCents=2400000){
+  if(!valid(budgetCents)||budgetCents<0)throw Error('家庭预算对照金额无效');
+  const rentCents=sum([wallet.personalMonthlyRentCents.fg,wallet.personalMonthlyRentCents.hyc]);
+  return scenarios.map(row=>{const listedAllocationCents=sum([rentCents,row.totalAllocationCents]);return {id:row.id,label:row.label,rentCents,commonAllocationCents:row.totalAllocationCents,listedAllocationCents,budgetCents,differenceCents:sum([budgetCents,-listedAllocationCents])};});
+}
 export function validateSnapshot(next){
   const require=(condition,label)=>{if(!condition)throw Error('快照校验失败：'+label);};
   const text=value=>typeof value==='string'&&value.trim().length>0;
@@ -43,6 +86,27 @@ export function validateSnapshot(next){
   for(const source of next.sources){require([source.id,source.label,source.coverage].every(text)&&(calendarDate(source.asOf)||timestamp(source.asOf))&&!sourceIds.has(source.id),'来源字段');sourceIds.add(source.id);}
   for(const row of rows('summary'))require(text(row.key)&&valid(row.cents),'汇总金额');
   require(Array.isArray(next.methods)&&next.methods.every(text),'方法说明');
+  const wallet=next.sharedWallet,p=wallet?.proposal;require(wallet?.contributionRateBps===5000&&text(wallet.scope),'小荷包规则与范围');
+  for(const key of ['actualMonthlyContributionCents','actualCommonSpendingCents','currentBalanceCents','sharedFixedObligationsCents'])require(wallet[key]===null||(valid(wallet[key])&&wallet[key]>=0),'小荷包实际金额或未知状态');
+  require(p&&valid(p.commonDays)&&p.commonDays>=0&&p.commonDays<=31&&valid(p.reunions)&&p.reunions>0&&p.reunions<=31&&valid(p.activities)&&p.activities===p.reunions,'共同日数、团聚与活动提案');
+  for(const key of ['diningPerDayCents','transportPerReunionCents','activityPerTimeCents','commonConsumablesCents','contingencyCents'])require(valid(p[key])&&p[key]>=0,'共同常规金额');
+  require(Array.isArray(p.reserveRows)&&p.reserveRows.length>0,'共同专项预留');const reserves=new Set();for(const row of p.reserveRows){require(text(row.label)&&valid(row.cents)&&row.cents>=0&&!reserves.has(row.label),'共同专项金额或重复');reserves.add(row.label);}
+  if(['reportedMonthlyContributions','reportedContributionTotalCents','contributionEvidence'].some(key=>wallet[key]!==undefined)){
+    require(wallet.contributionEvidence==='user_report_approximate'&&Array.isArray(wallet.reportedMonthlyContributions)&&wallet.reportedMonthlyContributions.length===2,'用户自报缴入证据');
+    const members=new Set();for(const row of wallet.reportedMonthlyContributions){require(['fg','hyc'].includes(row.member)&&!members.has(row.member)&&valid(row.cents)&&row.cents>=0,'自报成员缴入');members.add(row.member);}
+    require(valid(wallet.reportedContributionTotalCents)&&sum(wallet.reportedMonthlyContributions.map(r=>r.cents))===wallet.reportedContributionTotalCents,'用户自报缴入合计');
+  }
+  if(wallet.personalMonthlyRentCents!==undefined){require(wallet.personalMonthlyRentCents&&['fg','hyc'].every(member=>valid(wallet.personalMonthlyRentCents[member])&&wallet.personalMonthlyRentCents[member]>=0),'各自个人房租');sum(Object.values(wallet.personalMonthlyRentCents));}
+  if(wallet.reportedGrossSalaryCents!==undefined)for(const [member,cents] of Object.entries(wallet.reportedGrossSalaryCents))require(['fg','hyc'].includes(member)&&valid(cents)&&cents>=0,'用户自报税前工资');
+  if(wallet.obligationScope!==undefined)require(text(wallet.obligationScope),'个人与共同义务归属');
+  if(wallet.priorAgreements!==undefined){const prior=wallet.priorAgreements;require(prior&&prior.status==='prior-recorded-agreement'&&calendarDate(prior.sourceDate),'既有共同约定来源');for(const key of ['reviewThresholdCents','workingCapitalTargetCents','annualTravelBudgetCapCents'])require(valid(prior[key])&&prior[key]>=0,'既有共同约定金额');for(const key of ['hycContributionDay','fgContributionDay'])require(valid(prior[key])&&prior[key]>=1&&prior[key]<=31,'既有缴入日');}
+  const defaultCommon=sharedWalletModel(wallet);require(Array.isArray(wallet.travelFundingScenarios)&&wallet.travelFundingScenarios.length===2&&wallet.priorAgreements,'旅行备款对比');const scenarioIds=new Set();
+  for(const row of wallet.travelFundingScenarios){require(['trial','full-cap'].includes(row.id)&&!scenarioIds.has(row.id)&&text(row.label),'旅行方案或重复');scenarioIds.add(row.id);for(const key of ['travelMonthlyCents','otherReserveMonthlyCents','routineMonthlyCents','totalAllocationCents','annualTravelFundingCents'])require(valid(row[key])&&row[key]>=0,'旅行备款整数分');require(row.routineMonthlyCents===defaultCommon.routineCents&&row.totalAllocationCents===sum([row.travelMonthlyCents,row.otherReserveMonthlyCents,row.routineMonthlyCents]),'旅行方案合计');require(valid(row.beforeFixedObligationsCents)&&row.beforeFixedObligationsCents===wallet.reportedContributionTotalCents-row.totalAllocationCents,'旅行方案未扣F余量');require(row.annualTravelFundingCents===row.travelMonthlyCents*12&&valid(row.annualTravelFundingCents),'旅行年度预留');if(row.id==='full-cap')require(row.travelMonthlyCents===Math.round(wallet.priorAgreements.annualTravelBudgetCapCents/12)&&valid(row.annualRoundingRemainderCents)&&row.annualRoundingRemainderCents===wallet.priorAgreements.annualTravelBudgetCapCents-row.annualTravelFundingCents,'满额年度预留与分舍入');}
+  const trial=wallet.travelFundingScenarios.find(row=>row.id==='trial'),travelReserve=p.reserveRows.find(row=>/旅行/.test(row.label));require(travelReserve&&trial.travelMonthlyCents===travelReserve.cents&&trial.otherReserveMonthlyCents===sum(p.reserveRows.filter(row=>row!==travelReserve).map(row=>row.cents))&&wallet.travelFundingScenarios.every(row=>row.otherReserveMonthlyCents===trial.otherReserveMonthlyCents),'旅行与其他专项不重计');
+  const salaries=rows('observed_salary');require(next.queries.observed_salary.status==='bank-credits-not-payroll-components'&&text(next.queries.observed_salary.note),'工资观察口径');const salaryKeys=new Set();for(const row of salaries){require(['fg','hyc'].includes(row.member)&&calendarDate(row.date)&&(row.cents===null||(valid(row.cents)&&row.cents>=0)),'工资观察字段');const key=row.member+'|'+row.date;require(!salaryKeys.has(key),'工资观察重复');salaryKeys.add(key);}
+  const utilities=rows('utilities_review');require(next.queries.utilities_review.status==='identified-payments-not-complete-monthly-bills','水电观察口径');const utilityKeys=new Set();for(const row of utilities){require(['fg','hyc'].includes(row.member)&&text(row.category)&&text(row.note)&&(row.count===null||(valid(row.count)&&row.count>=0))&&(row.cents===null||(valid(row.cents)&&row.cents>=0)),'水电金额或笔数');const key=row.member+'|'+row.category;require(!utilityKeys.has(key),'水电类别重复');utilityKeys.add(key);}
+  const insights=rows('income_utilities_insights');require(next.queries.income_utilities_insights.status==='source-backed-with-explicit-gaps','收入水电结论口径');for(const row of insights)require(text(row.label)&&text(row.note)&&(row.cents===null||valid(row.cents)),'收入水电结论字段');
+  const observed=salaryObservationModel(salaries,wallet.reportedMonthlyContributions?.find(row=>row.member==='hyc')?.cents,wallet.personalMonthlyRentCents?.hyc);for(const [label,value] of [['黄宇辰近三笔工资入账均值',observed.recentMeanCents],['扣自报月缴入及房租后的观察均值',observed.afterContributionRentCents]]){const row=insights.find(row=>row.label===label);require(row&&row.cents===value,'工资观察均值或个人余量不一致');}
   return next;
 }
 export function monthlyModel(rows,member,start,end){
@@ -99,22 +163,60 @@ function renderCategories(){
 }
 function renderBudget(){
   if(!data)return;const baseline=data.context.baselineMonthlyCents,budget=Math.round(Number($('budget').value)*100),m=scenarioModel(baseline,budget);
-  $('budget-output').value=fmt(budget);$('budget-metrics').innerHTML=metric('选择的月消费上限',fmt(budget)+' 元','消费预算情景')+metric(m.difference>=0?'较记录月均少支出':'较记录月均多支出',fmt(Math.abs(m.difference))+' 元','并非已实现储蓄')+metric('相对基线变化',(Math.abs(m.difference)/baseline*100).toFixed(1)+'%',m.difference>=0?'消费控制幅度':'预算高于记录月均');
+  $('budget-output').value=fmt(budget);$('budget-metrics').innerHTML=metric('历史总消费假设',fmt(budget)+' 元','含个人与共同用途')+metric(m.difference>=0?'较历史月均少支出':'较历史月均多支出',fmt(Math.abs(m.difference))+' 元','不等于小荷包节余')+metric('相对历史月均变化',(Math.abs(m.difference)/baseline*100).toFixed(1)+'%','历史口径敏感性');
   $('savings-chart').innerHTML=bars(m.projections.map(r=>({label:r.months+'个月',cents:r.cents})),{height:250,label:'累计消费控制差额情景，人民币元；零轴右侧为较基线少支出，左侧为较基线多支出'});
-  $('savings-table').innerHTML=table(['持续期间','累计消费控制差额（元）','性质'],m.projections.map(r=>[r.months+'个月',fmt(r.cents),'情景，非实际储蓄']));
-  $('savings-conclusion').textContent=m.difference>0?'结论：若消费上限持续执行，6个月相对基线可少支出 '+fmt(m.difference*6)+' 元；只有核清其他资金需求并实际留存后，才计入储蓄。':'结论：当前消费预算不低于历史记录月均，不能从本情景推导新增消费节余额。';
-  renderCash();
+  $('savings-table').innerHTML=table(['持续期间','历史总消费差额（元）','性质'],m.projections.map(r=>[r.months+'个月',fmt(r.cents),'历史情景，非小荷包节余']));
+  $('savings-conclusion').textContent='历史口径下，6个月总消费差额为 '+fmt(m.difference*6)+' 元。历史资料未完成共同用途识别，不能作为小荷包节余或已实现储蓄。';
 }
-function renderCash(){
-  const income=$('income').value,ob=$('obligations').value;
-  if(income===''||ob===''){$('cash-result').textContent='结论：稳定收入及预算外应还与预留仍待核，目前无法可靠给出实际可存金额。';return;}
-  const i=Math.round(Number(income)*100),o=Math.round(Number(ob)*100),b=Math.round(Number($('budget').value)*100);
-  if(![i,o,b].every(valid)||i<0||o<0){$('cash-result').textContent='请输入有效的非负金额。';return;}
-  const remaining=i-b-o;$('cash-result').textContent=remaining>=0?'按输入情景，每月可安排余额 '+fmt(remaining)+' 元。需以实际到账、用途及余额留存验证。':'按输入情景，每月仍缺 '+fmt(-remaining)+' 元，应先调整预算或资金安排。';
+function renderSharedWallet(){
+  if(!data)return;
+  try{
+    const wallet=data.sharedWallet,mode=$('contribution-mode').value;$('income-verification').hidden=mode!=='income';
+    const m=sharedWalletModel(wallet,{commonDays:$('common-days').value===''?NaN:Number($('common-days').value),reunions:$('reunions').value===''?NaN:Number($('reunions').value),fgIncomeCents:mode==='income'?inputCents($('fg-income').value):null,hycIncomeCents:mode==='income'?inputCents($('hyc-income').value):null,fixedObligationsCents:inputCents($('shared-fixed').value),contributionMode:mode});
+    $('wallet-metrics').innerHTML=metric('共同常规试算',fmt(m.routineCents)+' 元／月',m.commonDays+'个共同日、'+m.reunions+'次团聚')+metric('共同专项预留提案',fmt(m.reserveCents)+' 元／月','属于专项资金安排，不能重复扣款')+metric('尚未覆盖的共担固定义务 F',valid(m.fixedObligationsCents)?fmt(m.fixedObligationsCents)+' 元／月':'待核','空白为未知；明确输入0才按0计算');
+    $('wallet-breakdown').innerHTML=table(['共同常规项目（提案）','数量','单价（元）','月试算（元）'],m.routineRows.map(r=>[r.label,r.count+r.unit,fmt(r.unitCents),fmt(r.cents)]));
+    $('wallet-reserves').innerHTML=table(['共同专项预留（提案）','月预留（元）'],wallet.proposal.reserveRows.map(r=>[r.label,fmt(r.cents)]));
+    const reported=m.contributionMode==='reported',approx=reported?'约 ':'',basis=reported?'用户自报通常月缴入；流水未核':'本人税后实收 × 50%，按分舍入';
+    $('wallet-contributions').innerHTML=metric(reported?'樊高一格自报月缴入':'樊高一格50%核验试算',valid(m.fgContributionCents)?approx+fmt(m.fgContributionCents)+' 元':'待核',basis)+metric(reported?'黄宇辰自报月缴入':'黄宇辰50%核验试算',valid(m.hycContributionCents)?approx+fmt(m.hycContributionCents)+' 元':'待核',basis)+metric(reported?'自报合计缴入情景 C':'双方50%核验合计 C',valid(m.contributionCents)?approx+fmt(m.contributionCents)+' 元／月':'待核',reported?'用户自报约数；非独立流水核验':'各自四舍五入至分后相加');
+    const unknown=[];if(!valid(m.fgContributionCents))unknown.push('樊高一格税后实收');if(!valid(m.hycContributionCents))unknown.push('黄宇辰税后实收');
+    const prefix=reported?'按用户自报近似缴入测算，':'按50%核验输入情景，';
+    $('wallet-result').textContent=unknown.length?'条件余量待核：请核实'+unknown.join('、')+'。未填项不按0处理，不由缴入反推净薪。':m.fixedObligationsCents===null?prefix+(m.beforeFixedObligationsCents>=0?'未扣F的条件空间'+approx+fmt(m.beforeFixedObligationsCents)+' 元／月。':'未扣F已出现共同安排缺口'+approx+fmt(-m.beforeFixedObligationsCents)+' 元／月。')+'F仍待核，尚不能给出扣F后的条件余量，更不是实际结余或储蓄。':m.conditionalRemainderCents>=0?prefix+'每月条件余量'+approx+fmt(m.conditionalRemainderCents)+' 元（C − 共同常规 − 专项预留 − F）。仍需按实际缴入与支出核验，不是已实现储蓄。':prefix+'每月共同安排缺口'+approx+fmt(-m.conditionalRemainderCents)+' 元。需复核共同支出和专项安排，不能将负数称为储蓄。';
+    const facts=[['流水核验的月缴入',wallet.actualMonthlyContributionCents,'待流水核验'],['流水核验的共同支出',wallet.actualCommonSpendingCents,'共同用途尚未完整识别'],['流水核验的当前余额',wallet.currentBalanceCents,'待余额核验']];
+    if(valid(wallet.reportedContributionTotalCents))facts.unshift(['用户自报通常月缴入',wallet.reportedContributionTotalCents,'约数；非独立核验']);
+    $('wallet-actual').innerHTML=table(['小荷包信息','金额（元）','依据与状态'],facts.map(([label,cents,note])=>[label,valid(cents)?fmt(cents):'待核',note]));
+    $('wallet-scope').textContent=wallet.scope+'。用户自报与流水核验分列，实际信息不由历史消费、资产或输入情景反推。';
+    const rent=wallet.personalMonthlyRentCents,personal=[];
+    if(rent){personal.push(['樊高一格个人月租',fmt(rent.fg)+' 元','用户自报；个人承担，不扣共同池'],['黄宇辰个人月租',fmt(rent.hyc)+' 元','用户自报；个人承担，不扣共同池'],['双方个人月租合计',fmt(sum([rent.fg,rent.hyc]))+' 元','个人成本参考，不自动扣入共同预算']);}
+    for(const [member,cents] of Object.entries(wallet.reportedGrossSalaryCents||{}))personal.push([memberName(member)+'自报税前月薪',fmt(cents)+' 元','税前口径；不能作为实发或由缴入反推净薪']);
+    $('personal-costs').innerHTML=personal.length?table(['个人成本与收入参考','用户自报金额','口径'],personal):'<p class="note">个人成本参考资料待补。</p>';
+    const prior=wallet.priorAgreements;
+    $('personal-obligation-scope').textContent=prior?'按'+prior.sourceDate+'既有约定，个人住房、水电、家电、清洁及个人单独旅行由个人承担。房贷车贷由樊高一格个人承担，房租各自承担，不在共同池重复扣除；例外共同承担事项需另行确认。':(wallet.obligationScope||'个人与共同义务范围待核')+'。个人贷款和各自房租不在共同池重复扣除；未明确共同承担的项目不自动计入F。';
+    if(prior){
+      $('prior-agreements').innerHTML='<h3>'+esc(prior.sourceDate)+'已记录的共同约定</h3>'+table(['既有约定','沿用规则'],[['共同范围','共同活动、共同采购与双方共同旅行；个人单独旅行不属共同'],['个人承担','个人住房、水电、家电、清洁由个人承担'],['支出评审门槛','不超过'+fmt(prior.reviewThresholdCents)+'元默认可付；超过须评审'],['共同池缴入日','黄宇辰每月'+prior.hycContributionDay+'日；樊高一格每月'+prior.fgContributionDay+'日'],['周转金余额目标',fmt(prior.workingCapitalTargetCents)+'元：目标存量，不是已存余额或每月另扣支出'],['双方共同旅行全年上限',fmt(prior.annualTravelBudgetCapCents)+'元：支出上限，不等于必须花满']]);
+      const travel=wallet.proposal.reserveRows.find(r=>/旅行/.test(r.label)),fullCapMonthly=Math.round(prior.annualTravelBudgetCapCents/12);
+      $('prior-travel-scope').textContent='若按全年旅行上限满额预留，月均需约'+fmt(fullCapMonthly)+'元；'+(travel?'当前每月旅行'+fmt(travel.cents)+'元仅为新增试算，未覆盖全年上限。':'当前专项未核全年旅行预留。')+'需另核已备款与行程；不自动把全年上限当必须支出或额外F。周转金目标与月专项预留分别核对；月机动金额不改变既有支出评审门槛。';
+    }else{$('prior-agreements').innerHTML='<p class="note">既有共同约定来源待补，新增试算不替代原已决规则。</p>';$('prior-travel-scope').textContent='旅行专项仅为试算；年度上限、已备款和行程仍需核对。';}
+    const scenarios=travelFundingModel(wallet,m);
+    $('travel-funding-table').innerHTML=table(['旅行备款口径','共同常规（元／月）','旅行备款（元／月）','其他专项（元／月）','共同安排合计（元／月）','未扣F条件空间（元／月）','扣F后条件余量'],scenarios.map(row=>[row.label,fmt(row.routineMonthlyCents),fmt(row.travelMonthlyCents),fmt(row.otherReserveMonthlyCents),fmt(row.totalAllocationCents),fmt(row.beforeFixedObligationsCents),row.conditionalRemainderCents===null?'F待核':fmt(row.conditionalRemainderCents)+' 元']));
+    $('travel-funding-scope').textContent='按当前'+m.commonDays+'个共同日、'+m.reunions+'次团聚及所选缴入口径比较。两套都是备款安排，专项留存不是当月消费；满额方案从零均摊12个月，上限不是必须花满。实际应扣已有专项余额，并按已确定行程和期限安排，不能把差额直接称储蓄。满额月预留按分舍入后，12期仍差'+fmt(scenarios.find(row=>row.id==='full-cap').annualRoundingRemainderCents)+'元，需在末期核齐。';
+    const gap=workingCapitalGap(wallet);
+    $('working-capital-result').textContent=gap===null?'先核周转金：目标'+fmt(prior.workingCapitalTargetCents)+'元，当前余额未核，缺口仍未知。先核余额并补足周转金缺口，再讨论未分配余量；上述两套条件空间都不能整笔称为自由储蓄。':gap>0?'周转金目标尚差'+fmt(gap)+'元。应优先用扣F后的条件余量补足缺口；目标是存量，不是每月重复扣款。':'已核余额达到周转金目标；是否形成储蓄仍需核对实际缴入、支出、专项与F，不能只凭预算差额判断。';
+    const constraints=familyBudgetConstraintModel(wallet,scenarios);
+    $('family-budget-constraint-table').innerHTML=table(['备款口径','个人房租合计（元）','共同安排（元）','已列备款小计（元）','24,000元对照差额（元）'],constraints.map(row=>[row.label,fmt(row.rentCents),fmt(row.commonAllocationCents),fmt(row.listedAllocationCents),fmt(row.differenceCents)]));
+    $('family-budget-constraint-result').textContent='按当前共同日数，旅行3000试算加两人房租已列备款'+fmt(constraints[0].listedAllocationCents)+'元，24,000元对照'+(constraints[0].differenceCents>=0?'只余'+fmt(constraints[0].differenceCents)+'元':'已超出'+fmt(-constraints[0].differenceCents)+'元')+'；满额全年旅行备款口径'+(constraints[1].differenceCents<0?'已超24,000元'+fmt(-constraints[1].differenceCents)+'元':'尚余'+fmt(constraints[1].differenceCents)+'元')+'，均未计尚未覆盖的F、个人水电、工作餐、通勤及待核贷款现金支出。若保留全家24,000元约束，需缩减共同日常或实际旅行计划，或共同讨论重定总额。';
+  }catch(error){for(const id of ['wallet-metrics','wallet-breakdown','wallet-reserves','wallet-contributions','wallet-actual','travel-funding-table','family-budget-constraint-table'])$(id).innerHTML='';for(const id of ['travel-funding-scope','working-capital-result','family-budget-constraint-result'])$(id).textContent='';$('wallet-result').textContent='共同预算输入无效：'+error.message+'；未输出条件余量。';}
 }
 function renderSupporting(){
   const rows=data.queries.management.rows;$('management').innerHTML=table(['项目','已记录信息','处理'],rows.map(r=>[r.label,r.value,r.note]));
   $('sources').innerHTML='<p>此前全部已有资料归属樊高一格；新增三份支付及银行资料归属黄宇辰，依据2026年11月4日用户明确确认。</p>'+table(['来源','数据截止','覆盖说明'],data.sources.map(r=>[r.label,r.asOf,r.coverage]))+'<p class="note">金额以整数分计算。消费、退款、还款、资金转移及投资分别处理；未把中行付款重复加入支付渠道消费。来源缺失不填零，不跨币种或不同时点拼成当前总资产。预算和储蓄为待讨论情景。</p>';
+}
+function renderIncomeUtilities(){
+  const salary=data.queries.observed_salary,wallet=data.sharedWallet,observed=salaryObservationModel(salary.rows,wallet.reportedMonthlyContributions.find(row=>row.member==='hyc').cents,wallet.personalMonthlyRentCents.hyc);
+  $('salary-metrics').innerHTML=metric('近三笔工资入账均值',fmt(observed.recentMeanCents)+' 元','观察值；工资条组成和所属期缺失')+metric('自报月缴入及个人房租',fmt(sum([wallet.reportedMonthlyContributions.find(row=>row.member==='hyc').cents,wallet.personalMonthlyRentCents.hyc]))+' 元','缴入约数；房租个人承担')+metric('扣上述两项后观察均值',fmt(observed.afterContributionRentCents)+' 元','仍需个人水电、生活与其他义务');
+  $('salary-table').innerHTML=table(['入账日','成员','已观察工资入账（元）'],salary.rows.map(row=>[row.date,memberName(row.member),fmt(row.cents)]));$('salary-scope').textContent=salary.note+'。这些是银行工资入账观察，不能据此确认标准净薪，不自动填入50%收入核验栏，也不作未来稳定收入预测。';
+  const utilities=data.queries.utilities_review.rows,categories=[...new Set(utilities.map(row=>row.category))];
+  $('utilities-table').innerHTML=table(['类别','樊高一格已识别付款（元）','笔数','黄宇辰已识别付款（元）','笔数','账期与覆盖说明'],categories.map(category=>{const fg=utilities.find(row=>row.member==='fg'&&row.category===category),hyc=utilities.find(row=>row.member==='hyc'&&row.category===category);return [category,fg?.cents===null||!fg?'未识别':fmt(fg.cents),valid(fg?.count)?fg.count:'未知',hyc?.cents===null||!hyc?'未识别':fmt(hyc.cents),valid(hyc?.count)?hyc.count:'未知',[fg?'樊高一格：'+fg.note:'樊高一格资料缺失',hyc?'黄宇辰：'+hyc.note:'黄宇辰资料缺失'].join('；')];}));
+  $('income-utilities-insights').innerHTML=table(['观察与解释','金额（元）','限制'],data.queries.income_utilities_insights.rows.map(row=>[row.label,fmt(row.cents),row.note]));
 }
 export async function load(){
   const sequence=++loadSequence;loadController?.abort();const controller=new AbortController();loadController=controller;
@@ -128,12 +230,15 @@ export async function load(){
     $('data-date').textContent='樊高一格记录截至2026/10/28；黄宇辰截至2026/11/3 · 整理 '+new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',dateStyle:'short',timeStyle:'short'}).format(new Date(data.generatedAt));
     $('baseline').textContent=fmt(data.context.baselineMonthlyCents);
     $('budget-table').innerHTML=table(['消费方案（提案）','月上限（元）','较基线少支出／月（元）','持续12个月差额（元）'],data.queries.budgets.rows.map(r=>[r.label,fmt(r.budgetCents),fmt(r.differenceCents),fmt(r.differenceCents*12)]));
-    renderMonthly();renderCategories();renderBudget();renderSupporting();$('status').hidden=true;$('analysis').hidden=false;
+    $('common-days').value=data.sharedWallet.proposal.commonDays;$('reunions').value=data.sharedWallet.proposal.reunions;$('fg-income').value='';$('hyc-income').value='';$('shared-fixed').value=data.sharedWallet.sharedFixedObligationsCents===null?'':cellAmount(data.sharedWallet.sharedFixedObligationsCents);const hasReported=Array.isArray(data.sharedWallet.reportedMonthlyContributions);$('contribution-mode').innerHTML='<option value="reported"'+(hasReported?'':' disabled')+'>用户自报通常缴入（约数）</option><option value="income">按税后实收50%核验</option>';$('contribution-mode').value=hasReported?'reported':'income';
+    renderSharedWallet();renderIncomeUtilities();renderMonthly();renderCategories();renderBudget();renderSupporting();$('status').hidden=true;$('analysis').hidden=false;
   }catch(e){if(sequence!==loadSequence)return;data=undefined;monthly=[];currentMonthly=null;$('export-monthly').disabled=true;$('analysis').hidden=true;$('status').hidden=false;$('status').textContent='数据读取失败，暂不显示分析。'+e.message+'，请点击重读快照。';}
   finally{clearTimeout(timer);if(sequence===loadSequence){$('analysis').setAttribute('aria-busy','false');loadController=null;}}
 }
 for(const id of ['member','start','end'])$(id).addEventListener('change',renderMonthly);
-$('category-member').addEventListener('change',renderCategories);$('budget').addEventListener('input',renderBudget);for(const id of ['income','obligations'])$(id).addEventListener('input',renderCash);
-$('reset').addEventListener('click',()=>{$('budget').value=24000;$('income').value='';$('obligations').value='';renderBudget();});$('reload').addEventListener('click',load);
+$('category-member').addEventListener('change',renderCategories);$('budget').addEventListener('input',renderBudget);for(const id of ['fg-income','hyc-income','shared-fixed','common-days','reunions'])$(id).addEventListener('input',renderSharedWallet);
+$('contribution-mode').addEventListener('change',renderSharedWallet);
+$('wallet-reset').addEventListener('click',()=>{if(!data)return;$('common-days').value=data.sharedWallet.proposal.commonDays;$('reunions').value=data.sharedWallet.proposal.reunions;renderSharedWallet();});
+$('reset').addEventListener('click',()=>{$('budget').value=24000;renderBudget();});$('reload').addEventListener('click',load);
 $('export-monthly').addEventListener('click',()=>{if(!currentMonthly?.selected.length||$('export-monthly').disabled)return;const url=URL.createObjectURL(new Blob([monthlyCsv(currentMonthly)],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download=memberName(currentMonthly.member)+'-'+currentMonthly.start+'至'+currentMonthly.end+'-记录月度净消费.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
 load();

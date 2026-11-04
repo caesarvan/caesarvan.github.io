@@ -3,20 +3,58 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <title>家庭消费、预算与储蓄 · 樊高一格与黄宇辰</title>
+  <title>共同预算与历史消费 · 樊高一格与黄宇辰</title>
   <link rel="stylesheet" href="style.css"><link rel="stylesheet" href="../../embed.css">
   <script src="../../embed.js" defer></script><script type="module" src="app.js"></script>
 </head>
 <body>
   <a class="skip" href="#main">跳到分析</a>
-  <header data-life-hub-global><a href="../../#/home">Life OS</a><span>家庭消费、预算与储蓄</span><a href="../../#/finance">樊高一格财务明细 ↗</a></header>
+  <header data-life-hub-global><a href="../../#/home">Life OS</a><span>共同预算与历史消费</span><a href="../../#/finance">樊高一格财务明细 ↗</a></header>
   <main id="main">
-    <div class="title-row"><div><h1>家庭消费、预算与储蓄</h1><p>樊高一格 · 黄宇辰</p></div><button id="reload" type="button">重读快照</button></div>
+    <div class="title-row"><div><h1>共同预算先安排共同用途</h1><p>樊高一格 · 黄宇辰 · 小荷包</p></div><button id="reload" type="button">重读快照</button></div>
     <p id="data-date" class="muted"></p>
     <div id="status" role="status" aria-live="polite">正在读取已发布数据…</div>
     <div id="analysis" hidden>
+      <section class="shared-wallet" aria-labelledby="wallet-title">
+        <div class="section-head"><h2 id="wallet-title">共同预算：按通常缴入安排共同用途</h2><span class="tag">缴入为用户自报 · 支出金额提案</span></div>
+        <p>双方按税后实收各缴50%的规则安排共同池。默认先使用用户自报的通常月缴入，不把近似缴入视为流水已核。共同用途从小荷包支出；个人50%还需承担个人生活与个人义务，不能全部视为可自由花费。</p>
+        <div id="prior-agreements" class="prior-agreements"></div><p id="prior-travel-scope" class="note"></p>
+        <div class="wallet-controls"><label>共同日数<input id="common-days" type="number" min="0" max="31" step="1" value="8" inputmode="numeric"></label><label>团聚次数<input id="reunions" type="number" min="0" max="31" step="1" value="4" inputmode="numeric"></label><button id="wallet-reset" type="button">恢复来源提案</button></div>
+        <p class="note">以下为新增预算试算：按共同日数测算共同餐饮，按团聚次数测算共同交通；每次团聚暂按1次共同活动。单价、机动及专项分配均为待讨论提案，不能覆盖既有评审门槛、缴入日期、周转金目标与旅行上限。</p>
+        <div id="wallet-metrics" class="metrics"></div>
+        <div class="wallet-tables"><div id="wallet-breakdown" class="table-wrap"></div><div id="wallet-reserves" class="table-wrap"></div></div>
+        <p class="note">专项预留按用途留存，发生支付时从对应专项余额扣减。共同旅行、大件与已约定共担年度费用不得在F中再扣一次；个人自由支出不从共同池另设额度。</p>
+        <h3>选择缴入口径，核对尚未覆盖的共同义务</h3>
+        <label class="contribution-mode">缴入测算依据<select id="contribution-mode"><option value="reported">用户自报通常缴入（约数）</option><option value="income">按税后实收50%核验</option></select></label>
+        <p class="note">默认按用户自报双方通常各月缴10,000元、合计约20,000元测算，无需强填未知收入。自报不是独立流水核验；不能把月缴10,000元反推成税后月薪20,000元。</p>
+        <div id="income-verification" hidden><div class="cash-inputs wallet-inputs"><label>樊高一格税后月实收（元）<input id="fg-income" type="number" min="0" step="0.01" placeholder="待核；0需明确填写" inputmode="decimal"></label><label>黄宇辰税后月实收（元）<input id="hyc-income" type="number" min="0" step="0.01" placeholder="待工资条实发核对" inputmode="decimal"></label></div><p class="note">核验模式按每人税后实收50%分别四舍五入到分，再相加；不自动用税前工资或通常缴入填净收入。</p></div>
+        <div class="cash-inputs wallet-inputs"><label>未被常规／专项覆盖的共同固定义务 F（元／月）<input id="shared-fixed" type="number" min="0" step="0.01" placeholder="未知留空；确认为0再填写" inputmode="decimal"></label></div>
+        <p class="note">空白是未知，明确输入0才按0计算；输入只用于本页情景，不保存或上传。收入波动和未核金额不外推。</p>
+        <p class="note">双方缴入属于家庭内部资金转移，不新增家庭收入、消费或储蓄；个人支付后报销到共同池时，按最终共同用途核对一次。</p>
+        <div id="wallet-contributions" class="metrics"></div>
+        <p id="wallet-result" class="conclusion" aria-live="polite"></p>
+        <p class="note">条件余量 = C − 共同常规试算 − 共同专项预留 − F。F未知时，仅展示“未扣F的条件空间”，不输出扣F后的结余，更不是实际储蓄。共同义务按最终受益归属核对，信用卡偿还已计消费时不重复扣除。</p>
+        <h3>两套旅行备款对比：共同安排能否持续</h3>
+        <div id="travel-funding-table" class="table-wrap"></div><p id="travel-funding-scope" class="note"></p>
+        <p id="working-capital-result" class="conclusion"></p>
+        <div class="budget-constraint"><h3>原24,000元家庭总预算的约束</h3><p>24,000元不是共同池每月可花目标。下面按月备款口径对照个人房租与共同安排；专项预留是资金留存，不是当月消费，两种口径不能混淆。</p><div id="family-budget-constraint-table" class="table-wrap"></div><p id="family-budget-constraint-result" class="conclusion"></p><p class="note">这是预算约束的可持续性对照，不是实际支出；尚未覆盖的F、双方个人生活及贷款现金支出需另核，不能将对照差额视为可自由花费。</p></div>
+        <details><summary>各自个人成本参考：不重复扣共同池</summary><div id="personal-costs" class="table-wrap"></div><p id="personal-obligation-scope" class="note"></p></details>
+        <details><summary>已确认规则与实际金额缺口</summary><div id="wallet-actual" class="table-wrap"></div><p id="wallet-scope" class="note"></p></details>
+      </section>
+      <section class="personal-evidence" aria-labelledby="income-evidence-title">
+        <div class="section-head"><h2 id="income-evidence-title">工资入账与个人水电：已观察金额和缺口</h2><span class="tag">工资条与完整月账仍缺</span></div>
+        <div id="salary-metrics" class="metrics"></div><div id="salary-table" class="table-wrap"></div><p id="salary-scope" class="note"></p>
+        <p class="note">自报约1万元用于预算测算；执行50%规则应按当月核实税后实收核算。若10月15日18,526.45元入账经核实就是当月规则口径，50%为9,263.23元；与1万元约数的差异736.77元不应自动要求补足。工资入账字段缺少扣款构成，不能省略这一核实条件。</p>
+        <h3>水电燃气已识别付款对比</h3><div id="utilities-table" class="table-wrap"></div>
+        <p class="note">付款日不等于账期，现有付款混合账期与住所，不能当作完整当前月账或每月固定生活费。未识别金额及笔数保留未知；个人水电按既有约定个人承担，不自动扣共同池。</p>
+        <h3>工资与大额公共服务的解释</h3><div id="income-utilities-insights" class="table-wrap"></div>
+        <p class="note">公共服务中的缴税用于解释历史峰值，不是水电或经常生活费，也不认定为当前工资预扣税。扣缴入与房租后的工资观察余量仍需个人水电、工作餐、通勤和其他生活费；不能直接称为自由储蓄。</p>
+      </section>
+      <section aria-labelledby="decision-title"><h2 id="decision-title">本次需要共同确认的事项</h2><ol class="decisions"><li><strong>共同范围：</strong>按最终共同受益归属识别消费，个人支出由各自个人部分承担。</li><li><strong>常规与专项：</strong>讨论共同日数、团聚次数、单价、机动与专项留存；核清F，避免重复扣款。</li><li><strong>实际留存：</strong>收入到账后核对各自50%缴入，月末核对共同支出、专项余额与实际小荷包余额。</li><li><strong>分工提案：</strong>樊高一格核对总账与预算，黄宇辰补类别和用途；双方共同复盘，调整金额需共同确认。</li></ol><p class="conclusion">先核实缴入与共同义务，再确定可执行的共同预算；条件余量要靠实际留存验证。</p></section>
+      <details id="history-reference" class="history-reference"><summary>历史全量消费参考：含个人与共同用途，不能当共同池基线</summary>
+      <p class="note">以下保留双方原记录的月度与分类分析，尚未完成小荷包交易识别和家庭抵销。历史28,899.20元月均不能作为共同预算基线，历史差额也不能当小荷包储蓄。</p>
       <section aria-labelledby="monthly-title">
-        <div class="section-head"><h2 id="monthly-title">消费的高峰集中在哪些月份</h2><div class="controls"><label>成员<select id="member"><option value="all">双方记录小计</option><option value="fg">樊高一格</option><option value="hyc">黄宇辰</option></select></label><label>开始月<select id="start"></select></label><label>结束月<select id="end"></select></label></div></div>
+        <div class="section-head"><h2 id="monthly-title">历史全量记录的月度高峰</h2><div class="controls"><label>成员<select id="member"><option value="all">双方记录小计</option><option value="fg">樊高一格</option><option value="hyc">黄宇辰</option></select></label><label>开始月<select id="start"></select></label><label>结束月<select id="end"></select></label></div></div>
         <div id="consumption-metrics" class="metrics"></div>
         <div id="monthly-legend" class="legend"><span><i class="fg"></i>樊高一格</span><span><i class="hyc"></i>黄宇辰</span></div>
         <div id="monthly-chart" class="chart"></div>
@@ -25,28 +63,27 @@
         <details><summary>查看本图逐月金额与导出</summary><button type="button" id="export-monthly" disabled>导出当前成员与月份 CSV</button><div id="monthly-table" class="table-wrap"></div></details>
       </section>
       <section aria-labelledby="category-title">
-        <div class="section-head"><h2 id="category-title">消费类别的可控空间</h2><label>成员<select id="category-member"><option value="fg">樊高一格 · 原支付</option><option value="hyc">黄宇辰 · 对应退款后净额</option></select></label></div>
+        <div class="section-head"><h2 id="category-title">历史来源类别参考</h2><label>成员<select id="category-member"><option value="fg">樊高一格 · 原支付</option><option value="hyc">黄宇辰 · 对应退款后净额</option></select></label></div>
         <p id="category-scope" class="note"></p><div id="category-chart" class="chart"></div>
         <p id="category-conclusion" class="conclusion"></p>
         <details><summary>查看完整分类金额</summary><div id="category-table" class="table-wrap"></div></details>
       </section>
+      <details id="historical-scenario"><summary>历史总消费情景：不等于小荷包节余</summary>
       <section aria-labelledby="budget-title">
-        <div class="section-head"><h2 id="budget-title">把月消费预算变成可执行的上限</h2><span class="tag">会议提案 · 未批准</span></div>
-        <p class="note">固定基线：双方 1—10 月记录月均 <strong id="baseline"></strong> 元。以下为消费预算情景，不包含贷款本金和未核的大额境外用途；不随上方图表筛选改变。</p>
+        <div class="section-head"><h2 id="budget-title">历史全量消费的敏感性参考</h2><span class="tag">旧口径情景 · 非共同预算</span></div>
+        <p class="note">历史比较值：双方1—10月记录月均 <strong id="baseline"></strong> 元。它包含个人与共同用途，不是共同池基线；不含贷款本金和未核境外最终用途，不随上方筛选改变。</p>
         <div id="budget-table" class="table-wrap"></div>
-        <div class="scenario-control"><label for="budget">调整月消费预算 <output id="budget-output"></output> 元</label><input id="budget" type="range" min="18000" max="36000" step="500" value="24000"><button id="reset" type="button">恢复 24,000 元提案</button></div>
+        <div class="scenario-control"><label for="budget">调整历史总消费假设 <output id="budget-output"></output> 元</label><input id="budget" type="range" min="18000" max="36000" step="500" value="24000"><button id="reset" type="button">恢复24,000元历史假设</button></div>
         <div id="budget-metrics" class="metrics"></div>
-        <p class="conclusion">24,000 元可先拆为常规消费与机动 18,000 元、计划性大额预留 6,000 元。大额项目滚存后再支付；预留款不等于可自由储蓄。</p>
-        <p class="note">每周核对常规消费；共同确认大额门槛；退款按原消费归因。类别和双方额度需要结合报销、共同用途与实际刚需再分配，不能机械按历史金额分摊。</p>
+        <p class="note">旧方案仅供全量消费敏感性比较，不据此分配共同池，也不替代页首按共同用途编制的提案。</p>
       </section>
       <section aria-labelledby="savings-title">
-        <div class="section-head"><h2 id="savings-title">消费控制差额可以支持多大的储蓄计划</h2><span class="tag">情景测算</span></div>
+        <div class="section-head"><h2 id="savings-title">历史总消费假设的累计差额</h2><span class="tag">非小荷包节余</span></div>
         <div id="savings-chart" class="chart"></div><p class="note">图中零轴右侧表示较基线少支出；左侧负值表示较基线多支出。金额为人民币元。</p><div id="savings-table" class="table-wrap"></div>
         <p id="savings-conclusion" class="conclusion"></p>
-        <p class="note">这是相对历史记录月均的消费控制差额；未假设投资收益，也未扣除尚未确认的债务及学费等资金需求，因此不是实际储蓄或储蓄率。</p>
-        <details open><summary>核对真正可以转存的金额</summary><div class="cash-inputs"><label>双方稳定税后月收入（元）<input id="income" type="number" min="0" step="100" placeholder="待双方核实"></label><label>消费预算以外的应还与预留（元）<input id="obligations" type="number" min="0" step="100" placeholder="避免与消费重复"></label></div><p id="cash-result" class="conclusion"></p><p class="note">可安排余额 = 稳定实收 − 消费预算 − 预算外应还与预留。信用卡还款若对应已计消费，不再扣第二次；一次性到期本金和大额计划须留足。</p></details>
+        <p class="note">原4,899.20元月差额只是28,899.20与24,000元的历史全量比较，不能当作小荷包储蓄。共同池条件余量仅由页首所选缴入口径、共同常规、专项与F计算。</p>
       </section>
-      <section aria-labelledby="decision-title"><h2 id="decision-title">今晚需要形成的决定</h2><ol class="decisions"><li><strong>消费上限：</strong>选择 20,000／24,000／28,000 元或自定额度，确认共同与个人支出的范围。</li><li><strong>预算控制：</strong>决定大额门槛、常规消费额度，以及旅行和采购的预留规则。</li><li><strong>储蓄计划：</strong>选择具体目标及用途，核清实际可存金额后定期转存，月末按余额验证。</li><li><strong>执行分工：</strong>樊高一格负责总账与预算核对，黄宇辰补类别和用途；双方每周共同复盘。以上均为分工提案。</li></ol><p class="conclusion">先确定一个能执行的月预算，再用真实留存金额验证储蓄计划。</p></section>
+      </details></details>
       <details class="management"><summary>后续财务管理：大额资金流、收入、资产、债务与投资</summary><div id="management"></div><p class="conclusion">这些项目会影响真正可储蓄的资金，应在消费预算后单独核对，不能与消费机械相加。</p></details>
       <details><summary>数据来源、归属与计算口径</summary><div id="sources"></div><p class="conclusion">樊高一格与黄宇辰已显性区分；资料覆盖与家庭内部抵销仍影响最终合计。</p></details>
     </div>
