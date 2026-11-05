@@ -1,7 +1,7 @@
 {
   "version": 1,
   "publicationMode": "authorized-public-snapshots",
-  "preparedAt": "2026-11-05T01:31:47+08:00",
+  "preparedAt": "2026-11-05T01:34:00+08:00",
   "datasets": [
     {
       "id": "finance",
@@ -163,6 +163,42 @@
       "records": 103,
       "bytes": 28053,
       "sha256": "16f8590ac57e0e87a397207b7851e8014e38874930e861acfa3aee1f71613072"
+    },
+    {
+      "id": "devices",
+      "file": "./devices.json",
+      "type": "collection",
+      "status": "ready",
+      "coverage": "partial",
+      "records": 7,
+      "generatedAt": "2026-11-05T01:31:30+08:00",
+      "sourceAsOf": "2026-11-05T00:55:50+08:00",
+      "bytes": 5651,
+      "sha256": "0bb96694b085af4f126ae3f4910c6ede271d8cf8d8953556a20c1f4c5d9176ce"
+    },
+    {
+      "id": "projects",
+      "file": "./projects.json",
+      "type": "collection",
+      "status": "ready",
+      "coverage": "partial",
+      "records": 7,
+      "generatedAt": "2026-11-05T01:31:30+08:00",
+      "sourceAsOf": "2026-10-30",
+      "bytes": 5785,
+      "sha256": "0ffa749f49fa1430fb10b63f444e706a729b4c8a875c0e02649cc31648b11add"
+    },
+    {
+      "id": "culture",
+      "file": "./culture.json",
+      "type": "collection",
+      "status": "ready",
+      "coverage": "partial",
+      "records": 7,
+      "generatedAt": "2026-11-05T01:31:30+08:00",
+      "sourceAsOf": "2026-11-04",
+      "bytes": 5309,
+      "sha256": "2189b3c90bc92d128da52b97d39aac28a9782c15a1ff5b4d5ef8f518255b2ba7"
     }
   ]
 }

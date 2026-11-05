@@ -7,6 +7,36 @@ import {createHash} from 'node:crypto';
 const root=path.dirname(fileURLToPath(import.meta.url));
 const fail=message=>{throw Error(message)};
 const readJSON=async file=>JSON.parse(await readFile(path.join(root,file),'utf8'));
+// Collections are finite, source-referenced public topics, independent of four-domain digests.
+export function validateCollection(data,item){
+  const bad=message=>fail(`Invalid collection ${item.id}: ${message}`);
+  const object=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
+  const text=value=>typeof value==='string'&&value.trim().length>0;
+  const date=(value,required=false)=>{
+    if(value===null&&!required)return;
+    if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2}))?$/.test(value))bad('invalid date');
+    const day=value.slice(0,10),parts=day.split('-').map(Number),d=new Date(`${day}T00:00:00Z`);
+    if(!Number.isFinite(d.getTime())||d.toISOString().slice(0,10)!==day||parts[0]<1||value.length>10&&!Number.isFinite(Date.parse(value)))bad('nonexistent date');
+    if(value.length>10){const time=value.slice(11,19).split(':').map(Number);if(time[0]>23||time[1]>59||time[2]>59)bad('invalid time');}
+  };
+  if(!object(data)||data.schemaVersion!==1||data.id!==item.id||!['partial','ready'].includes(data.status))bad('schema/id/status');
+  if(item.coverage!==data.status)bad('catalog coverage differs from business status');
+  if(item.status!=='ready')bad('collection catalog must declare availability separately as ready');
+  for(const key of ['items','sources','metrics'])if(!Array.isArray(data[key]))bad(`${key} must be an array`);
+  if(!object(data.coverage)||!text(data.coverage.summary)||!Array.isArray(data.coverage.gaps)||data.coverage.gaps.some(v=>!text(v)))bad('coverage explanation');
+  date(data.generatedAt,true);if(data.generatedAt.length===10)bad('generatedAt requires timezone');date(data.sourceAsOf);
+  if(item.generatedAt!==data.generatedAt||item.sourceAsOf!==data.sourceAsOf)bad('catalog timestamps differ');
+  const sourceIds=new Set();
+  for(const source of data.sources){if(!object(source)||!text(source.id)||sourceIds.has(source.id)||!text(source.label))bad('missing/duplicate source id');sourceIds.add(source.id);date(source.asOf);}
+  const itemIds=new Set();
+  for(const entry of data.items){if(!object(entry)||!text(entry.id)||itemIds.has(entry.id)||!text(entry.title)||!text(entry.status)||!sourceIds.has(entry.sourceId))bad('item identity/source');itemIds.add(entry.id);date(entry.date);if(!Array.isArray(entry.tags)||entry.tags.some(v=>!text(v)))bad('item tags');}
+  const metricIds=new Set();
+  for(const metric of data.metrics){if(!object(metric)||!text(metric.label)||!(metric.value===null||typeof metric.value==='number'&&Number.isFinite(metric.value)))bad('metric value must be finite or null');if(metric.id!==undefined){if(!text(metric.id)||metricIds.has(metric.id))bad('duplicate metric id');metricIds.add(metric.id);}if(metric.sourceId!==undefined&&!sourceIds.has(metric.sourceId))bad('metric source');if(metric.asOf!==undefined)date(metric.asOf);}
+  const walk=value=>{if(typeof value==='number'&&!Number.isFinite(value))bad('non-finite number');if(Array.isArray(value))value.forEach(walk);else if(object(value))for(const [key,child]of Object.entries(value)){if(key==='sourceId'&&!sourceIds.has(child))bad('unresolved sourceId');if(['date','asOf','sourceAsOf','dueDate','weekOf'].includes(key))date(child);walk(child);}};
+  walk(data);
+  if(!Number.isSafeInteger(item.records)||item.records!==data.items.length)bad('catalog count differs');
+  return data.items.length;
+}
 const manifest=await readJSON('modules.json');
 if(manifest.version!==1||!Array.isArray(manifest.modules)) fail('Invalid module registry');
 const ids=new Set();let pageEntries=0;
@@ -32,12 +62,14 @@ for(const item of catalog.datasets){
   dataIds.add(item.id);
   const file=path.join(root,'data',item.file),buffer=await readFile(file);
   if(createHash('sha256').update(buffer).digest('hex')!==item.sha256) fail('Dataset checksum mismatch');
+  if(item.bytes!==buffer.length) fail('Dataset byte count mismatch');
   const data=JSON.parse(buffer.toString());
   const count=item.type==='snapshot'
     ?Object.values(data.queries||{}).reduce((sum,query)=>{if(!Array.isArray(query.rows))fail('Invalid query rows');return sum+query.rows.length},0)
     :item.type==='ledger'?(data.schema_version==='unified-finance/1.0'&&Array.isArray(data.records)?data.records.length:fail('Invalid unified ledger'))
+    :item.type==='collection'?validateCollection(data,item)
     :item.type==='digest'?(data.schemaVersion===1&&data.id===item.id&&Array.isArray(data.items)&&['ready','partial'].includes(data.status)?data.items.length:fail('Invalid life digest'))
-    :Array.isArray(data.entries)?data.entries.length:fail('Invalid index entries');
+    :item.type==='index'&&Array.isArray(data.entries)?data.entries.length:fail('Invalid dataset type or index entries');
   if(count!==item.records) fail('Dataset count mismatch');
   if(item.status==='unavailable'){if(count!==0)fail('Unavailable dataset has records');unavailable++}
   else if(item.status!=='ready') fail('Invalid availability state');

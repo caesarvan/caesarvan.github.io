@@ -1,7 +1,7 @@
 (() => {
   'use strict';
   const profiles = {
-    icloud: ['iCloud 资料导航', '搜索完整资料索引，了解文件位置与分类。'],
+    icloud: ['iCloud 资料导航', '搜索已发布的资料索引，了解文件位置与分类。'],
     onedrive: ['OneDrive 资料导航', '集中浏览 OneDrive 资料索引与分类。'],
     outlook: ['Outlook 邮件导航', '按附件名称与邮件主题查找记录，返回来源邮件。'],
     mail: ['邮件归档导航', '查看早期邮件归档索引与邮件来源。'],

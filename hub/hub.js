@@ -1,6 +1,6 @@
 import {mountOverview} from './overview.js?v=20261105-colour';
-import {mountLifeOverview} from './life-overview.js?v=20261105-colour';
-import {mountPulse} from './pulse.js?v=20261105-colour';
+import {mountLifeOverview} from './life-overview.js?v=20261105-collections';
+import {mountPulse} from './pulse.js?v=20261105-collections';
 import {mountMotion} from './motion.js?v=20261105-colour';
 const $=s=>document.querySelector(s),main=$('#main');
 let registry,filter='all',search='',overview,lifeOverview,pulse,frameCleanup=()=>{};

@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-05T01:31:30+08:00",
+  "cadence": "沿用网站协调增量维护",
+  "status": "partial",
+  "publicScope": "公开经审阅的事实摘要、主题、聚合数字和缺口；不包含聊天原文、身份联系方式、网络地址、凭证、数据库、附件或照片原件。",
+  "id": "culture",
+  "title": "灵感与文化清单",
+  "summary": "把看过的讨论和记录下来的意向整理为有状态的文化清单：观影、音乐、展览和内容订阅分开呈现，不将推荐或意向当作已经观看。",
+  "sourceAsOf": "2026-11-04",
+  "coverage": {
+    "summary": "来自观看计划、周末活动研究、观影讨论及已整理订阅；活动余票、场次、价格和天气没有在本轮重新核实。",
+    "gaps": [
+      "观看意向没有实际完成证据，也未创建日历事件。",
+      "周末活动是原讨论候选，购票与实际出行未确认。",
+      "哔哩哔哩观察是历史局部动态，不是全关注历史导出。",
+      "推荐影片不代表个人已经观看或评分。"
+    ]
+  },
+  "sources": [
+    {
+      "id": "watch-intent",
+      "label": "原观看计划记录",
+      "asOf": "2026-11-04",
+      "kind": "discussion",
+      "readStatus": "read"
+    },
+    {
+      "id": "weekend-research",
+      "label": "周末活动原研究",
+      "asOf": "2026-11-04",
+      "kind": "discussion",
+      "readStatus": "read"
+    },
+    {
+      "id": "movie-discussion",
+      "label": "共赏影片讨论",
+      "asOf": "2026-10-20",
+      "kind": "discussion",
+      "readStatus": "read"
+    },
+    {
+      "id": "subscriptions",
+      "label": "已整理内容订阅",
+      "asOf": "2026-10-20",
+      "kind": "report",
+      "readStatus": "read"
+    }
+  ],
+  "metrics": [
+    {
+      "label": "已整理YouTube频道",
+      "value": 89,
+      "unit": "个",
+      "note": "既有公开收藏口径，非本轮新增"
+    },
+    {
+      "label": "频道分类",
+      "value": 12,
+      "unit": "类",
+      "note": "原整理结果"
+    },
+    {
+      "label": "本专题收录",
+      "value": 7,
+      "unit": "项",
+      "note": "事项数，不代表已观看数量"
+    }
+  ],
+  "items": [
+    {
+      "id": "watch-plan",
+      "title": "周末观看意向已记录",
+      "summary": "原会话记录11月7—8日观看《金特务》相关解说视频的意向；没有观看完成或日历提醒创建证据。",
+      "status": "pending",
+      "date": "2026-11-04",
+      "sourceId": "watch-intent",
+      "tags": [
+        "观看清单",
+        "意向"
+      ]
+    },
+    {
+      "id": "movie-yi-yi",
+      "title": "电影共赏候选：一一",
+      "summary": "原讨论将其列为可以认真共赏、交流家庭与人生主题的候选；是选择建议，不是已观看记录。",
+      "status": "needs_verification",
+      "date": "2026-10-20",
+      "sourceId": "movie-discussion",
+      "tags": [
+        "电影",
+        "候选"
+      ]
+    },
+    {
+      "id": "movie-bouquet",
+      "title": "电影共赏候选：花束般的恋爱",
+      "summary": "原讨论围绕共同爱好与现实生活的磨合比较观影氛围；保留为候选，未新增主观评分。",
+      "status": "needs_verification",
+      "date": "2026-10-20",
+      "sourceId": "movie-discussion",
+      "tags": [
+        "电影",
+        "候选"
+      ]
+    },
+    {
+      "id": "movie-summer",
+      "title": "影迷专场候选：牯岭街少年杀人事件",
+      "summary": "原讨论把它作为需要预留更充分时间的共赏候选；具体片源和完成情况待确认。",
+      "status": "needs_verification",
+      "date": "2026-10-20",
+      "sourceId": "movie-discussion",
+      "tags": [
+        "电影",
+        "候选"
+      ]
+    },
+    {
+      "id": "weekend-themes",
+      "title": "周末灵感：艺术展与现场音乐",
+      "summary": "既有研究覆盖当代艺术展、钢琴、合唱与城市散步；这里只保留主题，不公开精确个人行踪，不沿用未复核天气、票价或余票。",
+      "status": "needs_verification",
+      "date": "2026-11-04",
+      "sourceId": "weekend-research",
+      "tags": [
+        "艺术",
+        "音乐",
+        "研究"
+      ]
+    },
+    {
+      "id": "youtube-library",
+      "title": "分类收藏可直接回到既有入口",
+      "summary": "YouTube原整理保留89频道、12类；此处是主题概览，频道与链接沿用现有YouTube收藏页。",
+      "status": "completed",
+      "date": "2026-10-20",
+      "sourceId": "subscriptions",
+      "tags": [
+        "内容订阅",
+        "学习"
+      ]
+    },
+    {
+      "id": "bilibili-themes",
+      "title": "关注动态的兴趣主题",
+      "summary": "历史局部观察包含古典音乐、乐理、AI数码、效率工具与美食；不把过期开票信息当作当前可订活动。",
+      "status": "confirmed",
+      "date": "2026-10-20",
+      "sourceId": "subscriptions",
+      "tags": [
+        "兴趣地图",
+        "历史观察"
+      ]
+    }
+  ],
+  "nextActions": [
+    "观看后再补完成状态与自己的观后感。",
+    "决定活动前重新核对官方场次、余票、交通与总预算。",
+    "继续沿已有收藏入口阅读，不重新执行订阅清理。"
+  ]
+}

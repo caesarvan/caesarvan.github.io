@@ -1,0 +1,222 @@
+/* Life OS · Chromatic depth. Additive presentation; facts and chart geometry stay intact. */
+:root {
+  --evo-focus: #6041cf;
+  --evo-shadow: 0 3px 7px #20274303, 0 14px 34px #20274307;
+  --evo-shadow-raised: 0 5px 12px #20274306, 0 22px 42px #20274312;
+  --evo-hairline: #ffffffc4;
+  --evo-surface: #ffffffb8;
+}
+
+body {
+  background: radial-gradient(ellipse at 95% 0, #eae5ff 0, transparent 34%),
+    radial-gradient(ellipse at 6% 52%, #e9f5f2 0, transparent 38%), var(--bg);
+}
+.sidebar {
+  background: radial-gradient(ellipse at 10% 0, #42335480, transparent 38%),
+    linear-gradient(165deg, #21253f, #171e34 78%);
+  box-shadow: 10px 0 40px #151c3610;
+}
+.sidebar-note { background: linear-gradient(140deg, #393457, #263a4b); }
+.nav-item.active { box-shadow: inset 0 1px #e7ffc480, 0 6px 16px #0c13252b; }
+.shell > header { border-bottom-color: color-mix(in srgb, var(--line), transparent 15%); }
+
+/* A colourful opening, followed by quieter surfaces for actual numbers. */
+.welcome {
+  background: radial-gradient(ellipse at 92% 10%, #ddedc6 0, transparent 36%),
+    radial-gradient(ellipse at 78% 92%, #ffd8c8 0, transparent 35%),
+    linear-gradient(115deg, #eee9ff 15%, #e7e5fb 60%, #ecedfc);
+  border-color: #d9d2ee;
+  box-shadow: inset 0 1px 0 #ffffffa6, 0 14px 36px #6c5a9b0a;
+}
+.welcome h1 { text-wrap: balance; }
+.welcome .intro { color: #584d70; font-size: 13px; }
+.welcome-links a {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  border-color: #bfb0df;
+  background: #ffffffa3;
+  box-shadow: 0 2px 5px #6c5a9b06;
+  font-size: 12px;
+}
+.welcome-links a:nth-child(2) { border-color: #acccbd; background: #f2fff3b8; color: #255d51; }
+.welcome-links a:nth-child(3) { border-color: #d7bda9; background: #fff5e5cf; color: #795128; }
+.art-orbit { border-color: #9571e7; }
+.art-orbit.second { border-color: #b9df83; }
+.profile-shortcut { box-shadow: 0 5px 16px #5d49730b; }
+
+.view-toolbar { padding-bottom: 17px; border-bottom: 1px solid var(--line); }
+.view-switch { box-shadow: inset 0 1px 0 var(--evo-hairline), 0 4px 12px #20274304; }
+.view-switch [aria-pressed=true] { background: linear-gradient(130deg, #30324b, #46405d); }
+.lo-section-heading h2, .finance-section-heading h2 { text-wrap: balance; }
+
+/* One coherent lighting direction; each domain retains its own accent. */
+.lo-card { --evo-accent: var(--lo-accent); --evo-wash: var(--lo-soft); }
+.ov-card { --evo-accent: var(--card-accent); --evo-wash: var(--card-wash); }
+.lo-card, .ov-card {
+  background: radial-gradient(ellipse at 100% 0, var(--evo-wash), transparent 54%),
+    linear-gradient(155deg, var(--card) 20%, color-mix(in srgb, var(--evo-wash), var(--card) 85%));
+  border-color: color-mix(in srgb, var(--evo-accent), var(--line) 83%);
+  box-shadow: inset 0 1px 0 var(--evo-hairline), var(--evo-shadow);
+}
+.lo-card::before, .ov-card::before {
+  height: 4px;
+  background: linear-gradient(90deg, var(--evo-accent), color-mix(in srgb, var(--evo-accent), #f1c677 40%), transparent 95%);
+}
+.lo-card:focus-within, .ov-card:focus-within {
+  border-color: var(--evo-accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--evo-accent), transparent 82%), var(--evo-shadow);
+}
+.lo-icon, .ov-icon {
+  box-shadow: inset 0 1px 0 #ffffff38, 0 5px 12px color-mix(in srgb, var(--evo-accent), transparent 85%);
+}
+.lo-metrics, .ov-finance-metrics {
+  background: linear-gradient(120deg, var(--evo-wash), color-mix(in srgb, var(--evo-wash), var(--card) 48%));
+}
+.lo-summary { font-size: 13px; line-height: 1.85; }
+.lo-items li { font-size: 12px; line-height: 1.85; }
+.lo-metrics dt, .lo-metrics p, .lo-coverage, .lo-dates,
+.lo-card-note, .lo-chart-note, .lo-freshness-counts { font-size: 11px; line-height: 1.8; }
+.lo-item-state { padding: 2px 7px; border: 1px solid var(--line); }
+.ov-note, .ov-source, .ov-values { font-size: 12px; line-height: 1.85; }
+.ov-card-controls { row-gap: 10px; }
+.ov-card-controls select { min-height: 42px; max-width: 100%; font-size: 12px; }
+.ov-chart-area { background: color-mix(in srgb, var(--card), transparent 9%); }
+.ov-chart-heading { margin-bottom: 7px; }
+.ov-chart-heading h3 { line-height: 1.6; }
+.ov-related { border-top: 1px solid color-mix(in srgb, var(--evo-accent), transparent 88%); }
+
+/* The state diagram is a focal card; domain tiles remain readable and distinct. */
+.pulse-feature {
+  background: radial-gradient(ellipse at 100% 0, #57437d99, transparent 60%),
+    radial-gradient(ellipse at 0 100%, #14665d66, transparent 65%),
+    linear-gradient(135deg, #242b47, #1b283d);
+  border: 1px solid #ffffff18;
+  box-shadow: inset 0 1px 0 #ffffff1f, 0 17px 38px #20284116;
+}
+.pulse-feature h2 { text-wrap: balance; }
+.pulse-legend button { min-height: 40px; font-size: 11px; background: #ffffff09; }
+.pulse-legend button:hover, .pulse-legend button.is-selected { background: #ffffff20; border-color: #ffffff70; }
+.pulse-feature-note { font-size: 11px; color: #c5d0e5; }
+.pulse-feature-note > span { color: #bac9e0; }
+.pulse-domain {
+  background: radial-gradient(ellipse at 100% 0, var(--pulse-soft), transparent 70%), var(--card);
+  box-shadow: inset 0 1px 0 var(--evo-hairline), 0 5px 18px #20274305;
+}
+.pulse-domain::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 17px;
+  right: 17px;
+  height: 3px;
+  border-radius: 0 0 4px 4px;
+  background: linear-gradient(90deg, var(--pulse-domain), transparent);
+  pointer-events: none;
+}
+.pulse-domain:focus-within { border-color: var(--pulse-domain); }
+.pulse-domain-link { min-height: 42px; }
+.pulse-domain-link small { font-size: 8px; letter-spacing: 1.2px; }
+.pulse-domain-observation { font-size: 12px; min-height: 43px; line-height: 1.8; }
+.pulse-domain-date { font-size: 10px; line-height: 1.8; }
+.pulse-domain-badge { font-size: 9px; padding: 3px 6px; }
+.pulse-domain-stack { height: 8px; }
+.space {
+  background: linear-gradient(130deg, color-mix(in srgb, var(--color), var(--card) 93%), var(--card) 75%);
+  box-shadow: inset 0 1px 0 var(--evo-hairline), 0 4px 16px #20274304;
+}
+.space:focus-visible { border-color: var(--color); }
+.directory > summary { padding-block: 6px; }
+
+/* No layout shift or motion is required to understand focus, selection or hover. */
+.lo-card:hover, .ov-card:hover, .space:hover, .nav-item:hover, .welcome-links a:hover { transform: none; }
+:is(button, a, input, select, summary):focus-visible { outline: 3px solid var(--evo-focus); outline-offset: 4px; }
+.pulse-feature :is(button, a):focus-visible { outline-color: #d6c5ff; }
+@media (hover: hover) and (pointer: fine) {
+  .lo-card:hover, .ov-card:hover { border-color: color-mix(in srgb, var(--evo-accent), var(--line) 48%); box-shadow: var(--evo-shadow-raised); }
+  .pulse-domain:hover { border-color: var(--pulse-domain); box-shadow: var(--evo-shadow); }
+  .space:hover { border-color: var(--color); box-shadow: var(--evo-shadow); }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html[data-motion=full]:not([data-page-hidden=true]) :is(.lo-card, .ov-card, .pulse-domain, .space) {
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  }
+  html[data-motion=full]:not([data-page-hidden=true]) :is(.lo-card, .ov-card, .pulse-domain, .space):hover { transform: translateY(-3px); }
+}
+
+[data-theme=dark] {
+  --evo-focus: #cbb5ff;
+  --evo-shadow: 0 3px 9px #070d1824, 0 15px 34px #070d181a;
+  --evo-shadow-raised: 0 5px 15px #070d1840, 0 22px 42px #070d1833;
+  --evo-hairline: #ffffff0d;
+  --evo-surface: #ffffff08;
+}
+[data-theme=dark] body {
+  background: radial-gradient(ellipse at 95% 0, #322447 0, transparent 38%),
+    radial-gradient(ellipse at 6% 60%, #173333 0, transparent 40%), var(--bg);
+}
+[data-theme=dark] .sidebar { background: linear-gradient(165deg, #191c32, #101729 80%); }
+[data-theme=dark] .welcome {
+  background: radial-gradient(ellipse at 95% 5%, #36554880, transparent 38%),
+    radial-gradient(ellipse at 85% 100%, #653f4466, transparent 45%),
+    linear-gradient(120deg, #332c4e, #272c47);
+  border-color: #56466d;
+  box-shadow: inset 0 1px 0 #ffffff0d, 0 14px 36px #080d181a;
+}
+[data-theme=dark] .welcome .intro { color: #d1c8e1; }
+[data-theme=dark] .welcome-links a,
+[data-theme=dark] .welcome-links a:nth-child(2),
+[data-theme=dark] .welcome-links a:nth-child(3) { color: #ece6f8; background: #ffffff0d; border-color: #82718f; }
+[data-theme=dark] .view-switch [aria-pressed=true] { color: #172b22; background: linear-gradient(120deg, #c5e997, #a9db9c); }
+[data-theme=dark] .pulse-feature { background: radial-gradient(ellipse at 100% 0, #513a6b99, transparent 65%), linear-gradient(135deg, #242e49, #1b2c3b); border-color: #43516b; }
+[data-theme=dark] .pulse-domain { background: radial-gradient(ellipse at 100% 0, var(--pulse-soft), transparent 85%), var(--card); }
+
+@media (max-width: 760px) {
+  .welcome .intro { font-size: 12px; max-width: 275px; }
+  .welcome-links a { font-size: 11px; min-height: 38px; padding-inline: 10px; }
+  .view-toolbar { padding-bottom: 18px; }
+  .view-switch button { min-height: 42px; }
+  .pulse-domain { padding: 17px 14px 14px; }
+  .pulse-domain-observation { font-size: 11px; min-height: 40px; }
+  .pulse-domain-date { font-size: 10px; }
+  .pulse-domain-link strong { font-size: 13px; }
+  .pulse-domain-badge { margin-left: 0; }
+  .pulse-legend button { min-height: 37px; font-size: 10px; }
+  .pulse-feature-note { font-size: 10px; }
+  .lo-summary, .lo-items li { font-size: 12px; }
+  .lo-metrics p, .lo-dates, .lo-card-note, .lo-chart-note { font-size: 11px; }
+  .ov-note, .ov-source, .ov-values { font-size: 11px; }
+}
+@media (max-width: 390px) {
+  .welcome h1 { font-size: 33px; }
+  .welcome-links { column-gap: 5px; }
+  .welcome-links a { padding-inline: 8px; }
+  .pulse-domain { padding-inline: 12px; }
+  .pulse-domain-link { gap: 6px; }
+  .pulse-domain-arrow { display: none; }
+  .pulse-domain-link strong { font-size: 12px; }
+  .lo-metrics { gap: 14px 10px; }
+  .lo-metrics dd { font-size: 24px; overflow-wrap: anywhere; }
+}
+
+/* Extend the existing motion contract; hidden tabs never spend work on decoration. */
+html[data-motion=reduced], html[data-motion=off] { scroll-behavior: auto; }
+html[data-motion=reduced] *, html[data-motion=reduced] *::before, html[data-motion=reduced] *::after,
+html[data-motion=off] *, html[data-motion=off] *::before, html[data-motion=off] *::after,
+html.motion-off *, html.motion-off *::before, html.motion-off *::after {
+  animation: none !important;
+  transition: none !important;
+}
+html[data-page-hidden=true] *, html[data-page-hidden=true] *::before, html[data-page-hidden=true] *::after { animation-play-state: paused !important; }
+html[data-motion=reduced] :is(.lo-card, .ov-card, .pulse-domain, .space):hover,
+html[data-motion=off] :is(.lo-card, .ov-card, .pulse-domain, .space):hover,
+html.motion-off :is(.lo-card, .ov-card, .pulse-domain, .space):hover { transform: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  :is(.lo-card, .ov-card, .pulse-domain, .space):hover { transform: none !important; }
+}
+@media (prefers-contrast: more) {
+  .lo-card, .ov-card, .pulse-domain, .space { border-width: 2px; }
+  .lo-summary, .lo-coverage, .lo-dates, .ov-note, .ov-source { color: var(--ink); }
+}

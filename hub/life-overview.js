@@ -4,7 +4,11 @@ export const LIFE_KINDS = Object.freeze({
   health: { title: '健康与训练', kicker: 'HEALTH', description: '训练记录、计划与资料缺口', icon: 'heart' },
   knowledge: { title: '知识与决策', kicker: 'KNOWLEDGE', description: '正在探索的问题与知识积累', icon: 'book' },
   system: { title: '系统运行状态', kicker: 'SYSTEM', description: '运行证据、归档与改进方向', icon: 'layers' },
+  devices: { title: '设备与家庭科技', kicker: 'DEVICES', description: '设备能力、家庭科技与待核验方案', icon: 'device', type: 'collection' },
+  projects: { title: '项目与实验', kicker: 'PROJECTS', description: '项目方向、实验方法与验证边界', icon: 'experiment', type: 'collection' },
+  culture: { title: '灵感与文化清单', kicker: 'CULTURE', description: '文化兴趣、共同体验与待探索清单', icon: 'spark', type: 'collection' },
 });
+export const LIFE_COLLECTION_IDS = Object.freeze(['devices', 'projects', 'culture']);
 export const LIFE_STATUS = Object.freeze({
   confirmed: '已确认', needs_verification: '待核实', in_progress: '进行中', pending: '待推进', completed: '已完成',
 });
@@ -46,6 +50,9 @@ export function lifeStatusVisual(items, {compact=false,id='life-status'}={}) {
 }
 export function lifeIcon(name) {
   const paths = {
+    device: '<rect x="4" y="3" width="16" height="13" rx="2"/><path d="M8 21h8m-4-5v5"/>',
+    experiment: '<path d="M9 3h6m-5 0v7L4 20h16l-6-10V3M7 15h10"/>',
+    spark: '<path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5Z"/>',
     home: '<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1Z"/>',
     heart: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/><path d="M3 12h5l2-4 3 8 2-4h6"/>',
     book: '<path d="M12 5v16M3 3h4a7 7 0 0 1 5 2 7 7 0 0 1 5-2h4v16h-4a7 7 0 0 0-5 2 7 7 0 0 0-5-2H3Z"/>',
@@ -58,7 +65,7 @@ export function normalizeLifeData(raw, id) {
   if (!Object.hasOwn(LIFE_KINDS, id) || !raw || raw.id !== id || raw.schemaVersion !== 1 || !['ready', 'partial'].includes(raw.status)) throw Error('摘要格式或模块标识不匹配，请重试。');
   if (!Array.isArray(raw.items) || !Array.isArray(raw.sources)) throw Error('摘要缺少事项或来源清单，请重试。');
   return {
-    id, title: lifeText(raw.title, LIFE_KINDS[id].title), summary: lifeText(raw.summary),
+    id, type: LIFE_COLLECTION_IDS.includes(id) ? 'collection' : 'digest', title: lifeText(raw.title, LIFE_KINDS[id].title), summary: lifeText(raw.summary),
     sourceAsOf: lifeText(raw.sourceAsOf), generatedAt: lifeText(raw.generatedAt), cadence: lifeText(raw.cadence, '更新周期未提供'), status: raw.status,
     coverage: { summary: lifeText(raw.coverage?.summary, '来源覆盖说明待补。'), gaps: array(raw.coverage?.gaps).map(v => lifeText(v)).filter(Boolean) },
     sources: raw.sources.map((s, i) => ({ id: lifeText(s?.id, `source-${i}`), label: lifeText(s?.label, '未命名来源'), asOf: lifeText(s?.asOf), kind: lifeText(s?.kind), readStatus: lifeText(s?.readStatus) })),
@@ -100,19 +107,19 @@ function renderCard(data) {
     ${metrics.length ? `<dl class="lo-metrics">${metrics.map(m => `<div><dt>${esc(m.label)}</dt><dd>${esc(m.value)}${m.unit ? `<small>${esc(m.unit)}</small>` : ''}</dd>${m.note ? `<p>${esc(m.note)}</p>` : ''}</div>`).join('')}</dl>` : ''}
     <ul class="lo-items">${data.items.length ? data.items.slice(0, 2).map(item => `<li><span class="lo-item-state lo-status-${item.status}">${esc(LIFE_STATUS[item.status])}</span><span>${esc(item.title)}</span></li>`).join('') : '<li class="lo-muted">尚未收录可公开事项。</li>'}</ul>
     <details class="lo-coverage"><summary>来源与缺口</summary><p>${esc(data.coverage.summary)}</p>${data.coverage.gaps.length ? `<ul>${data.coverage.gaps.map(g => `<li>${esc(g)}</li>`).join('')}</ul>` : ''}<ul class="lo-sources">${data.sources.map(s => `<li>${esc(s.label)} · ${esc(lifeDate(s.asOf))}</li>`).join('')}</ul></details>
-    <div class="lo-dates"><span>来源截至 <time>${esc(lifeDate(data.sourceAsOf))}</time></span><span>摘要整理 <time>${esc(lifeDate(data.generatedAt))}</time></span></div>
+    <div class="lo-dates"><span>${data.type==='collection'?'摘要锚点':'来源截至'} <time>${esc(lifeDate(data.sourceAsOf))}</time></span><span>摘要整理 <time>${esc(lifeDate(data.generatedAt))}</time></span></div>
     <div class="lo-freshness-counts" aria-label="逐来源时间新鲜度">${[['recent','48小时内'],['stale','待更新'],['unknown','日期待补']].map(([key,label])=>`<span class="lo-${key}"><i></i>${label} <b>${data.sources.filter(s=>lifeFreshness(s.asOf).state===key).length}</b></span>`).join('')}</div>
     <p class="lo-card-note">${esc(sourceLabels.length ? `${sourceLabels.length} 项来源 · ${data.cadence}` : `来源待补 · ${data.cadence}`)}${freshness.state === 'stale' ? ' · 超过 48 小时仅提示待更新，不代表采集失败。' : ''}</p></div>`;
 }
 
-/** Mounts only the four registered life modules. Each card has an independent retry. */
+/** Mounts registered summaries and explicitly supported collections; every card retries independently. */
 export function mountLifeOverview(container, { modules = [] } = {}) {
   if (!container) throw Error('缺少生活摘要容器。');
   const ids = Object.keys(LIFE_KINDS).filter(id => !modules.length || modules.some(m => m.id === id && m.enabled !== false));
   const controller = new AbortController();
   const versions = new Map();
   let destroyed = false;
-  container.innerHTML = `<section class="lo-overview" aria-labelledby="lo-heading"><div class="lo-section-heading"><div><p class="lo-eyebrow">LIFE IN PROGRESS</p><h2 id="lo-heading">生活也在持续生长</h2><p>家庭、健康、知识与系统，从已记录的事实继续。</p></div><span class="lo-section-tag">每日整理 · 保留缺口</span></div><div class="lo-grid">${ids.map(id => { const config = LIFE_KINDS[id]; return `<article class="lo-card lo-${id}" data-lo-id="${id}"><div class="lo-card-heading"><span class="lo-icon">${lifeIcon(config.icon)}</span><div><h3>${lifeEscape(config.title)}</h3><p>${lifeEscape(config.description)}</p></div><a class="lo-enter" href="#/${id}" aria-label="查看${lifeEscape(config.title)}详情"><span>查看详情</span><b aria-hidden="true">↗</b></a></div><div class="lo-body" aria-live="polite" aria-busy="true"><p class="lo-loading">正在读取公开摘要…</p></div></article>`; }).join('')}</div><p class="lo-global-note">需求、讨论与计划按各自状态保留；完成以来源中的完成记录为准。摘要整理时间不等于来源更新或自动化运行时间。</p></section>`;
+  container.innerHTML = `<section class="lo-overview" aria-labelledby="lo-heading"><div class="lo-section-heading"><div><p class="lo-eyebrow">LIFE IN PROGRESS</p><h2 id="lo-heading">生活也在持续生长</h2><p>从家庭与成长，到设备、项目与灵感，按各自来源继续。</p></div><span class="lo-section-tag">来源各自更新 · 保留缺口</span></div><div class="lo-grid">${ids.map(id => { const config = LIFE_KINDS[id]; return `<article class="lo-card lo-${id}" data-lo-id="${id}"><div class="lo-card-heading"><span class="lo-icon">${lifeIcon(config.icon)}</span><div><h3>${lifeEscape(config.title)}</h3><p>${lifeEscape(config.description)}</p></div><a class="lo-enter" href="#/${id}" aria-label="查看${lifeEscape(config.title)}详情"><span>查看详情</span><b aria-hidden="true">↗</b></a></div><div class="lo-body" aria-live="polite" aria-busy="true"><p class="lo-loading">正在读取公开摘要…</p></div></article>`; }).join('')}</div><p class="lo-global-note">需求、讨论与计划按各自状态保留；完成以来源中的完成记录为准。摘要整理时间不等于来源更新或自动化运行时间。</p></section>`;
   async function load(id) {
     const version = (versions.get(id) || 0) + 1;
     versions.set(id, version);

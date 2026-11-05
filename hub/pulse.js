@@ -1,5 +1,5 @@
 /* Snapshot-backed visual summary. Counts describe recorded items, never a life score. */
-import { loadLifeData, lifeDate, lifeEscape as esc, lifeIcon, LIFE_KINDS, LIFE_STATUS } from './life-overview.js?v=20261105-colour';
+import { loadLifeData, lifeDate, lifeEscape as esc, lifeIcon, LIFE_KINDS, LIFE_STATUS } from './life-overview.js?v=20261105-collections';
 
 const DOMAIN = Object.freeze({
   family: { color: '#c84c37', soft: '#fff0e9', label: 'FAMILY' },
@@ -53,7 +53,7 @@ export function mountPulse(container, { modules = [] } = {}) {
       body = `<div class="pulse-domain-count"><strong>${fmt(shown)}<small>条</small></strong><span>${esc(description)}</span><span class="pulse-domain-badge">${data.status === 'partial' ? '摘要有缺口' : '已有摘要'}</span></div>
         <div class="pulse-domain-stack" role="img" aria-label="${esc(STATES.map(status => `${LIFE_STATUS[status.id]}${count(data, status.id)}条`).join('，'))}">${total ? STATES.filter(status => count(data, status.id)).map(status => `<span class="${selected && selected !== status.id ? 'is-dimmed' : ''}" style="flex:${count(data, status.id)};background:${status.color}" title="${esc(LIFE_STATUS[status.id])} ${count(data, status.id)}条"></span>`).join('') : '<span class="pulse-stack-empty"></span>'}</div>
         <p class="pulse-domain-observation">${esc(data.items[0]?.title || data.summary || '尚未收录可公开事项。')}</p>
-        <p class="pulse-domain-date">来源截至 <time>${esc(lifeDate(data.sourceAsOf))}</time></p>`;
+        <p class="pulse-domain-date">${data.type==='collection'?'摘要锚点':'来源截至'} <time>${esc(lifeDate(data.sourceAsOf))}</time></p>`;
     }
     return `<article class="pulse-domain pulse-domain-${id}" style="--pulse-domain:${domain.color};--pulse-soft:${domain.soft}" ${state?.loading ? 'aria-busy="true"' : ''}>${heading}${body}</article>`;
   }

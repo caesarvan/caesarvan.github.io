@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-05T01:31:30+08:00",
+  "cadence": "沿用网站协调增量维护",
+  "status": "partial",
+  "publicScope": "公开经审阅的事实摘要、主题、聚合数字和缺口；不包含聊天原文、身份联系方式、网络地址、凭证、数据库、附件或照片原件。",
+  "id": "projects",
+  "title": "项目与实验",
+  "summary": "将已经沉淀的方法、研究和作品整理成项目档案：记录阶段成果，也保留尚未成交、投稿或最终验收的边界。",
+  "sourceAsOf": "2026-10-30",
+  "coverage": {
+    "summary": "覆盖跨境电商研究、摄影候选技术复核、备忘录与资料库整理；是已有成果索引，不声称所有目标均完成。",
+    "gaps": [
+      "电商尚无已成交经营数据、完整履约报价或利润验证。",
+      "摄影作者、完整后期历史、最早来源及赛事资格仍需确认。",
+      "资料库整理处于用户要求的暂停状态，未验收移动不计入成功。",
+      "备忘录附件实体和云端同步未独立验证。"
+    ]
+  },
+  "sources": [
+    {
+      "id": "commerce-research",
+      "label": "跨境电商起步研究",
+      "asOf": "2026-10-20",
+      "kind": "discussion",
+      "readStatus": "read"
+    },
+    {
+      "id": "photo-review",
+      "label": "摄影候选原片技术复核",
+      "asOf": "2026-10-26",
+      "kind": "report",
+      "readStatus": "read"
+    },
+    {
+      "id": "notes-organization",
+      "label": "备忘录分类重命名结果",
+      "asOf": "2026-10-30",
+      "kind": "report",
+      "readStatus": "read"
+    },
+    {
+      "id": "library-organization",
+      "label": "资料库整理暂停断点",
+      "asOf": "2026-11-04T23:04:29+08:00",
+      "kind": "report",
+      "readStatus": "read"
+    }
+  ],
+  "metrics": [
+    {
+      "label": "摄影候选",
+      "value": 13,
+      "unit": "张",
+      "note": "已完成原片技术复核；原片不公开"
+    },
+    {
+      "label": "建议优先推进",
+      "value": 9,
+      "unit": "张",
+      "note": "技术复核建议，不是已投稿"
+    },
+    {
+      "label": "有效备忘录",
+      "value": 329,
+      "unit": "条",
+      "note": "原核查口径；含7条整理目录"
+    },
+    {
+      "label": "备忘录分类",
+      "value": 6,
+      "unit": "类"
+    },
+    {
+      "label": "资料库核验改名",
+      "value": 314,
+      "unit": "项",
+      "note": "暂停时累计"
+    },
+    {
+      "label": "资料库核验移动",
+      "value": 529,
+      "unit": "项",
+      "note": "另17项未回读，不并入"
+    }
+  ],
+  "items": [
+    {
+      "id": "commerce-state",
+      "title": "跨境副业仍处研究阶段",
+      "summary": "已比较同一目标市场下的平台、履约、日间客服与获客成本；没有把平台流水、广告回报或模拟场景当作真实利润。",
+      "status": "in_progress",
+      "date": "2026-10-20",
+      "sourceId": "commerce-research",
+      "tags": [
+        "商业研究",
+        "待验证"
+      ]
+    },
+    {
+      "id": "commerce-next",
+      "title": "先取得履约与人工报价",
+      "summary": "下一步是确认供货、仓配、退件与工作日人工责任及报价，再决定首轮平台与产品；没有已成交经营成果。",
+      "status": "pending",
+      "date": "2026-10-20",
+      "sourceId": "commerce-research",
+      "tags": [
+        "履约",
+        "实验"
+      ]
+    },
+    {
+      "id": "commerce-method",
+      "title": "保留分阶段验证方法",
+      "summary": "从准入和责任边界开始，随后样品验证、小规模真实交易、实际回款与时间成本复盘；属于建议实验路线，不是已执行计划。",
+      "status": "confirmed",
+      "date": "2026-10-20",
+      "sourceId": "commerce-research",
+      "tags": [
+        "方法",
+        "决策"
+      ]
+    },
+    {
+      "id": "photo-selection",
+      "title": "13张候选已完成技术复核",
+      "summary": "首轮选片与相册已建立，13张未修改原件全部取回并完成全尺寸及局部检查；审美评分与技术复核分别记录。",
+      "status": "completed",
+      "date": "2026-10-26",
+      "sourceId": "photo-review",
+      "tags": [
+        "摄影",
+        "已交付"
+      ]
+    },
+    {
+      "id": "photo-entry",
+      "title": "投稿资格仍待逐项确认",
+      "summary": "9张建议优先推进，部分候选转为技术风险储备；作者、后期、来源及具体赛事规则未齐，不标为已投稿。",
+      "status": "pending",
+      "date": "2026-10-26",
+      "sourceId": "photo-review",
+      "tags": [
+        "摄影",
+        "投稿"
+      ]
+    },
+    {
+      "id": "notes-index",
+      "title": "329条备忘录形成六类目录",
+      "summary": "已按工作、出行、生活、财务、设备与学习资料组织，保留附件和锁定笔记边界；公开只呈现分类成果。",
+      "status": "completed",
+      "date": "2026-10-30",
+      "sourceId": "notes-organization",
+      "tags": [
+        "知识整理",
+        "已交付"
+      ]
+    },
+    {
+      "id": "library-pause",
+      "title": "资料库整理按用户指示暂停",
+      "summary": "暂停时累计314项核验改名、529项核验移动；另17项已提交未回读、3项未提交，不计入完成。",
+      "status": "pending",
+      "date": "2026-11-04",
+      "sourceId": "library-organization",
+      "tags": [
+        "资料管理",
+        "暂停"
+      ]
+    }
+  ],
+  "nextActions": [
+    "电商先补责任与成本证据，再做真实小规模验证。",
+    "摄影先确认作者、后期与赛事资格，再决定投稿。",
+    "资料库只在用户明确恢复后从未验收移动断点继续。"
+  ]
+}

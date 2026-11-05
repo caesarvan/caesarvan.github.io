@@ -1,0 +1,179 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-05T01:31:30+08:00",
+  "cadence": "沿用网站协调增量维护",
+  "status": "partial",
+  "publicScope": "公开经审阅的事实摘要、主题、聚合数字和缺口；不包含聊天原文、身份联系方式、网络地址、凭证、数据库、附件或照片原件。",
+  "id": "devices",
+  "title": "设备与家庭科技",
+  "summary": "把设备检查和选型讨论整理成可查阅的家庭科技档案：NAS、存储连接、影音工具与使用边界。每项是注明日期的观察或讨论，不是实时遥测。",
+  "sourceAsOf": "2026-11-05T00:55:50+08:00",
+  "coverage": {
+    "summary": "来自NAS短时现场采样、只读映射结果与影音软件比较；没有持续压力测试、完整网络拓扑或购买验收。",
+    "gaps": [
+      "NAS显示型号与实际处理器不一致，真实机箱或部署方式未核实。",
+      "资源数值是历史短时样本，不代表当前负载或传输测速。",
+      "远程卷只读，不代表可安装或运行需要写入的软件。",
+      "播放器候选尚无购买、跨设备实播与完整音轨兼容验收。"
+    ]
+  },
+  "sources": [
+    {
+      "id": "nas-observation",
+      "label": "NAS容器与性能现场检查",
+      "asOf": "2026-11-05T00:55:50+08:00",
+      "kind": "report",
+      "readStatus": "read"
+    },
+    {
+      "id": "storage-mapping",
+      "label": "存储连接原会话阶段结果",
+      "asOf": "2026-11-05T01:25:34+08:00",
+      "kind": "report",
+      "readStatus": "read"
+    },
+    {
+      "id": "player-comparison",
+      "label": "家庭影音软件对比",
+      "asOf": "2026-11-05T01:18:48+08:00",
+      "kind": "discussion",
+      "readStatus": "read"
+    }
+  ],
+  "metrics": [
+    {
+      "label": "容器总数",
+      "value": 6,
+      "unit": "个",
+      "note": "现场样本；另有原生套件，不混合计数"
+    },
+    {
+      "label": "容器运行",
+      "value": 3,
+      "unit": "个"
+    },
+    {
+      "label": "容器停止",
+      "value": 3,
+      "unit": "个"
+    },
+    {
+      "label": "存储总量",
+      "value": 31.4,
+      "unit": "TB",
+      "note": "NAS现场界面口径"
+    },
+    {
+      "label": "已用存储",
+      "value": 22.3,
+      "unit": "TB"
+    },
+    {
+      "label": "剩余存储",
+      "value": 9.1,
+      "unit": "TB"
+    },
+    {
+      "label": "内存使用率",
+      "value": 17,
+      "unit": "%",
+      "note": "短时样本；缓存不当作应用占满"
+    },
+    {
+      "label": "处理器核心",
+      "value": 4,
+      "unit": "核"
+    }
+  ],
+  "items": [
+    {
+      "id": "nas-hardware",
+      "title": "NAS硬件按实际处理器识别",
+      "summary": "现场显示四核处理器与8GB内存；显示型号与实际处理器存在差异，按真实硬件判断能力。",
+      "status": "confirmed",
+      "date": "2026-11-05",
+      "sourceId": "nas-observation",
+      "tags": [
+        "硬件",
+        "历史采样"
+      ]
+    },
+    {
+      "id": "nas-workloads",
+      "title": "容器与原生套件分开看",
+      "summary": "现场共6个容器，3个运行、3个停止；媒体库、下载与照片等原生套件另列，进程运行不等于正在播放或下载。",
+      "status": "confirmed",
+      "date": "2026-11-05",
+      "sourceId": "nas-observation",
+      "tags": [
+        "服务",
+        "容器"
+      ]
+    },
+    {
+      "id": "nas-scrub",
+      "title": "高读盘有维护任务证据",
+      "summary": "采样期间存储池正在数据清理，服务列表也有文件系统校验读盘；这类校验维护不等于删除文件。",
+      "status": "confirmed",
+      "date": "2026-11-05",
+      "sourceId": "nas-observation",
+      "tags": [
+        "维护",
+        "性能"
+      ]
+    },
+    {
+      "id": "nas-memory",
+      "title": "内存宽裕与磁盘繁忙分开判断",
+      "summary": "样本内存使用17%、交换很少，磁盘忙碌度曾到92%；未用单次样本推断长期瓶颈。",
+      "status": "confirmed",
+      "date": "2026-11-05",
+      "sourceId": "nas-observation",
+      "tags": [
+        "观测",
+        "性能"
+      ]
+    },
+    {
+      "id": "storage-readonly",
+      "title": "远程磁盘只读映射已跑通",
+      "summary": "原会话已观察到约8.59TB卷被只读挂载；它是独立卷口径，不与NAS总容量相加，也不等于软件安装验收。",
+      "status": "confirmed",
+      "date": "2026-11-05",
+      "sourceId": "storage-mapping",
+      "tags": [
+        "存储",
+        "只读"
+      ]
+    },
+    {
+      "id": "media-options",
+      "title": "影音工具选型已有比较",
+      "summary": "比较VidHub、Infuse Pro、Emby与现有Jellyfin；服务器片库管理和播放客户端分别评估，未把建议写成已购买部署。",
+      "status": "needs_verification",
+      "date": "2026-11-05",
+      "sourceId": "player-comparison",
+      "tags": [
+        "影音",
+        "选型"
+      ]
+    },
+    {
+      "id": "media-acceptance",
+      "title": "用真实片源验证播放体验",
+      "summary": "保留待测清单：拖动、HDR、字幕、音轨切换、跨设备续播与NAS负载；价格和功能在购买前再核实。",
+      "status": "pending",
+      "date": "2026-11-05",
+      "sourceId": "player-comparison",
+      "tags": [
+        "验收",
+        "播放"
+      ]
+    }
+  ],
+  "nextActions": [
+    "维护校验结束后再取同口径样本比较。",
+    "保留现有只读卷，另以小范围验证需要写入的使用场景。",
+    "用同一片源在目标设备上完成播放器体验对比。"
+  ]
+}

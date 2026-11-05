@@ -210,6 +210,58 @@
       "mode": "published",
       "order": 9.5,
       "enabled": true
+    },
+    {
+      "id": "data-status",
+      "title": "数据状态",
+      "description": "查看各领域快照、来源截止与覆盖缺口",
+      "icon": "◎",
+      "color": "#7944dd",
+      "group": "more",
+      "type": "page",
+      "href": "./pages/data-status/index.html",
+      "mode": "catalog",
+      "order": 95,
+      "enabled": true
+    },
+    {
+      "id": "devices",
+      "title": "设备与家庭科技",
+      "description": "把设备检查和选型讨论整理成可查阅的家庭科技档案：NAS、存储连接、影音工具与使用边界。每项是注明日期的观察或讨论，不是实时遥测。",
+      "icon": "◈",
+      "color": "#3266d6",
+      "group": "life",
+      "type": "page",
+      "href": "./pages/devices/index.html",
+      "mode": "published",
+      "order": 65,
+      "enabled": true
+    },
+    {
+      "id": "projects",
+      "title": "项目与实验",
+      "description": "将已经沉淀的方法、研究和作品整理成项目档案：记录阶段成果，也保留尚未成交、投稿或最终验收的边界。",
+      "icon": "✦",
+      "color": "#7944dd",
+      "group": "life",
+      "type": "page",
+      "href": "./pages/projects/index.html",
+      "mode": "published",
+      "order": 66,
+      "enabled": true
+    },
+    {
+      "id": "culture",
+      "title": "灵感与文化清单",
+      "description": "把看过的讨论和记录下来的意向整理为有状态的文化清单：观影、音乐、展览和内容订阅分开呈现，不将推荐或意向当作已经观看。",
+      "icon": "♫",
+      "color": "#c84c37",
+      "group": "life",
+      "type": "page",
+      "href": "./pages/culture/index.html",
+      "mode": "published",
+      "order": 67,
+      "enabled": true
     }
   ]
 }

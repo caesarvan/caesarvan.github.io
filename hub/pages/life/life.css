@@ -17,3 +17,13 @@
 [data-theme=dark][data-life-kind=knowledge]{--lp-accent:#c6a2ff;--lp-soft:#332a4b}
 [data-theme=dark][data-life-kind=system]{--lp-accent:#9cbcff;--lp-soft:#253451}
 [data-theme=dark] .lp-hero-icon{color:var(--lp-accent);background:var(--lp-soft)}
+
+/* Additional reviewed collection kinds share the evidence renderer. */
+[data-life-kind=devices]{--lp-accent:#287087;--lp-soft:#e8f6fa}
+[data-life-kind=projects]{--lp-accent:#8756b8;--lp-soft:#f4edfc}
+[data-life-kind=culture]{--lp-accent:#9d526e;--lp-soft:#fceef3}
+[data-theme=dark][data-life-kind=devices]{--lp-accent:#85d1e2;--lp-soft:#213a45}
+[data-theme=dark][data-life-kind=projects]{--lp-accent:#ceaff5;--lp-soft:#382b49}
+[data-theme=dark][data-life-kind=culture]{--lp-accent:#f0a9c1;--lp-soft:#452c3a}
+.lp-domain-chart .lp-source-matrix{margin-top:22px}
+@media(min-width:781px){.lp-tabs{flex-wrap:wrap;gap:7px}}

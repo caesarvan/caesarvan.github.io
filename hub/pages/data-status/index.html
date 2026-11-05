@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f4f6fc">
+  <title>数据状态 · Caesar Life OS</title>
+  <meta name="description" content="逐项查看公开快照的可载入状态、数据量、来源日期与覆盖缺口。">
+  <link rel="icon" href="../../favicon.svg">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="../../embed.css?v=20261104">
+  <script src="../../embed.js?v=20261104"></script>
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="ds-skip" href="#data-main">跳到数据状态</a>
+  <div class="ds-app">
+    <header class="ds-topbar" data-life-hub-global>
+      <a href="../../#/home" class="ds-brand"><span aria-hidden="true">▦</span> Life OS</a>
+      <a href="../../#/home">返回生活总览 <span aria-hidden="true">↗</span></a>
+    </header>
+    <main id="data-main" tabindex="-1" aria-busy="true">
+      <section class="ds-hero" aria-labelledby="ds-title">
+        <div class="ds-eyebrow"><span class="ds-signal" aria-hidden="true"></span> 数据与覆盖 · DATA AT A GLANCE</div>
+        <h1 id="ds-title">每一份数据，<br><span>都有自己的时刻。</span></h1>
+        <p class="ds-lede">看清哪些快照可以载入、哪些内容仍有缺口。来源截止与整理时间分开记录，空缺保留为空缺。</p>
+        <div class="ds-hero-note"><span aria-hidden="true">◈</span><p>这里读取公开登记目录，不重新采集业务数据。<strong>可载入表示已登记快照可供页面使用，不代表来源已完整、当前仍最新或本次已校验全部正文。</strong></p></div>
+      </section>
+      <div id="ds-loading" class="ds-loading" role="status"><span class="ds-loading-mark" aria-hidden="true"></span> 正在读取已发布的数据目录…</div>
+      <section id="ds-content" hidden>
+        <div id="ds-metrics" class="ds-metrics" aria-label="目录状态计数"></div>
+        <section class="ds-directory" aria-labelledby="ds-directory-title">
+          <div class="ds-section-head"><div><p class="ds-eyebrow">公开快照目录</p><h2 id="ds-directory-title">逐项看清，按需打开</h2></div><p id="ds-prepared" class="ds-muted"></p></div>
+          <div class="ds-controls">
+            <div class="ds-filter" role="group" aria-label="按目录状态筛选">
+              <button type="button" data-filter="all" aria-pressed="true">全部</button>
+              <button type="button" data-filter="gaps" aria-pressed="false">有缺口或待说明</button>
+              <button type="button" data-filter="loadable" aria-pressed="false">可载入</button>
+            </div>
+            <label class="ds-search"><span>搜索数据集</span><input id="ds-query" type="search" placeholder="名称、领域或数据集标识" autocomplete="off"></label>
+          </div>
+          <p id="ds-results" class="ds-result-count" role="status" aria-live="polite" aria-atomic="true"></p>
+          <div id="ds-grid" class="ds-grid"></div>
+          <p id="ds-empty" class="ds-empty" hidden>没有符合当前条件的数据集。试试其他名称或切回全部。</p>
+        </section>
+        <section id="ds-static" class="ds-static" aria-labelledby="ds-static-title"></section>
+        <aside class="ds-reading" aria-labelledby="ds-reading-title">
+          <h2 id="ds-reading-title">怎样读这些状态</h2>
+          <div><p><strong>可载入</strong>是目录的可用性声明；<strong>部分覆盖</strong>表示业务内容仍有已知缺口，两者可以同时成立。</p><p><strong>未单独登记</strong>表示目录没有提供来源截止或范围信息，不能用整理时间补作来源截止。索引条目也不代表附件或正文已经公开。</p></div>
+        </aside>
+      </section>
+      <section id="ds-error" class="ds-error" hidden role="alert"><span aria-hidden="true">◇</span><h2>数据目录暂时没有读到</h2><p>本次读取失败，不能据此判断数据为空。请稍后重试。</p><button id="ds-retry" type="button">重新读取目录</button></section>
+    </main>
+    <footer class="ds-footer"><span>Life OS · 数据状态</span><span id="ds-read-at">来源时间与目录读取时间分别记录 · 北京时间</span></footer>
+  </div>
+</body>
+</html>
