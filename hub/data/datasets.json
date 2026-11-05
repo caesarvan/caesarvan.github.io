@@ -1,27 +1,27 @@
 {
   "version": 1,
   "publicationMode": "authorized-public-snapshots",
-  "preparedAt": "2026-11-05T23:24:59+08:00",
+  "preparedAt": "2026-11-05T23:34:08+08:00",
   "datasets": [
     {
       "id": "finance",
       "type": "snapshot",
       "file": "./finance.json",
       "status": "ready",
-      "generatedAt": "2026-10-31T03:16:12+08:00",
-      "records": 15000,
-      "bytes": 9068765,
-      "sha256": "b0215293fa728ce74d20f860bd8d03a51ff877a6e8355b682b292da1d48fd08e"
+      "generatedAt": "2026-11-05T23:34:08+08:00",
+      "records": 15052,
+      "bytes": 9104442,
+      "sha256": "f872e60adc92b11b50c3107caebfcf9026cc9cf130dbdf47d96cf748b7ba7218"
     },
     {
       "id": "finance-unified",
       "type": "ledger",
       "file": "./finance-unified.json",
       "status": "ready",
-      "generatedAt": "2026-11-05T01:31:47+08:00",
-      "records": 20878,
-      "bytes": 35855390,
-      "sha256": "22c60d2a73d65433c7512deef702d89dcfe07068ca4bd309c4a83077cbb99d25"
+      "generatedAt": "2026-11-05T23:34:08+08:00",
+      "records": 21791,
+      "bytes": 37501281,
+      "sha256": "f56835f4bd6ae0d1b44878d24aa41311640e1bff3eeedaa22075f9c0eb5ff22f"
     },
     {
       "id": "webank",
