@@ -1,7 +1,7 @@
 {
   "version": 1,
   "publicationMode": "authorized-public-snapshots",
-  "preparedAt": "2026-11-05T01:34:00+08:00",
+  "preparedAt": "2026-11-05T23:24:59+08:00",
   "datasets": [
     {
       "id": "finance",
@@ -111,11 +111,11 @@
       "file": "./family.json",
       "status": "ready",
       "coverage": "partial",
-      "generatedAt": "2026-11-04T01:56:30+08:00",
+      "generatedAt": "2026-11-05T23:23:39.474545+08:00",
       "sourceAsOf": "2026-11-04T00:49:28+08:00",
-      "records": 5,
-      "bytes": 6104,
-      "sha256": "1e14fe4eb8bc9ae9473f384489cb966516aa0beafbdf3ed58d74b185a80dacf6"
+      "records": 6,
+      "bytes": 6956,
+      "sha256": "62c35c5a002dc179b0967de52fb88af417ae04a94169f83ebd9c698b9725609e"
     },
     {
       "id": "health",
@@ -123,11 +123,11 @@
       "file": "./health.json",
       "status": "ready",
       "coverage": "partial",
-      "generatedAt": "2026-11-04T01:39:35+08:00",
-      "sourceAsOf": "2026-11-03",
-      "records": 4,
-      "bytes": 3177,
-      "sha256": "541dd4e07cc64736006e5804fcca6c4d05176329e4b753c7fbfba29d29fac7df"
+      "generatedAt": "2026-11-05T23:23:39.474545+08:00",
+      "sourceAsOf": "2026-11-05T09:33:00+08:00",
+      "records": 5,
+      "bytes": 4101,
+      "sha256": "0518dcf869d57e53a3e48e6e64c7eda973702fb55a1d0d2f00839dd27eb6218d"
     },
     {
       "id": "knowledge",
@@ -135,11 +135,11 @@
       "file": "./knowledge.json",
       "status": "ready",
       "coverage": "partial",
-      "generatedAt": "2026-11-04T23:22:12+08:00",
-      "sourceAsOf": "2026-11-04",
+      "generatedAt": "2026-11-05T23:23:39.474545+08:00",
+      "sourceAsOf": "2026-11-05T09:36:25+08:00",
       "records": 6,
-      "bytes": 5898,
-      "sha256": "6d47bb43c9802a3462cfc0185b458ce138c815ca7a5251a3a8b1894a8a16efa6"
+      "bytes": 6000,
+      "sha256": "94853e845fc8686481c58a4bb5bb89e1c588f50c8590f349f887905398c6b689"
     },
     {
       "id": "system",
@@ -147,11 +147,11 @@
       "file": "./system.json",
       "status": "ready",
       "coverage": "partial",
-      "generatedAt": "2026-11-04T23:22:12+08:00",
-      "sourceAsOf": "2026-11-04",
+      "generatedAt": "2026-11-05T23:23:39.474545+08:00",
+      "sourceAsOf": "2026-11-05T23:14:37.016300+08:00",
       "records": 6,
-      "bytes": 5420,
-      "sha256": "e021b1785b43e35a62e513e0b1fcae6c0f98caffd1c3370e3d7ae5d5d91409a3"
+      "bytes": 5480,
+      "sha256": "d8844840ab9d7642b1575eb6e52b3f9140480d4a8dd770887ea1b2d5de6673fd"
     },
     {
       "id": "household-budget",
