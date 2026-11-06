@@ -13,7 +13,7 @@ if (!root.dataset.lifeHubEmbed) {
   try { theme = localStorage.getItem('life-theme') || localStorage.getItem('life-hub-theme') || ''; } catch { /* Storage can be unavailable. */ }
   root.dataset.theme = theme === 'light' || theme === 'dark' ? theme : matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
-tabs.innerHTML = Object.entries(LIFE_KINDS).map(([id, config]) => `<a href="../life/index.html?kind=${id}${root.dataset.lifeHubEmbed ? '&embed=1' : ''}" class="lp-tab lp-${id}${id === kind ? ' active' : ''}"${id === kind ? ' aria-current="page"' : ''}>${lifeIcon(config.icon)}<span>${esc(config.title)}</span></a>`).join('');
+tabs.innerHTML = Object.entries(LIFE_KINDS).map(([id, config]) => `<a href="${config.type === 'collection' ? `../${id}/index.html${root.dataset.lifeHubEmbed ? '?embed=1' : ''}` : `../life/index.html?kind=${id}${root.dataset.lifeHubEmbed ? '&embed=1' : ''}`}" class="lp-tab lp-${id}${id === kind ? ' active' : ''}"${id === kind ? ' aria-current="page"' : ''}>${lifeIcon(config.icon)}<span>${esc(config.title)}</span></a>`).join('');
 
 function badge(status) { return `<span class="lp-status lp-status-${status}"><i aria-hidden="true"></i>${esc(LIFE_STATUS[status])}</span>`; }
 function renderItem(item, data) {

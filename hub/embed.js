@@ -25,6 +25,10 @@
     id, href: `./pages/${id}/index.html`, type: 'page', enabled: true
   })).concat([...fileKinds].map(id => ({
     id, href: `./pages/files/index.html?kind=${id}`, type: 'page', enabled: true
+  })), [...lifeKinds].map(id => ({
+    id, href: `./pages/life/index.html?kind=${id}`, type: 'page', enabled: true
+  })), ['devices', 'projects', 'culture'].map(id => ({
+    id, href: `./pages/${id}/index.html`, type: 'page', enabled: true
   })));
   fetch(new URL('modules.json', hub), { credentials: 'omit' })
     .then(response => response.ok ? response.json() : null)
