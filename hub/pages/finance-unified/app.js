@@ -252,11 +252,46 @@
     const blob=new Blob(['\uFEFF'+[headings,...rows].map(row=>row.map(csvCell).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}), url=URL.createObjectURL(blob), anchor=node('a');
     anchor.href=url;anchor.download='统一账库_'+state.tab+'_'+new Date().toISOString().slice(0,10)+'.csv';document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
   }
+  async function hydrateLedger(data, ledgerUrl) {
+    if (data?.schema_version !== 'unified-finance-manifest/1.0') return data;
+    if (data.ledger_schema_version !== 'unified-finance/1.0' || !Array.isArray(data.record_files) || !data.record_files.length || !Number.isSafeInteger(data.summary?.all_records) || data.summary.all_records < 0 || 'records' in data) throw new Error('账库分片清单不正确');
+    const base = new URL(ledgerUrl), files = new Set();
+    const parts = data.record_files.map(part => {
+      if (!part || !/^\.\/finance-unified\/[a-f0-9]{16,64}\/records-\d{4}\.json$/.test(part.file || '') || files.has(part.file) || !Number.isSafeInteger(part.bytes) || part.bytes <= 0 || part.bytes > 6 * 1024 * 1024 || !Number.isSafeInteger(part.records) || part.records < 0 || !/^[a-f0-9]{64}$/.test(part.sha256 || '')) throw new Error('账库分片路径或登记不正确');
+      files.add(part.file); const url = new URL(part.file, base);
+      if (url.origin !== base.origin || !url.pathname.startsWith(new URL('.', base).pathname + 'finance-unified/')) throw new Error('账库分片路径越界');
+      return {...part, url: url.href};
+    });
+    const loaded = new Array(parts.length); let next = 0;
+    await Promise.all(Array.from({length: Math.min(4, parts.length)}, async () => {
+      for (;;) {
+        const index = next++; if (index >= parts.length) return;
+        const part = parts[index], response = await fetch(part.url, {cache:'no-store', credentials:'same-origin'});
+        if (!response.ok) throw new Error('账库分片 HTTP ' + response.status);
+        const bytes = await response.arrayBuffer();
+        if (bytes.byteLength !== part.bytes) throw new Error('账库分片长度不匹配');
+        const digest = Array.from(new Uint8Array(await globalThis.crypto.subtle.digest('SHA-256', bytes)), value => value.toString(16).padStart(2, '0')).join('');
+        if (digest !== part.sha256) throw new Error('账库分片校验失败');
+        const shard = JSON.parse(new TextDecoder('utf-8', {fatal:true}).decode(bytes));
+        if (shard.schema_version !== 'unified-finance-records/1.0' || !Array.isArray(shard.records) || shard.records.length !== part.records) throw new Error('账库分片记录数不匹配');
+        loaded[index] = shard.records;
+      }
+    }));
+    const records = loaded.flat(), ids = new Set();
+    for (const record of records) {
+      if (!record || typeof record.record_id !== 'string' || !record.record_id || ids.has(record.record_id)) throw new Error('账库记录编号缺失或重复');
+      ids.add(record.record_id);
+    }
+    if (records.length !== data.summary.all_records) throw new Error('账库记录总数不匹配');
+    const payload = {...data, schema_version:data.ledger_schema_version, records};
+    delete payload.ledger_schema_version; delete payload.record_files;
+    return payload;
+  }
   async function load() {
     try {
       const response=await fetch('../../data/finance-unified.json',{cache:'no-store',credentials:'same-origin'});
       if(!response.ok)throw new Error('HTTP '+response.status);
-      const payload=await response.json();if(!Array.isArray(payload.records))throw new Error('账库格式不正确');
+      const payload=await hydrateLedger(await response.json(), new URL('../../data/finance-unified.json', globalThis.location?.href || 'https://caesarvan.github.io/hub/pages/finance-unified/index.html'));if(!Array.isArray(payload.records))throw new Error('账库格式不正确');
       state.summary=payload.summary || {};state.scopeStart=payload.scope_start || '2025-01-01';
       state.records=payload.records.map(record=>{const copy={...record};copy._details=json(copy.details || copy.details_json,{});copy._search=text([purpose(copy),category(copy),copy.record_id,copy.external_id,copy.source_system,copy._details.merchant,copy._details.account_label,copy._details.instrument_name,JSON.stringify(copy._details.items || []),JSON.stringify(copy._details.order_evidence || copy._details.orderEvidence || [])].filter(Boolean).join(' ')).toLocaleLowerCase('zh-CN');return copy;});
       state.records.sort((a,b)=>(b.event_date||'').localeCompare(a.event_date||'')||a.record_id.localeCompare(b.record_id));state.byId=new Map(state.records.map(r=>[r.record_id,r]));

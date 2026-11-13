@@ -37,6 +37,30 @@ export function validateCollection(data,item){
   if(!Number.isSafeInteger(item.records)||item.records!==data.items.length)bad('catalog count differs');
   return data.items.length;
 }
+export async function hydrateUnifiedLedger(data, readPart = file => readFile(path.join(root, 'data', file))) {
+  if (data.schema_version !== 'unified-finance-manifest/1.0') {
+    if (data.schema_version !== 'unified-finance/1.0' || !Array.isArray(data.records)) fail('Invalid unified ledger');
+    return data;
+  }
+  if (data.ledger_schema_version !== 'unified-finance/1.0' || !Array.isArray(data.record_files) || !data.record_files.length || !Number.isSafeInteger(data.summary?.all_records) || data.summary.all_records < 0 || 'records' in data) fail('Invalid unified ledger manifest');
+  const files = new Set(), ids = new Set(), records = [];
+  for (const part of data.record_files) {
+    if (!part || !/^\.\/finance-unified\/[a-f0-9]{16,64}\/records-\d{4}\.json$/.test(part.file || '') || files.has(part.file) || !Number.isSafeInteger(part.bytes) || part.bytes <= 0 || part.bytes > 6 * 1024 * 1024 || !Number.isSafeInteger(part.records) || part.records < 0 || !/^[a-f0-9]{64}$/.test(part.sha256 || '')) fail('Invalid unified ledger shard path or metadata');
+    files.add(part.file);
+    const buffer = await readPart(part.file);
+    if (buffer.length !== part.bytes || createHash('sha256').update(buffer).digest('hex') !== part.sha256) fail('Unified ledger shard checksum/bytes mismatch');
+    const shard = JSON.parse(buffer.toString('utf8'));
+    if (shard.schema_version !== 'unified-finance-records/1.0' || !Array.isArray(shard.records) || shard.records.length !== part.records) fail('Unified ledger shard count/schema mismatch');
+    for (const record of shard.records) {
+      if (!record || typeof record.record_id !== 'string' || !record.record_id || ids.has(record.record_id)) fail('Duplicate or missing unified ledger record id');
+      ids.add(record.record_id); records.push(record);
+    }
+  }
+  if (records.length !== data.summary.all_records) fail('Unified ledger manifest total mismatch');
+  const payload = {...data, schema_version:data.ledger_schema_version, records};
+  delete payload.ledger_schema_version; delete payload.record_files;
+  return payload;
+}
 const manifest=await readJSON('modules.json');
 if(manifest.version!==1||!Array.isArray(manifest.modules)) fail('Invalid module registry');
 const ids=new Set();let pageEntries=0;
@@ -66,7 +90,7 @@ for(const item of catalog.datasets){
   const data=JSON.parse(buffer.toString());
   const count=item.type==='snapshot'
     ?Object.values(data.queries||{}).reduce((sum,query)=>{if(!Array.isArray(query.rows))fail('Invalid query rows');return sum+query.rows.length},0)
-    :item.type==='ledger'?(data.schema_version==='unified-finance/1.0'&&Array.isArray(data.records)?data.records.length:fail('Invalid unified ledger'))
+    :item.type==='ledger'?(await hydrateUnifiedLedger(data)).records.length
     :item.type==='collection'?validateCollection(data,item)
     :item.type==='digest'?(data.schemaVersion===1&&data.id===item.id&&Array.isArray(data.items)&&['ready','partial'].includes(data.status)?data.items.length:fail('Invalid life digest'))
     :item.type==='index'&&Array.isArray(data.entries)?data.entries.length:fail('Invalid dataset type or index entries');
