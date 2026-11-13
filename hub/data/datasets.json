@@ -1,7 +1,7 @@
 {
   "version": 1,
   "publicationMode": "authorized-public-snapshots",
-  "preparedAt": "2026-11-13T11:19:56+08:00",
+  "preparedAt": "2026-11-13T23:22:40+08:00",
   "datasets": [
     {
       "id": "finance",
@@ -123,11 +123,11 @@
       "file": "./health.json",
       "status": "ready",
       "coverage": "partial",
-      "generatedAt": "2026-11-12T23:18:20+08:00",
-      "sourceAsOf": "2026-11-12T09:32:00+08:00",
+      "generatedAt": "2026-11-13T23:22:20.594777+08:00",
+      "sourceAsOf": "2026-11-13T09:28:00+08:00",
       "records": 5,
-      "bytes": 4367,
-      "sha256": "7b6076530bafe333ae3a813ccc7258b4b4d644e38ea84ef2374190e0cfdcce43"
+      "bytes": 4413,
+      "sha256": "93a249a53c4a3fdc804f589ad1cda83515684bde3f2e66ff41ac628f52ac19ca"
     },
     {
       "id": "knowledge",
@@ -135,11 +135,11 @@
       "file": "./knowledge.json",
       "status": "ready",
       "coverage": "partial",
-      "generatedAt": "2026-11-12T23:18:20+08:00",
-      "sourceAsOf": "2026-11-12T10:35:07+08:00",
+      "generatedAt": "2026-11-13T23:22:20.594777+08:00",
+      "sourceAsOf": "2026-11-13T09:32:40+08:00",
       "records": 6,
-      "bytes": 6125,
-      "sha256": "0628f87ae7d4883ab45960dd2110fc9d026acebfb61d75b79e8d8183b88e485f"
+      "bytes": 6127,
+      "sha256": "cf0bc5f43448138ff2a600f4d18aa07d40d9587e489c033818d96e87c582e51d"
     },
     {
       "id": "system",
@@ -147,11 +147,11 @@
       "file": "./system.json",
       "status": "ready",
       "coverage": "partial",
-      "generatedAt": "2026-11-12T23:18:20+08:00",
-      "sourceAsOf": "2026-11-12T23:17:29.264746+08:00",
+      "generatedAt": "2026-11-13T23:22:20.594777+08:00",
+      "sourceAsOf": "2026-11-13T23:17:29.017652+08:00",
       "records": 6,
-      "bytes": 5736,
-      "sha256": "315aa6ac90e44a27cd7fa19cbbc8cc8542ec5febcfc518aa412e58b2fc441c6b"
+      "bytes": 5719,
+      "sha256": "b0e3296ce776324a071b7d1338af6b11a00d27c981e265d7daa91f4ad1286bd5"
     },
     {
       "id": "household-budget",
