@@ -1,7 +1,7 @@
 {
   "version": 1,
   "publicationMode": "authorized-public-snapshots",
-  "preparedAt": "2026-11-13T23:22:40+08:00",
+  "preparedAt": "2026-11-14T23:17:57+08:00",
   "datasets": [
     {
       "id": "finance",
@@ -123,11 +123,11 @@
       "file": "./health.json",
       "status": "ready",
       "coverage": "partial",
-      "generatedAt": "2026-11-13T23:22:20.594777+08:00",
-      "sourceAsOf": "2026-11-13T09:28:00+08:00",
+      "generatedAt": "2026-11-14T23:17:27.461253+08:00",
+      "sourceAsOf": "2026-11-14T09:32:00+08:00",
       "records": 5,
-      "bytes": 4413,
-      "sha256": "93a249a53c4a3fdc804f589ad1cda83515684bde3f2e66ff41ac628f52ac19ca"
+      "bytes": 4428,
+      "sha256": "1ecd126588bf2113425473ac56ce8a2a49914add25f5a09df987fbc8eda7abee"
     },
     {
       "id": "knowledge",
@@ -135,11 +135,11 @@
       "file": "./knowledge.json",
       "status": "ready",
       "coverage": "partial",
-      "generatedAt": "2026-11-13T23:22:20.594777+08:00",
-      "sourceAsOf": "2026-11-13T09:32:40+08:00",
+      "generatedAt": "2026-11-14T23:17:27.461253+08:00",
+      "sourceAsOf": "2026-11-14T10:20:31+08:00",
       "records": 6,
-      "bytes": 6127,
-      "sha256": "cf0bc5f43448138ff2a600f4d18aa07d40d9587e489c033818d96e87c582e51d"
+      "bytes": 6168,
+      "sha256": "01d46942f54baec8d5e9be8e591d245ee242efcd680edbce3eec7bff15faac33"
     },
     {
       "id": "system",
@@ -147,11 +147,11 @@
       "file": "./system.json",
       "status": "ready",
       "coverage": "partial",
-      "generatedAt": "2026-11-13T23:22:20.594777+08:00",
-      "sourceAsOf": "2026-11-13T23:17:29.017652+08:00",
+      "generatedAt": "2026-11-14T23:17:27.461253+08:00",
+      "sourceAsOf": "2026-11-14T23:15:37.496042+08:00",
       "records": 6,
-      "bytes": 5719,
-      "sha256": "b0e3296ce776324a071b7d1338af6b11a00d27c981e265d7daa91f4ad1286bd5"
+      "bytes": 5722,
+      "sha256": "28c6727c53d55bcc1f1d390a33d0bf0e122c87f97354fb578e248d3165fc1124"
     },
     {
       "id": "household-budget",
