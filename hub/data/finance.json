@@ -1,7 +1,7 @@
 {
   "surface": "dashboard",
   "title": "个人财务总览",
-  "generatedAt": "2026-11-23T10:23:54+08:00",
+  "generatedAt": "2026-11-24T23:20:35+08:00",
   "status": "reviewed",
   "buildStatus": "complete",
   "filters": [
@@ -93234,7 +93234,7 @@
           "merge_transactions.py",
           "merge-validation.json"
         ],
-        "executedAt": "2026-11-23T10:23:54+08:00",
+        "executedAt": "2026-11-24T23:20:35+08:00",
         "filters": [
           "交易日：2025-01-01至2026-10-20本次检索时点",
           "Asia/Shanghai；周一至周日；当前月/周未结束",
@@ -93759,7 +93759,7 @@
           "订单、核销、还款、转账、投资与估值不增加消费；候选关系不改变金额。"
         ],
         "asOfDate": "2026-11-17",
-        "executedAt": "2026-11-23T10:23:54+08:00",
+        "executedAt": "2026-11-24T23:20:35+08:00",
         "asOfDateBasis": "latest_observed_ledger_record_not_complete_account_coverage"
       }
     },
@@ -108810,7 +108810,7 @@
           }
         ],
         "asOfDate": "2026-10-22",
-        "preservedFromSnapshotSha256": "aca94c2dfa8a6fdb97f59933bdcfe9902595bd3860c1c4d1429735ee70275c6c"
+        "preservedFromSnapshotSha256": "831e41d02afaefece90f294315a1e3740eafa7368365df5dbaeec7ae72174d77"
       }
     },
     "data_quality": {
@@ -108900,7 +108900,7 @@
           }
         ],
         "asOfDate": "2026-10-22",
-        "preservedFromSnapshotSha256": "aca94c2dfa8a6fdb97f59933bdcfe9902595bd3860c1c4d1429735ee70275c6c"
+        "preservedFromSnapshotSha256": "831e41d02afaefece90f294315a1e3740eafa7368365df5dbaeec7ae72174d77"
       },
       "methods": [
         {
@@ -138581,7 +138581,7 @@
           }
         ],
         "asOfDate": "2026-10-22",
-        "preservedFromSnapshotSha256": "aca94c2dfa8a6fdb97f59933bdcfe9902595bd3860c1c4d1429735ee70275c6c"
+        "preservedFromSnapshotSha256": "831e41d02afaefece90f294315a1e3740eafa7368365df5dbaeec7ae72174d77"
       },
       "methods": [
         {
@@ -139141,7 +139141,7 @@
           }
         ],
         "asOfDate": "2026-10-22",
-        "preservedFromSnapshotSha256": "aca94c2dfa8a6fdb97f59933bdcfe9902595bd3860c1c4d1429735ee70275c6c"
+        "preservedFromSnapshotSha256": "831e41d02afaefece90f294315a1e3740eafa7368365df5dbaeec7ae72174d77"
       }
     },
     "loan_snapshots": {
@@ -139558,7 +139558,7 @@
           }
         ],
         "asOfDate": "2026-10-22",
-        "preservedFromSnapshotSha256": "aca94c2dfa8a6fdb97f59933bdcfe9902595bd3860c1c4d1429735ee70275c6c"
+        "preservedFromSnapshotSha256": "831e41d02afaefece90f294315a1e3740eafa7368365df5dbaeec7ae72174d77"
       }
     },
     "income_evidence": {
@@ -140227,7 +140227,7 @@
           }
         ],
         "asOfDate": "2026-10-22",
-        "preservedFromSnapshotSha256": "aca94c2dfa8a6fdb97f59933bdcfe9902595bd3860c1c4d1429735ee70275c6c"
+        "preservedFromSnapshotSha256": "831e41d02afaefece90f294315a1e3740eafa7368365df5dbaeec7ae72174d77"
       }
     },
     "equity_evidence": {
@@ -140500,7 +140500,7 @@
           }
         ],
         "asOfDate": "2026-10-22",
-        "preservedFromSnapshotSha256": "aca94c2dfa8a6fdb97f59933bdcfe9902595bd3860c1c4d1429735ee70275c6c"
+        "preservedFromSnapshotSha256": "831e41d02afaefece90f294315a1e3740eafa7368365df5dbaeec7ae72174d77"
       }
     },
     "property_evidence": {
@@ -140587,7 +140587,7 @@
           }
         ],
         "asOfDate": "2026-10-22",
-        "preservedFromSnapshotSha256": "aca94c2dfa8a6fdb97f59933bdcfe9902595bd3860c1c4d1429735ee70275c6c"
+        "preservedFromSnapshotSha256": "831e41d02afaefece90f294315a1e3740eafa7368365df5dbaeec7ae72174d77"
       }
     },
     "insurance_evidence": {
@@ -140860,7 +140860,7 @@
           }
         ],
         "asOfDate": "2026-10-22",
-        "preservedFromSnapshotSha256": "aca94c2dfa8a6fdb97f59933bdcfe9902595bd3860c1c4d1429735ee70275c6c"
+        "preservedFromSnapshotSha256": "831e41d02afaefece90f294315a1e3740eafa7368365df5dbaeec7ae72174d77"
       }
     },
     "supplement_issues": {
@@ -141240,7 +141240,7 @@
           }
         ],
         "asOfDate": "2026-10-22",
-        "preservedFromSnapshotSha256": "aca94c2dfa8a6fdb97f59933bdcfe9902595bd3860c1c4d1429735ee70275c6c"
+        "preservedFromSnapshotSha256": "831e41d02afaefece90f294315a1e3740eafa7368365df5dbaeec7ae72174d77"
       }
     },
     "compensation_policies": {
@@ -142484,7 +142484,7 @@
           }
         ],
         "asOfDate": "2026-10-22",
-        "preservedFromSnapshotSha256": "aca94c2dfa8a6fdb97f59933bdcfe9902595bd3860c1c4d1429735ee70275c6c"
+        "preservedFromSnapshotSha256": "831e41d02afaefece90f294315a1e3740eafa7368365df5dbaeec7ae72174d77"
       }
     },
     "supplement_sources": {
@@ -142684,7 +142684,7 @@
           }
         ],
         "asOfDate": "2026-10-22",
-        "preservedFromSnapshotSha256": "aca94c2dfa8a6fdb97f59933bdcfe9902595bd3860c1c4d1429735ee70275c6c"
+        "preservedFromSnapshotSha256": "831e41d02afaefece90f294315a1e3740eafa7368365df5dbaeec7ae72174d77"
       }
     },
     "refresh_review": {
@@ -146442,7 +146442,7 @@
           "本表为已发布历史辅助资料，本次账库导出未重检；原统计截止保留，不能代表本轮邮箱/账户全覆盖。"
         ],
         "asOfDate": "2026-10-22",
-        "preservedFromSnapshotSha256": "aca94c2dfa8a6fdb97f59933bdcfe9902595bd3860c1c4d1429735ee70275c6c"
+        "preservedFromSnapshotSha256": "831e41d02afaefece90f294315a1e3740eafa7368365df5dbaeec7ae72174d77"
       }
     },
     "bank_weekly_analysis": {
@@ -147691,7 +147691,7 @@
           "账本最近记录日不是完整账户或邮件覆盖水位；无记录不代表零。",
           "订单、核销、还款、转账、投资与估值不增加消费；候选关系不改变金额。"
         ],
-        "executedAt": "2026-11-23T10:23:54+08:00",
+        "executedAt": "2026-11-24T23:20:35+08:00",
         "asOfDate": "2026-11-17",
         "asOfDateBasis": "latest_observed_ledger_record_not_complete_account_coverage"
       }
@@ -147787,7 +147787,7 @@
           "本表为已发布历史辅助资料，本次账库导出未重检；原统计截止保留，不能代表本轮邮箱/账户全覆盖。"
         ],
         "asOfDate": "2026-10-22",
-        "preservedFromSnapshotSha256": "aca94c2dfa8a6fdb97f59933bdcfe9902595bd3860c1c4d1429735ee70275c6c"
+        "preservedFromSnapshotSha256": "831e41d02afaefece90f294315a1e3740eafa7368365df5dbaeec7ae72174d77"
       }
     },
     "order_evidence": {
@@ -213640,7 +213640,7 @@
       "source": {
         "label": "统一主账只读投影 · 银行与渠道观察",
         "provider": "reviewed unified ledger",
-        "executedAt": "2026-11-23T10:23:54+08:00",
+        "executedAt": "2026-11-24T23:20:35+08:00",
         "caveats": [
           "只读最新已核查数据库备份，未采集邮箱或平台。",
           "账本最近记录日不是完整账户或邮件覆盖水位；无记录不代表零。",
@@ -216446,7 +216446,7 @@
       "source": {
         "label": "统一主账只读投影 · 银行与渠道观察",
         "provider": "reviewed unified ledger",
-        "executedAt": "2026-11-23T10:23:54+08:00",
+        "executedAt": "2026-11-24T23:20:35+08:00",
         "caveats": [
           "只读最新已核查数据库备份，未采集邮箱或平台。",
           "账本最近记录日不是完整账户或邮件覆盖水位；无记录不代表零。",
@@ -216507,7 +216507,7 @@
       "source": {
         "label": "统一主账只读投影 · 银行与渠道观察",
         "provider": "reviewed unified ledger",
-        "executedAt": "2026-11-23T10:23:54+08:00",
+        "executedAt": "2026-11-24T23:20:35+08:00",
         "caveats": [
           "只读最新已核查数据库备份，未采集邮箱或平台。",
           "账本最近记录日不是完整账户或邮件覆盖水位；无记录不代表零。",
@@ -217710,7 +217710,7 @@
       "source": {
         "label": "统一主账只读投影 · 银行与渠道观察",
         "provider": "reviewed unified ledger",
-        "executedAt": "2026-11-23T10:23:54+08:00",
+        "executedAt": "2026-11-24T23:20:35+08:00",
         "caveats": [
           "只读最新已核查数据库备份，未采集邮箱或平台。",
           "账本最近记录日不是完整账户或邮件覆盖水位；无记录不代表零。",
@@ -233347,7 +233347,7 @@
           }
         ],
         "asOfDate": "2026-10-22",
-        "preservedFromSnapshotSha256": "aca94c2dfa8a6fdb97f59933bdcfe9902595bd3860c1c4d1429735ee70275c6c"
+        "preservedFromSnapshotSha256": "831e41d02afaefece90f294315a1e3740eafa7368365df5dbaeec7ae72174d77"
       }
     }
   },
@@ -233508,11 +233508,11 @@
         }
       ],
       "unlocatedItemRows": 1198,
-      "projectionGeneratedAt": "2026-11-23T10:23:54+08:00",
+      "projectionGeneratedAt": "2026-11-24T23:20:35+08:00",
       "orderSummaryScope": "current database evidence since 2025; not complete historical collector totals"
     },
     "ledgerExport": {
-      "generatedAt": "2026-11-23T10:23:54+08:00",
+      "generatedAt": "2026-11-24T23:20:35+08:00",
       "periodEndBasis": "latest_observed_ledger_record_not_complete_account_coverage",
       "collectionWatermarkAdvanced": false,
       "primaryBankRecords": 4884,
