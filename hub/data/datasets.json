@@ -1,7 +1,7 @@
 {
   "version": 1,
   "publicationMode": "authorized-public-snapshots",
-  "preparedAt": "2026-11-24T23:23:55.336506+08:00",
+  "preparedAt": "2026-11-25T23:20:13+08:00",
   "datasets": [
     {
       "id": "finance",
@@ -123,11 +123,11 @@
       "file": "./health.json",
       "status": "ready",
       "coverage": "partial",
-      "generatedAt": "2026-11-24T23:16:53.026569+08:00",
-      "sourceAsOf": "2026-11-24T09:30:00+08:00",
+      "generatedAt": "2026-11-25T23:19:29.476019+08:00",
+      "sourceAsOf": "2026-11-25T09:33:00+08:00",
       "records": 5,
-      "bytes": 4311,
-      "sha256": "93c91bee51c27d3771afd272bc46fc52814bc36ebed8734f2e7c5bae6587b1a8"
+      "bytes": 4336,
+      "sha256": "27f55e7c46bf87a1db4e6ba137a6803d6029f12a2288f236be8db306ef923708"
     },
     {
       "id": "knowledge",
@@ -135,11 +135,11 @@
       "file": "./knowledge.json",
       "status": "ready",
       "coverage": "partial",
-      "generatedAt": "2026-11-24T23:16:53.026569+08:00",
-      "sourceAsOf": "2026-11-24T09:35:58+08:00",
+      "generatedAt": "2026-11-25T23:19:29.476019+08:00",
+      "sourceAsOf": "2026-11-25T16:05:26+08:00",
       "records": 6,
-      "bytes": 6043,
-      "sha256": "ca1322a87de9cb81d439c6569279394e1bf70af4cc3c0dc79a533531f37677f0"
+      "bytes": 6024,
+      "sha256": "69f264b001a19931b047e8e2bd0f117a7d8f75ec451aa01d8adfa70edd1e70b0"
     },
     {
       "id": "system",
@@ -147,11 +147,11 @@
       "file": "./system.json",
       "status": "ready",
       "coverage": "partial",
-      "generatedAt": "2026-11-24T23:16:53.026569+08:00",
-      "sourceAsOf": "2026-11-24T22:44:17.246839+08:00",
-      "records": 10,
-      "bytes": 8337,
-      "sha256": "8ca2fa21bb6d4073f360018a90483450b58a60d434a9f4e26a7f08ff47208619"
+      "generatedAt": "2026-11-25T23:19:29.476019+08:00",
+      "sourceAsOf": "2026-11-25T23:16:15.146138+08:00",
+      "records": 11,
+      "bytes": 8967,
+      "sha256": "3bace45d401dea3bcf4c6cb88d8dc78e6a8ee4aa91827c4051fdd98049a49de7"
     },
     {
       "id": "household-budget",
