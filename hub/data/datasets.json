@@ -1,7 +1,7 @@
 {
   "version": 1,
   "publicationMode": "authorized-public-snapshots",
-  "preparedAt": "2026-11-25T23:33:41.926281+08:00",
+  "preparedAt": "2026-11-26T23:15:48+08:00",
   "datasets": [
     {
       "id": "finance",
@@ -123,11 +123,11 @@
       "file": "./health.json",
       "status": "ready",
       "coverage": "partial",
-      "generatedAt": "2026-11-25T23:19:29.476019+08:00",
-      "sourceAsOf": "2026-11-25T09:33:00+08:00",
+      "generatedAt": "2026-11-26T23:15:25.978211+08:00",
+      "sourceAsOf": "2026-11-26T09:34:00+08:00",
       "records": 5,
-      "bytes": 4336,
-      "sha256": "27f55e7c46bf87a1db4e6ba137a6803d6029f12a2288f236be8db306ef923708"
+      "bytes": 4503,
+      "sha256": "00865931a5dc1c260bb32b11667345bf32b1e728eda63142bda93a796d733046"
     },
     {
       "id": "knowledge",
@@ -135,11 +135,11 @@
       "file": "./knowledge.json",
       "status": "ready",
       "coverage": "partial",
-      "generatedAt": "2026-11-25T23:19:29.476019+08:00",
-      "sourceAsOf": "2026-11-25T16:05:26+08:00",
+      "generatedAt": "2026-11-26T23:15:25.978211+08:00",
+      "sourceAsOf": "2026-11-26T09:35:53+08:00",
       "records": 6,
       "bytes": 6024,
-      "sha256": "69f264b001a19931b047e8e2bd0f117a7d8f75ec451aa01d8adfa70edd1e70b0"
+      "sha256": "864d82caf391d180aa82ccdf7265b3e601cb75a7c17a91a036902e32297c8b36"
     },
     {
       "id": "system",
@@ -147,11 +147,11 @@
       "file": "./system.json",
       "status": "ready",
       "coverage": "partial",
-      "generatedAt": "2026-11-25T23:19:29.476019+08:00",
-      "sourceAsOf": "2026-11-25T23:16:15.146138+08:00",
-      "records": 11,
-      "bytes": 8967,
-      "sha256": "3bace45d401dea3bcf4c6cb88d8dc78e6a8ee4aa91827c4051fdd98049a49de7"
+      "generatedAt": "2026-11-26T23:15:25.978211+08:00",
+      "sourceAsOf": "2026-11-26T23:14:00.650826+08:00",
+      "records": 12,
+      "bytes": 9535,
+      "sha256": "1c3bd076861d592fe6623feec532628feee1a7de5cc58eb48ed98110b03514c1"
     },
     {
       "id": "household-budget",
